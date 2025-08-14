@@ -1,0 +1,60 @@
+@font-face {
+	font-family: 'Geist Sans';
+	src: url('/fonts/Geist/Geist-VariableFont_wght.woff2') format('woff2-variations');
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: optional;
+}
+@font-face {
+	font-family: 'Geist Mono';
+	src: url('/fonts/Geist_Mono/GeistMono-VariableFont_wght.woff2') format('woff2-variations');
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: optional;
+}
+
+@import 'tailwindcss';
+
+/* --- Design tokens --- */
+@theme {
+	--font-sans: 'Geist Sans', ui-sans-serif, system-ui, sans-serif;
+	--font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, monospace;
+
+	/* Brand (#FCD000) */
+	--color-brand: #fcd000;
+	--color-brand-foreground: #000;
+
+	/* Dark defaults (we ship dark-first) */
+	--color-bg: hsl(222.2 84% 4.9%);
+	--color-fg: hsl(210 40% 98%);
+	--color-muted: hsl(217.2 32.6% 17.5%);
+	--color-muted-foreground: hsl(215 20% 65.1%);
+	--color-border: hsl(217.2 32.6% 17.5%);
+
+	/* Light palette (activated by .light on <html>) */
+	--color-bg--light: hsl(0 0% 100%);
+	--color-fg--light: hsl(222.2 84% 4.9%);
+	--color-muted--light: hsl(210 40% 96.1%);
+	--color-muted-foreground--light: hsl(215.4 16.3% 46.9%);
+	--color-border--light: hsl(214.3 31.8% 91.4%);
+}
+
+:root.light {
+	--color-bg: var(--color-bg--light);
+	--color-fg: var(--color-fg--light);
+	--color-muted: var(--color-muted--light);
+	--color-muted-foreground: var(--color-muted-foreground--light);
+	--color-border: var(--color-border--light);
+}
+
+/* App shell baseline */
+html,
+body,
+#svelte {
+	height: 100%;
+}
+body {
+	font-family: var(--font-sans);
+	background: var(--color-bg);
+	color: var(--color-fg);
+}
