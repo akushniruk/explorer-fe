@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-export type Theme = 'dark' | 'light';
+export type Theme = 'light' | 'dark';
 const isServer = typeof document === 'undefined';
 
 function initial(): Theme {
@@ -11,6 +11,7 @@ export const theme = writable<Theme>(initial());
 export function applyTheme(t: Theme) {
 	if (isServer) return;
 	const html = document.documentElement;
-	html.classList.toggle('light', t === 'light'); // dark is default (no class)
+	html.classList.remove('light', 'dark');
+	html.classList.add(t);
 	localStorage.setItem('theme', t);
 }

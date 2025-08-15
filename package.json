@@ -49,6 +49,8 @@
 	},
 	"dependencies": {
 		"@inlang/paraglide-js": "^2.0.0",
+		"@melt-ui/svelte": "0.86.6",
+		"bits-ui": "2.9.3",
 		"clsx": "2.1.1",
 		"lucide-svelte": "0.539.0",
 		"tailwind-merge": "3.3.1",

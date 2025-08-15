@@ -1,41 +1,180 @@
 <script lang="ts">
 	import '../app.css';
 	import { onMount } from 'svelte';
+	import { get } from 'svelte/store';
 	import { theme, applyTheme } from '$lib/theme';
+	import { FileText, ChevronDown } from 'lucide-svelte';
 
-	function toggleTheme() {
-		theme.update((t) => (t === 'dark' ? 'light' : 'dark'));
+	let showThemeDropdown = false;
+
+	function setTheme(newTheme: 'light' | 'dark') {
+		theme.set(newTheme);
+		showThemeDropdown = false;
+	}
+
+	function getThemeDisplay(t: 'light' | 'dark') {
+		return t === 'light' ? 'Light' : 'Dark';
+	}
+
+	function handleClickOutside(event: MouseEvent) {
+		const target = event.target as Element;
+		if (!target.closest('[data-theme-dropdown]')) showThemeDropdown = false;
 	}
 
 	onMount(() => {
-		applyTheme($theme);
+		// apply the initial theme and keep in sync
+		applyTheme(get(theme));
 		const unsubscribe = theme.subscribe(applyTheme);
-		return () => unsubscribe();
+		document.addEventListener('click', handleClickOutside);
+		return () => {
+			unsubscribe();
+			document.removeEventListener('click', handleClickOutside);
+		};
 	});
 </script>
 
-<div class="min-h-dvh bg-bg text-fg">
-	<header class="border-b border-border/60 px-4 py-3 flex items-center justify-between">
-		<a href="/" class="font-semibold tracking-tight">Nexus</a>
-		<div class="flex items-center gap-2">
-			<button
-				on:click={toggleTheme}
-				class="inline-flex h-9 px-3 items-center rounded-md border border-border text-sm hover:bg-muted"
-			>
-				Toggle theme
-			</button>
-			<a
-				href="/channel/list"
-				class="inline-flex h-9 px-4 items-center rounded-md font-medium
-               bg-brand text-brand-foreground hover:brightness-95
-               focus:outline-none focus:ring-2 focus:ring-brand/60"
-			>
-				Explore Channels
-			</a>
+<svelte:head>
+	<title>YNScan - The Yellow Network Explorer</title>
+	<meta
+		name="description"
+		content="Explore and monitor The Yellow Network's payment channels, app sessions, and blockchain assets. Real-time network statistics and comprehensive blockchain data analysis."
+	/>
+	<meta
+		name="keywords"
+		content="Yellow Network, blockchain explorer, payment channels, app sessions, cryptocurrency, DeFi, blockchain scanner"
+	/>
+	<meta name="author" content="YNScan" />
+	<meta property="og:title" content="YNScan - The Yellow Network Explorer" />
+	<meta
+		property="og:description"
+		content="Explore and monitor The Yellow Network's payment channels, app sessions, and blockchain assets."
+	/>
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://ynscan.xyz" />
+	<meta property="og:site_name" content="YNScan" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content="YNScan - The Yellow Network Explorer" />
+	<meta
+		name="twitter:description"
+		content="Explore and monitor The Yellow Network's payment channels, app sessions, and blockchain assets."
+	/>
+	<link rel="canonical" href="https://ynscan.xyz" />
+</svelte:head>
+
+<div class="min-h-dvh bg-bg text-fg flex flex-col">
+	<!-- Header -->
+	<header class="bg-bg border-b border-border">
+		<div class="max-w-7xl mx-auto px-4">
+			<!-- Top bar -->
+			<div class="flex items-center justify-between py-2 text-xs sm:text-sm">
+				<div class="flex items-center gap-3">
+					<span class="text-muted-foreground">The Yellow Network Explorer</span>
+					<div class="hidden sm:flex items-center gap-2">
+						<span class="inline-block w-2 h-2 rounded-full bg-muted-foreground"></span>
+						<span class="text-muted-foreground">Online</span>
+					</div>
+				</div>
+
+				<div class="flex items-center gap-3">
+					<a
+						href="https://erc7824.org/"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="text-muted-foreground hover:underline inline-flex items-center gap-1"
+						title="ERC-7824 Documentation"
+					>
+						<FileText class="w-4 h-4" aria-hidden="true" />
+						<span>Docs</span>
+					</a>
+
+					<!-- Theme dropdown -->
+					<div class="relative" data-theme-dropdown>
+						<button
+							type="button"
+							on:click={() => (showThemeDropdown = !showThemeDropdown)}
+							class="text-muted-foreground hover:text-fg text-xs inline-flex items-center gap-1"
+							aria-haspopup="menu"
+							aria-expanded={showThemeDropdown}
+						>
+							{getThemeDisplay($theme)}
+							<ChevronDown
+								class={`w-3 h-3 transition-transform ${showThemeDropdown ? 'rotate-180' : ''}`}
+								aria-hidden="true"
+							/>
+						</button>
+
+						{#if showThemeDropdown}
+							<div
+								class="absolute top-full right-0 mt-1 rounded-lg border border-border bg-bg shadow-lg z-50 min-w-[8rem]"
+								role="menu"
+							>
+								<button
+									type="button"
+									on:click={() => setTheme('light')}
+									class="w-full px-3 py-2 text-xs text-left hover:bg-muted/40 rounded-t-lg transition-colors {$theme ===
+									'light'
+										? 'bg-muted/30'
+										: ''}"
+									role="menuitem"
+								>
+									Light
+								</button>
+								<button
+									type="button"
+									on:click={() => setTheme('dark')}
+									class="w-full px-3 py-2 text-xs text-left hover:bg-muted/40 rounded-b-lg transition-colors {$theme ===
+									'dark'
+										? 'bg-muted/30'
+										: ''}"
+									role="menuitem"
+								>
+									Dark
+								</button>
+							</div>
+						{/if}
+					</div>
+				</div>
+			</div>
+
+			<!-- Main header -->
+			<div class="py-3">
+				<div class="flex items-center justify-between gap-8">
+					<a href="/" class="flex items-center gap-3 flex-shrink-0">
+						<span class="text-lg font-semibold tracking-tight">ynscan</span>
+					</a>
+
+					<!-- Navigation on right -->
+					<nav class="flex items-center gap-8">
+						<a href="/" class="text-sm hover:text-brand transition-colors">Home</a>
+						<a href="/channels" class="text-sm hover:text-brand transition-colors">Channels</a>
+						<a href="/sessions" class="text-sm hover:text-brand transition-colors">Sessions</a>
+						<a href="/assets" class="text-sm hover:text-brand transition-colors">Assets</a>
+						<a href="/nodes" class="text-sm hover:text-brand transition-colors">Nodes</a>
+					</nav>
+				</div>
+			</div>
 		</div>
 	</header>
 
-	<main class="px-4 py-6">
+	<main class="flex-1">
 		<slot />
 	</main>
+
+	<!-- Footer -->
+	<footer class="border-t border-border py-3 mt-auto">
+		<div class="max-w-7xl mx-auto px-4">
+			<div
+				class="flex flex-col md:flex-row justify-between items-center gap-2 text-[11px] text-muted-foreground"
+			>
+				<p class="m-0">ynscan © 2025</p>
+				<!-- <p class="m-0 text-center md:text-right">
+					Donations:
+					<a href="/participant/0x71c7656ec7ab88b098defb751b7401b5f6d8976f" class="underline">
+						0x71c765...d8976f
+					</a>
+					<span class="ml-1" aria-hidden="true">♥</span>
+				</p> -->
+			</div>
+		</div>
+	</footer>
 </div>
