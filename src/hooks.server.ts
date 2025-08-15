@@ -6,7 +6,7 @@ import { dev } from '$app/environment';
 import { env } from '$env/dynamic/private';
 
 const handleApi: Handle = ({ event, resolve }) => {
-	event.locals.apiBase = env.PUBLIC_API_BASE ?? (dev ? 'http://localhost:3000/api/v1' : '');
+	event.locals.apiBase = env.PUBLIC_API_BASE ?? (dev ? 'http://localhost:3000' : '');
 	return resolve(event);
 };
 

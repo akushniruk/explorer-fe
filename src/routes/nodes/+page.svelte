@@ -54,8 +54,11 @@
 </script>
 
 <svelte:head>
-	<title>Network Nodes | YNScan - The Yellow Network Explorer</title>
-	<meta name="description" content="Interactive map showing The Yellow Network nodes worldwide. Explore global node distribution, regional coverage, and network infrastructure." />
+	<title>Network Nodes | ynscan - The Yellow Network Explorer</title>
+	<meta
+		name="description"
+		content="Interactive map showing The Yellow Network nodes worldwide. Explore global node distribution, regional coverage, and network infrastructure."
+	/>
 	<link rel="canonical" href="https://ynscan.xyz/nodes" />
 </svelte:head>
 
@@ -168,7 +171,9 @@
 						class="text-xs fill-white font-medium"
 						style="text-shadow: 0 1px 3px rgba(0,0,0,0.8);"
 					>
-						{node.location?.slice(0, 2)?.toUpperCase() || node.name.slice(0, 2)?.toUpperCase() || 'N'}
+						{node.location?.slice(0, 2)?.toUpperCase() ||
+							node.name.slice(0, 2)?.toUpperCase() ||
+							'N'}
 					</text>
 				</g>
 			{/each}
@@ -217,7 +222,11 @@
 			<div class="p-6">
 				<div class="flex items-center justify-between mb-4">
 					<h2 class="text-lg font-semibold">Node Details</h2>
-					<button on:click={closeNodePanel} class="text-muted-foreground hover:text-fg" aria-label="Close node details">
+					<button
+						on:click={closeNodePanel}
+						class="text-muted-foreground hover:text-fg"
+						aria-label="Close node details"
+					>
 						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path
 								stroke-linecap="round"
@@ -242,16 +251,15 @@
 								<div
 									class="w-2 h-2 rounded-full"
 									class:bg-primary={selectedNode.status === 'online'}
-									class:bg-muted={selectedNode.status === 'offline'}
-									class:bg-muted={selectedNode.status === 'unknown'}
+									class:bg-muted={selectedNode.status === 'offline' ||
+										selectedNode.status === 'unknown'}
 								></div>
 								<span class="text-sm font-medium capitalize">{selectedNode.status}</span>
 							</div>
 						</div>
 
 						<div>
-							<div class="text-xs text-muted-foreground uppercase tracking-wider">Available</div
-							>
+							<div class="text-xs text-muted-foreground uppercase tracking-wider">Available</div>
 							<div class="text-sm font-medium mt-1">
 								<span
 									class="inline-flex px-2 py-1 rounded text-xs"
@@ -267,24 +275,24 @@
 					</div>
 
 					{#if selectedNode.location}
-					<div>
-						<div class="text-xs text-muted-foreground uppercase tracking-wider">Location</div>
-						<div class="mt-1 space-y-1">
-							<div class="text-sm">{selectedNode.location}</div>
-							{#if selectedNode.lat && selectedNode.lng}
-								<div class="text-xs text-muted-foreground">
-									{selectedNode.lat.toFixed(4)}°, {selectedNode.lng.toFixed(4)}°
-								</div>
-							{/if}
+						<div>
+							<div class="text-xs text-muted-foreground uppercase tracking-wider">Location</div>
+							<div class="mt-1 space-y-1">
+								<div class="text-sm">{selectedNode.location}</div>
+								{#if selectedNode.lat && selectedNode.lng}
+									<div class="text-xs text-muted-foreground">
+										{selectedNode.lat.toFixed(4)}°, {selectedNode.lng.toFixed(4)}°
+									</div>
+								{/if}
+							</div>
 						</div>
-					</div>
 					{/if}
 
 					{#if selectedNode.version}
-					<div>
-						<div class="text-xs text-muted-foreground uppercase tracking-wider">Version</div>
-						<div class="text-sm font-mono mt-1">{selectedNode.version}</div>
-					</div>
+						<div>
+							<div class="text-xs text-muted-foreground uppercase tracking-wider">Version</div>
+							<div class="text-sm font-mono mt-1">{selectedNode.version}</div>
+						</div>
 					{/if}
 
 					{#if selectedNode.latency_ms}

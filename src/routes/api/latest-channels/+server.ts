@@ -36,7 +36,7 @@ export const GET: RequestHandler = async (event) => {
 		const sort = event.url.searchParams.get('sort') ?? 'updated_at';
 		const order = event.url.searchParams.get('order') ?? 'desc';
 
-		const path = `/channel/list?limit=${limit}&sort=${sort}&order=${order}`;
+		const path = `/api/v1/channel/list?limit=${limit}&sort=${sort}&order=${order}`;
 		const result = await apiGet(event, path, ChannelsResponseSchema);
 
 		if (result.notModified) {

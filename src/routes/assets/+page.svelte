@@ -53,72 +53,14 @@
 </script>
 
 <svelte:head>
-	<title>Blockchain Assets | YNScan - The Yellow Network Scanner</title>
-	<meta
-		name="description"
-		content="Explore blockchain assets on The Yellow Network. View token contracts, decimals, supply information, and asset statistics across supported networks."
-	/>
+	<title>Assets | ynscan</title>
+	<meta name="description" content="Explore assets on The Yellow Network." />
 	<link rel="canonical" href="https://ynscan.xyz/assets" />
 </svelte:head>
 
 <div class="max-w-7xl mx-auto px-4 py-6">
 	<div class="mb-8">
-		<h1 class="text-3xl font-bold mb-2">Blockchain Assets</h1>
-		<p class="text-muted-foreground">
-			Explore all assets tracked across the Yellow Network. Monitor token flows, contract addresses,
-			and cross-chain activity.
-		</p>
-	</div>
-
-	<!-- Filters and Search -->
-	<div class="bg-card border border-border rounded-lg p-6 mb-6">
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-			<!-- Search -->
-			<div>
-				<label for="search" class="block text-sm font-medium mb-2">Search</label>
-				<input
-					id="search"
-					type="text"
-					placeholder="Symbol, name, or contract address..."
-					bind:value={searchQuery}
-					class="w-full px-3 py-2 border border-border rounded-lg bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring"
-				/>
-			</div>
-
-			<!-- Chain Filter -->
-			<div>
-				<label for="chain" class="block text-sm font-medium mb-2">Chain</label>
-				<select
-					id="chain"
-					bind:value={chainFilter}
-					class="w-full px-3 py-2 border border-border rounded-lg bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring"
-				>
-					<option value="all">All Chains</option>
-					{#each chains as chain}
-						<option value={chain}>Chain {chain}</option>
-					{/each}
-				</select>
-			</div>
-
-			<!-- Clear Filters -->
-			<div class="flex items-end">
-				<button
-					on:click={() => {
-						searchQuery = '';
-						chainFilter = 'all';
-					}}
-					class="px-4 py-2 text-sm text-foreground border border-border rounded-lg hover:bg-muted/50"
-				>
-					Clear Filters
-				</button>
-			</div>
-		</div>
-
-		<div class="mt-4">
-			<p class="text-sm text-muted-foreground">
-				Showing {filteredAssets.length} of {data.total} assets
-			</p>
-		</div>
+		<h1 class="text-3xl font-bold mb-2">Assets</h1>
 	</div>
 
 	<!-- Assets Table -->

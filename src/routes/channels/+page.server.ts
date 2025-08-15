@@ -5,13 +5,18 @@ import type { Channel } from '$lib/types';
 
 const ChannelSchema = z.object({
 	channel_id: z.string(),
+	chain_id: z.string(),
+	token: z.string(),
 	wallet: z.string(),
 	participant: z.string(),
 	amount: z.string(),
 	status: z.string(),
-	chain_id: z.string().optional(),
-	updated_at: z.string().optional(),
-	created_at: z.string().optional()
+	challenge: z.string(),
+	nonce: z.string(),
+	version: z.string(),
+	adjudicator: z.string(),
+	created_at: z.string(),
+	updated_at: z.string()
 });
 
 const ChannelsResponseSchema = z.object({

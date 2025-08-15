@@ -50,10 +50,10 @@
 	}
 </script>
 
-<div class="rounded-md border">
+<div class="bg-card border border-border rounded-lg">
 	<Table.Root>
 		<Table.Header>
-			<Table.Row class="hover:bg-transparent">
+			<Table.Row class="hover:bg-transparent border-b border-border">
 				{#each columns as column}
 					<Table.Head
 						class="h-12 {column.align === 'right' ? 'text-right' : 'text-left'} {column.sortable
@@ -115,7 +115,7 @@
 						<Table.Cell class="font-mono">
 							<a
 								href={`/asset/${asset.contract_address}`}
-								class="text-foreground hover:text-foreground text-sm"
+								class="text-foreground hover:text-foreground text-sm cursor-pointer"
 								title={asset.contract_address}
 							>
 								{shortHex(asset.contract_address, 12, 8)}

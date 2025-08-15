@@ -10,7 +10,7 @@
 
 <svelte:head>
 	<title
-		>Channel {data.channel ? shortHex(data.channel.channel_id, 8, 6) : 'Not Found'} | YNScan</title
+		>Channel {data.channel ? shortHex(data.channel.channel_id, 8, 6) : 'Not Found'} | ynscan</title
 	>
 	<meta
 		name="description"

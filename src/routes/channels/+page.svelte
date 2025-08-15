@@ -49,7 +49,7 @@
 </script>
 
 <svelte:head>
-	<title>Payment Channels | YNScan - The Yellow Network Explorer</title>
+	<title>Channels | ynscan</title>
 	<meta
 		name="description"
 		content="Browse all payment channels on The Yellow Network. Track states, participants, and asset flows."
@@ -59,72 +59,8 @@
 
 <div class="mx-auto max-w-7xl px-4 py-6">
 	<div class="mb-6">
-		<h1 class="mb-2 text-3xl font-bold">Payment Channels</h1>
-		<p class="text-muted-foreground">
-			Monitor payment channels on the Yellow Network. Track channel states, participants, and
-			balances.
-		</p>
+		<h1 class="mb-2 text-3xl font-bold">Channels</h1>
 	</div>
-
-	<!-- Filters -->
-	<div class="bg-card border border-border rounded-lg p-6 mb-6">
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-			<!-- Search -->
-			<div>
-				<label for="search" class="block text-sm font-medium mb-2">Search</label>
-				<input
-					id="search"
-					type="text"
-					placeholder="Channel ID or participant address..."
-					value={q}
-					on:input={(e) => onSearchInput(e.currentTarget.value)}
-					class="w-full px-3 py-2 border border-border rounded-lg bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring"
-				/>
-			</div>
-
-			<!-- Status Filter -->
-			<div>
-				<label for="status" class="block text-sm font-medium mb-2">Status</label>
-				<select
-					id="status"
-					bind:value={status}
-					on:change={() => setQuery({ status })}
-					class="w-full px-3 py-2 border border-border rounded-lg bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring"
-				>
-					<option value="all">All Statuses</option>
-					<option value="open">Open</option>
-					<option value="closed">Closed</option>
-					<option value="pending">Pending</option>
-				</select>
-			</div>
-
-			<!-- Clear Filters -->
-			<div class="flex items-end">
-				<button
-					on:click={() => setQuery({ q: null, status: 'all' })}
-					class="px-4 py-2 text-sm text-foreground border border-border rounded-lg hover:bg-muted"
-				>
-					Clear Filters
-				</button>
-			</div>
-		</div>
-
-		<div class="mt-4">
-			<p class="text-sm text-muted-foreground">
-				Showing {data.channels.length} of {data.total} channels
-			</p>
-		</div>
-	</div>
-
-	<!-- Top pagination -->
-	<ChannelsPagination
-		currentPage={data.page}
-		totalPages={Math.max(1, Math.ceil(data.total / data.limit))}
-		totalRecords={data.total}
-		recordsPerPage={data.limit}
-		{onPageChange}
-		{onPageSizeChange}
-	/>
 
 	<!-- Table -->
 	<ChannelsTable

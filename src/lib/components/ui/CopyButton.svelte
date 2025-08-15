@@ -26,7 +26,7 @@
 
 <button
 	type="button"
-	class="inline-flex items-center gap-1 rounded border border-border bg-background px-1.5 py-0.5 text-[11px] font-medium text-muted-foreground hover:bg-muted transition-colors"
+	class="inline-flex items-center rounded border border-border bg-background p-1 text-muted-foreground hover:bg-muted transition-colors cursor-pointer"
 	on:click|stopPropagation={copy}
 	aria-label={title}
 	{title}
@@ -36,5 +36,4 @@
 	{:else}
 		<Copy class="h-3.5 w-3.5" />
 	{/if}
-	<span class="min-w-[3.5rem] text-xs">{copied ? 'Copied' : 'Copy'}</span>
 </button>

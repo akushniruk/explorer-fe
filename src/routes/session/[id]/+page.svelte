@@ -11,11 +11,11 @@
 
 <svelte:head>
 	<title
-		>Session {data.session ? shortHex(data.session.session_id, 8, 6) : 'Not Found'} | YNScan</title
+		>Session {data.session ? shortHex(data.session.session_id, 8, 6) : 'Not Found'} | ynscan</title
 	>
 	<meta
 		name="description"
-		content="View detailed information for this app session on The Yellow Network. Session participants, status, and activity history."
+		content="View detailed information for this app session on The Yellow Network."
 	/>
 	<link rel="canonical" href="https://ynscan.xyz/session/{data.session?.session_id || ''}" />
 </svelte:head>

@@ -71,10 +71,14 @@ export const GET: RequestHandler = async (event) => {
 
 		// Search channels and sessions in parallel
 		const [channelsResult, sessionsResult] = await Promise.allSettled([
-			apiGet(event, `/channel/list?q=${encodeURIComponent(query)}&limit=5`, ChannelsResponseSchema),
 			apiGet(
 				event,
-				`/app-session/list?q=${encodeURIComponent(query)}&limit=5`,
+				`/api/v1/channel/list?q=${encodeURIComponent(query)}&limit=5`,
+				ChannelsResponseSchema
+			),
+			apiGet(
+				event,
+				`/api/v1/app-session/list?q=${encodeURIComponent(query)}&limit=5`,
 				SessionsResponseSchema
 			)
 		]);

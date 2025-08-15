@@ -55,10 +55,10 @@
 	}
 </script>
 
-<div class="rounded-md border">
+<div class="bg-card border border-border rounded-lg">
 	<Table.Root>
 		<Table.Header>
-			<Table.Row class="hover:bg-transparent">
+			<Table.Row class="hover:bg-transparent border-b border-border">
 				{#each columns as column}
 					<Table.Head
 						class="h-12 {column.align === 'right' ? 'text-right' : 'text-left'} {column.sortable
@@ -103,7 +103,7 @@
 						<Table.Cell class="font-mono">
 							<a
 								href={`/session/${session.session_id}`}
-								class="text-foreground hover:text-foreground text-sm"
+								class="text-foreground hover:text-foreground text-sm cursor-pointer"
 								title={session.session_id}
 							>
 								{shortHex(session.session_id, 12, 8)}
@@ -125,7 +125,7 @@
 										<span class="text-muted-foreground text-xs">#{i + 1}:</span>
 										<a
 											href={`/participant/${participant}`}
-											class="font-mono text-foreground hover:text-foreground"
+											class="font-mono text-foreground hover:text-foreground cursor-pointer"
 											title={participant}
 										>
 											{shortHex(participant, 6, 4)}
@@ -145,7 +145,7 @@
 							{#if session.channel_id}
 								<a
 									href={`/channel/${session.channel_id}`}
-									class="text-foreground hover:text-foreground text-sm"
+									class="text-foreground hover:text-foreground text-sm cursor-pointer"
 									title={session.channel_id}
 								>
 									{shortHex(session.channel_id, 6, 4)}

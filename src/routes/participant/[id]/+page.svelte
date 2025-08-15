@@ -18,7 +18,7 @@
 </script>
 
 <svelte:head>
-	<title>Participant {shortHex(data.participantId, 8, 6)} | YNScan</title>
+	<title>Participant {shortHex(data.participantId, 8, 6)} | ynscan</title>
 	<meta
 		name="description"
 		content="View participant details and activity on The Yellow Network. Channel participation, session history, and network statistics."

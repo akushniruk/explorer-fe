@@ -32,7 +32,7 @@
 </script>
 
 <svelte:head>
-	<title>YNScan - The Yellow Network Explorer</title>
+	<title>ynscan - The Yellow Network Explorer</title>
 	<meta
 		name="description"
 		content="Explore The Yellow Network in real-time. Track channels, app sessions, network nodes, assets."

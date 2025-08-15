@@ -33,10 +33,10 @@
 	}
 </script>
 
-<div class="rounded-md border">
+<div class="bg-card border border-border rounded-lg">
 	<Table.Root>
 		<Table.Header>
-			<Table.Row class="hover:bg-transparent">
+			<Table.Row class="hover:bg-transparent border-b border-border">
 				{#each columns as column}
 					<Table.Head class="h-12 {column.align === 'right' ? 'text-right' : 'text-left'}">
 						<span class="font-medium text-muted-foreground text-sm">{column.label}</span>
@@ -69,7 +69,7 @@
 							<Table.Cell class="font-mono">
 								<a
 									href={`/channel/${row.channel_id}`}
-									class="text-foreground hover:text-foreground text-sm"
+									class="text-foreground hover:text-foreground text-sm cursor-pointer"
 									title={row.channel_id}
 								>
 									{shortHex(row.channel_id, 12, 8)}
@@ -83,7 +83,7 @@
 										<span class="text-muted-foreground text-xs">From:</span>
 										<a
 											href={`/participant/${row.wallet}`}
-											class="font-mono text-foreground hover:text-foreground"
+											class="font-mono text-foreground hover:text-foreground cursor-pointer"
 											title={row.wallet}
 										>
 											{shortHex(row.wallet, 6, 4)}
@@ -93,7 +93,7 @@
 										<span class="text-muted-foreground text-xs">To:</span>
 										<a
 											href={`/participant/${row.participant}`}
-											class="font-mono text-foreground hover:text-foreground"
+											class="font-mono text-foreground hover:text-foreground cursor-pointer"
 											title={row.participant}
 										>
 											{shortHex(row.participant, 6, 4)}
@@ -127,7 +127,7 @@
 							<Table.Cell class="font-mono">
 								<a
 									href={`/session/${row.session_id}`}
-									class="text-foreground hover:text-foreground text-sm"
+									class="text-foreground hover:text-foreground text-sm cursor-pointer"
 									title={row.session_id}
 								>
 									{shortHex(row.session_id, 12, 8)}
@@ -149,7 +149,7 @@
 											<span class="text-muted-foreground text-xs">#{i + 1}:</span>
 											<a
 												href={`/participant/${participant}`}
-												class="font-mono text-foreground hover:text-foreground"
+												class="font-mono text-foreground hover:text-foreground cursor-pointer"
 												title={participant}
 											>
 												{shortHex(participant, 6, 4)}

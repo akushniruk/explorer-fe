@@ -116,13 +116,13 @@ export const load: PageServerLoad = async (event) => {
 
 		// Use Promise.allSettled to handle individual failures gracefully
 		const results = await Promise.allSettled([
-			apiGet(event, '/channel/count', CountResponseSchema),
-			apiGet(event, '/app-session/count', CountResponseSchema),
-			apiGet(event, '/network/count', CountResponseSchema),
-			apiGet(event, '/asset/count', CountResponseSchema),
-			apiGet(event, `/nodes/list?limit=1`, NodesResponseSchema), // nodes for count
-			apiGet(event, `/channel/list?${qs}`, ChannelsResponseSchema),
-			apiGet(event, `/app-session/list?${qs}`, SessionsResponseSchema)
+			apiGet(event, '/api/v1/channel/count', CountResponseSchema),
+			apiGet(event, '/api/v1/app-session/count', CountResponseSchema),
+			apiGet(event, '/api/v1/network/count', CountResponseSchema),
+			apiGet(event, '/api/v1/asset/count', CountResponseSchema),
+			apiGet(event, `/api/v1/nodes/list?limit=1`, NodesResponseSchema), // nodes for count
+			apiGet(event, `/api/v1/channel/list?${qs}`, ChannelsResponseSchema),
+			apiGet(event, `/api/v1/app-session/list?${qs}`, SessionsResponseSchema)
 		]);
 
 		// Extract results with safe fallbacks

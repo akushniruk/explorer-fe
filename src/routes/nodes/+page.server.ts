@@ -3,18 +3,21 @@ import { apiGet } from '$lib/server/api';
 import { z } from 'zod';
 
 const NodeSchema = z.object({
-	id: z.number(),
+	slug: z.string(),
 	name: z.string(),
-	endpoint: z.string(),
-	location: z.string().optional(),
-	lat: z.number().optional(),
-	lng: z.number().optional(),
+	ws_url: z.string(),
+	website_host: z.string(),
+	icon_key: z.string(),
+	description: z.string(),
+	country_code: z.string(),
+	region: z.string(),
+	latitude: z.number(),
+	longitude: z.number(),
 	status: z.string(),
-	latency_ms: z.number().optional(),
-	available: z.boolean().optional(),
-	version: z.string().optional(),
-	created_at: z.string().optional(),
-	updated_at: z.string().optional()
+	available: z.boolean(),
+	latency_ms: z.number().nullable(),
+	last_seen_at: z.string().nullable(),
+	updated_at: z.string()
 });
 
 const NodesResponseSchema = z.object({
@@ -80,11 +83,23 @@ export const load: PageServerLoad = async (event) => {
 		});
 
 		const data = result.data;
-		// Transform API data to match expected format if needed
+		// Transform API data to match expected frontend format
 		const nodes = data.data.map((node) => ({
-			...node,
-			latency_ms: node.latency_ms || Math.floor(Math.random() * 200) + 50,
-			available: node.available ?? Math.random() > 0.2
+			id: node.slug, // Use slug as id
+			name: node.name,
+			endpoint: node.ws_url,
+			location: node.country_code,
+			lat: node.latitude,
+			lng: node.longitude,
+			status: node.status,
+			latency_ms: node.latency_ms ?? Math.floor(Math.random() * 200) + 50,
+			available: node.available,
+			version: '1.0',
+			description: node.description,
+			country_code: node.country_code,
+			region: node.region,
+			icon_key: node.icon_key,
+			updated_at: node.updated_at
 		}));
 
 		return {

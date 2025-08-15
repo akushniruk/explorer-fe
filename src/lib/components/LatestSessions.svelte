@@ -9,7 +9,9 @@
 <div class="bg-card border border-border rounded-lg">
 	<div class="flex items-center justify-between p-4 border-b border-border">
 		<h2 class="text-lg font-semibold">Latest Sessions</h2>
-		<a href="/sessions" class="text-sm text-brand hover:text-brand/80">View All Sessions →</a>
+		<a href="/sessions" class="text-sm text-brand hover:text-brand/80 cursor-pointer"
+			>View All Sessions →</a
+		>
 	</div>
 	<div class="p-0">
 		{#each sessions as s (s.session_id)}
@@ -21,7 +23,7 @@
 						<div class="flex items-center gap-2">
 							<a
 								href={`/session/${s.session_id}`}
-								class="font-mono text-sm text-brand hover:text-brand/80"
+								class="font-mono text-sm text-brand hover:text-brand/80 cursor-pointer"
 							>
 								{shortHex(s.session_id, 8, 6)}
 							</a>
@@ -35,13 +37,13 @@
 							{#if s.participants && s.participants.length > 0}
 								<a
 									href={`/participant/${s.participants[0]}`}
-									class="font-mono text-brand hover:text-brand/80"
+									class="font-mono text-brand hover:text-brand/80 cursor-pointer"
 									>{shortHex(s.participants[0], 6, 4)}</a
 								>
 								{#if s.participants.length > 1}
 									& <a
 										href={`/participant/${s.participants[1]}`}
-										class="font-mono text-brand hover:text-brand/80"
+										class="font-mono text-brand hover:text-brand/80 cursor-pointer"
 										>{shortHex(s.participants[1], 6, 4)}</a
 									>
 								{/if}

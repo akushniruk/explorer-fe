@@ -58,88 +58,14 @@
 </script>
 
 <svelte:head>
-	<title>App Sessions | YNScan - The Yellow Network Explorer</title>
-	<meta
-		name="description"
-		content="Browse all application sessions on The Yellow Network. Monitor session activity, participants, protocols, and real-time session statistics."
-	/>
+	<title>App Sessions | ynscan</title>
+	<meta name="description" content="Browse all application sessions on The Yellow Network." />
 	<link rel="canonical" href="https://ynscan.xyz/sessions" />
 </svelte:head>
 
 <div class="max-w-7xl mx-auto px-4 py-6">
 	<div class="mb-8">
 		<h1 class="text-3xl font-bold mb-2">App Sessions</h1>
-		<p class="text-muted-foreground">
-			Monitor active sessions within state channels. View participant interactions, session states,
-			and network activity.
-		</p>
-	</div>
-
-	<!-- Filters and Search -->
-	<div class="bg-card border border-border rounded-lg p-6 mb-6">
-		<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-			<!-- Search -->
-			<div>
-				<label for="search" class="block text-sm font-medium mb-2">Search</label>
-				<input
-					id="search"
-					type="text"
-					placeholder="Session ID, channel, or participant..."
-					bind:value={searchQuery}
-					class="w-full px-3 py-2 border border-border rounded-lg bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring"
-				/>
-			</div>
-
-			<!-- Status Filter -->
-			<div>
-				<label for="status" class="block text-sm font-medium mb-2">Status</label>
-				<select
-					id="status"
-					bind:value={statusFilter}
-					class="w-full px-3 py-2 border border-border rounded-lg bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring"
-				>
-					<option value="all">All Statuses</option>
-					<option value="active">Active</option>
-					<option value="closed">Closed</option>
-					<option value="pending">Pending</option>
-				</select>
-			</div>
-
-			<!-- Protocol Filter -->
-			<div>
-				<label for="protocol" class="block text-sm font-medium mb-2">Protocol</label>
-				<select
-					id="protocol"
-					bind:value={protocolFilter}
-					class="w-full px-3 py-2 border border-border rounded-lg bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring"
-				>
-					<option value="all">All Protocols</option>
-					{#each protocols as protocol}
-						<option value={protocol}>{protocol}</option>
-					{/each}
-				</select>
-			</div>
-
-			<!-- Clear Filters -->
-			<div class="flex items-end">
-				<button
-					on:click={() => {
-						searchQuery = '';
-						statusFilter = 'all';
-						protocolFilter = 'all';
-					}}
-					class="px-4 py-2 text-sm text-foreground border border-border rounded-lg hover:bg-muted/50"
-				>
-					Clear Filters
-				</button>
-			</div>
-		</div>
-
-		<div class="mt-4">
-			<p class="text-sm text-muted-foreground">
-				Showing {filteredSessions.length} of {data.total} sessions
-			</p>
-		</div>
 	</div>
 
 	<!-- Sessions Table -->

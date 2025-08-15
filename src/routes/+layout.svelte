@@ -34,29 +34,29 @@
 </script>
 
 <svelte:head>
-	<title>YNScan - The Yellow Network Explorer</title>
+	<title>ynscan - The Yellow Network Explorer</title>
 	<meta
 		name="description"
-		content="Explore and monitor The Yellow Network's payment channels, app sessions, and blockchain assets. Real-time network statistics and comprehensive blockchain data analysis."
+		content="Explore and monitor The Yellow Network's channels, app sessions, and assets. Real-time network statistics and comprehensive data analysis."
 	/>
 	<meta
 		name="keywords"
-		content="Yellow Network, blockchain explorer, payment channels, app sessions, cryptocurrency, DeFi, blockchain scanner"
+		content="Yellow Network, explorer, channels, app sessions, cryptocurrency, DeFi, network scanner"
 	/>
-	<meta name="author" content="YNScan" />
-	<meta property="og:title" content="YNScan - The Yellow Network Explorer" />
+	<meta name="author" content="ynscan" />
+	<meta property="og:title" content="ynscan - The Yellow Network Explorer" />
 	<meta
 		property="og:description"
-		content="Explore and monitor The Yellow Network's payment channels, app sessions, and blockchain assets."
+		content="Explore and monitor The Yellow Network's channels, app sessions, and network assets."
 	/>
 	<meta property="og:type" content="website" />
 	<meta property="og:url" content="https://ynscan.xyz" />
-	<meta property="og:site_name" content="YNScan" />
+	<meta property="og:site_name" content="ynsacn" />
 	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:title" content="YNScan - The Yellow Network Explorer" />
+	<meta name="twitter:title" content="ynsacn - The Yellow Network Explorer" />
 	<meta
 		name="twitter:description"
-		content="Explore and monitor The Yellow Network's payment channels, app sessions, and blockchain assets."
+		content="Explore and monitor The Yellow Network's channels, app sessions, and network assets."
 	/>
 	<link rel="canonical" href="https://ynscan.xyz" />
 </svelte:head>
@@ -167,11 +167,6 @@
 						<a
 							href="/nodes"
 							class="text-sm text-foreground hover:text-muted-foreground transition-colors">Nodes</a
-						>
-						<a
-							href="/search"
-							class="text-sm text-foreground hover:text-muted-foreground transition-colors"
-							>Search</a
 						>
 					</nav>
 				</div>

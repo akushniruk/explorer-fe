@@ -71,7 +71,7 @@
 </script>
 
 <svelte:head>
-	<title>Search: {data.query} | YNScan - The Yellow Network Scanner</title>
+	<title>Search: {data.query} | ynscan - The Yellow Network Scanner</title>
 	<meta
 		name="description"
 		content="Search results for {data.query} on The Yellow Network. Find channels, sessions, participants, and assets quickly."
