@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Kpi from '$lib/ui/Kpi.svelte';
+	import Kpi from './Kpi.svelte';
 	import type { NetworkCounts } from '$lib/types';
 
 	export let counts: NetworkCounts;

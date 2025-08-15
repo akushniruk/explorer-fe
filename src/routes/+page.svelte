@@ -14,14 +14,16 @@
 	let timer: ReturnType<typeof setInterval>;
 	async function refreshLists() {
 		try {
-			const q = new URLSearchParams({ limit: '6', sortBy: 'updated_at', order: 'desc' });
+			const q = new URLSearchParams({ limit: '6', sort: 'updated_at', order: 'desc' });
 			const [ch, ss] = await Promise.all([
-				fetch(`/api/v1/channel/list?${q}`).then((r) => (r.ok ? r.json() : null)),
-				fetch(`/api/v1/app-session/list?${q}`).then((r) => (r.ok ? r.json() : null))
+				fetch(`/api/latest-channels?${q}`).then((r) => (r.ok ? r.json() : { data: [] })),
+				fetch(`/api/latest-sessions?${q}`).then((r) => (r.ok ? r.json() : { data: [] }))
 			]);
-			if (ch?.data) data.latest.channels = ch.data;
-			if (ss?.data) data.latest.sessions = ss.data;
-		} catch {}
+			if (ch?.data && Array.isArray(ch.data)) data.latest.channels = ch.data;
+			if (ss?.data && Array.isArray(ss.data)) data.latest.sessions = ss.data;
+		} catch (error) {
+			console.error('Failed to refresh lists:', error);
+		}
 	}
 	onMount(() => {
 		timer = setInterval(refreshLists, 20000);

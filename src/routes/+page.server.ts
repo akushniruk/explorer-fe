@@ -1,71 +1,179 @@
 import type { PageServerLoad } from './$types';
+import { apiGet } from '$lib/server/api';
+import { z } from 'zod';
 
-export const load: PageServerLoad = async ({ fetch, locals, setHeaders }) => {
-	const base = locals.apiBase ?? '';
+const CountResponseSchema = z.object({
+	success: z.boolean(),
+	data: z.object({
+		total: z.number().optional(),
+		count: z.number().optional()
+	}),
+	meta: z.object({
+		timestamp: z.string(),
+		requestId: z.string(),
+		version: z.string()
+	})
+});
 
-	console.log('API Base URL:', base); // Debug log
+const ChannelSchema = z.object({
+	channel_id: z.string(),
+	wallet: z.string(),
+	participant: z.string(),
+	amount: z.string(),
+	status: z.string(),
+	chain_id: z.string().optional(),
+	updated_at: z.string().optional(),
+	created_at: z.string().optional()
+});
 
+const AppSessionSchema = z.object({
+	id: z.number(),
+	protocol: z.string(),
+	session_id: z.string(),
+	channel_id: z.string().optional(),
+	nonce: z.string(),
+	participants: z.array(z.string()),
+	weight: z.array(z.number()).optional(),
+	quorum: z.string().optional(),
+	version: z.string().optional(),
+	status: z.string(),
+	challenge: z.string().optional(),
+	session_data: z.any().nullable().optional(),
+	created_at: z.string().optional(),
+	updated_at: z.string().optional()
+});
+
+const ChannelsResponseSchema = z.object({
+	success: z.boolean(),
+	data: z.array(ChannelSchema),
+	meta: z.object({
+		timestamp: z.string(),
+		requestId: z.string(),
+		version: z.string(),
+		pagination: z.object({
+			page: z.number(),
+			limit: z.number(),
+			total: z.number(),
+			totalPages: z.number()
+		})
+	})
+});
+
+const SessionsResponseSchema = z.object({
+	success: z.boolean(),
+	data: z.array(AppSessionSchema),
+	meta: z.object({
+		timestamp: z.string(),
+		requestId: z.string(),
+		version: z.string(),
+		pagination: z.object({
+			page: z.number(),
+			limit: z.number(),
+			total: z.number(),
+			totalPages: z.number()
+		})
+	})
+});
+
+const NodeSchema = z.object({
+	id: z.number().optional(),
+	name: z.string(),
+	endpoint: z.string().optional(),
+	location: z.string().optional(),
+	lat: z.number().optional(),
+	lng: z.number().optional(),
+	status: z.string(),
+	latency_ms: z.number().optional(),
+	available: z.boolean().optional(),
+	version: z.string().optional(),
+	created_at: z.string().optional(),
+	updated_at: z.string().optional()
+});
+
+const NodesResponseSchema = z.object({
+	success: z.boolean(),
+	data: z.array(NodeSchema),
+	meta: z.object({
+		timestamp: z.string(),
+		requestId: z.string(),
+		version: z.string(),
+		pagination: z.object({
+			page: z.number(),
+			limit: z.number(),
+			total: z.number(),
+			totalPages: z.number()
+		})
+	})
+});
+
+export const load: PageServerLoad = async (event) => {
 	try {
-		const qs = new URLSearchParams({ limit: '6', sortBy: 'updated_at', order: 'desc' }).toString();
+		const qs = new URLSearchParams({
+			limit: '6',
+			sort: 'updated_at',
+			order: 'desc'
+		}).toString();
 
-		const [
-			chCountRes,
-			asCountRes,
-			netCountRes,
-			assetsCountRes,
-			nodesListRes,
-			latestChannelsRes,
-			latestSessionsRes
-		] = await Promise.all([
-			fetch(`${base}/api/v1/channel/count`)
-				.then((r) => (r.ok ? r.json() : null))
-				.catch(() => null),
-			fetch(`${base}/api/v1/app-session/count`)
-				.then((r) => (r.ok ? r.json() : null))
-				.catch(() => null),
-			fetch(`${base}/api/v1/network/count`)
-				.then((r) => (r.ok ? r.json() : null))
-				.catch(() => null),
-			fetch(`${base}/api/v1/asset/count`)
-				.then((r) => (r.ok ? r.json() : null))
-				.catch(() => null),
-			// nodes do not have /count; grab total from pagination meta with limit=1
-			fetch(`${base}/api/v1/nodes/list?limit=1`)
-				.then((r) => (r.ok ? r.json() : null))
-				.catch(() => null),
-			fetch(`${base}/api/v1/channel/list?${qs}`)
-				.then((r) => (r.ok ? r.json() : null))
-				.catch(() => null),
-			fetch(`${base}/api/v1/app-session/list?${qs}`)
-				.then((r) => (r.ok ? r.json() : null))
-				.catch(() => null)
+		// Use Promise.allSettled to handle individual failures gracefully
+		const results = await Promise.allSettled([
+			apiGet(event, '/channel/count', CountResponseSchema),
+			apiGet(event, '/app-session/count', CountResponseSchema),
+			apiGet(event, '/network/count', CountResponseSchema),
+			apiGet(event, '/asset/count', CountResponseSchema),
+			apiGet(event, `/nodes/list?limit=1`, NodesResponseSchema), // nodes for count
+			apiGet(event, `/channel/list?${qs}`, ChannelsResponseSchema),
+			apiGet(event, `/app-session/list?${qs}`, SessionsResponseSchema)
 		]);
 
-		const nodesTotal = nodesListRes?.meta?.pagination?.total ?? 0;
+		// Extract results with safe fallbacks
+		const [
+			channelsCount,
+			sessionsCount,
+			networksCount,
+			assetsCount,
+			nodesList,
+			latestChannels,
+			latestSessions
+		] = results.map((result) =>
+			result.status === 'fulfilled' && !result.value.notModified ? result.value.data : null
+		);
 
-		// Cache the whole dashboard for a short time; lists will also CSR-refresh
-		setHeaders({
+		// Cache the whole dashboard for a short time
+		event.setHeaders({
 			'Cache-Control': 'public, max-age=15, s-maxage=15, stale-while-revalidate=60'
 		});
 
-		const result = {
+		const dashboardData = {
 			counts: {
-				channels: chCountRes?.data?.total ?? chCountRes?.data?.count ?? 0,
-				sessions: asCountRes?.data?.total ?? asCountRes?.data?.count ?? 0,
-				networks: netCountRes?.data?.total ?? netCountRes?.data?.count ?? 0,
-				assets: assetsCountRes?.data?.total ?? assetsCountRes?.data?.count ?? 0,
-				nodes: nodesTotal
+				channels: channelsCount?.data?.total ?? channelsCount?.data?.count ?? 0,
+				sessions: sessionsCount?.data?.total ?? sessionsCount?.data?.count ?? 0,
+				networks: networksCount?.data?.total ?? networksCount?.data?.count ?? 0,
+				assets: assetsCount?.data?.total ?? assetsCount?.data?.count ?? 0,
+				nodes: nodesList?.meta?.pagination?.total ?? 0
 			},
 			latest: {
-				channels: latestChannelsRes?.data ?? [],
-				sessions: latestSessionsRes?.data ?? []
+				channels: latestChannels?.data ?? [],
+				sessions: latestSessions?.data ?? []
 			}
 		};
 
-		console.log('Load function result:', JSON.stringify(result, null, 2));
-		return result;
+		return dashboardData;
 	} catch (error) {
-		console.error('Error in load function:', error);
-		throw error;
+		console.error('Error loading dashboard data:', error);
+
+		// Return safe defaults on error
+		return {
+			counts: {
+				channels: 0,
+				sessions: 0,
+				networks: 0,
+				assets: 0,
+				nodes: 0
+			},
+			latest: {
+				channels: [],
+				sessions: []
+			}
+		};
 	}
 };

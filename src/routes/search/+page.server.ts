@@ -1,9 +1,70 @@
 import type { PageServerLoad } from './$types';
+import { apiGet } from '$lib/server/api';
+import { z } from 'zod';
 
-export const load: PageServerLoad = async ({ fetch, locals, url }) => {
-	const base = locals.apiBase ?? '';
-	const query = url.searchParams.get('q') || '';
-	const scope = url.searchParams.get('scope') || 'all';
+const ChannelSchema = z.object({
+	channel_id: z.string(),
+	wallet: z.string(),
+	participant: z.string(),
+	amount: z.string(),
+	status: z.string(),
+	chain_id: z.string().optional(),
+	updated_at: z.string().optional(),
+	created_at: z.string().optional()
+});
+
+const AppSessionSchema = z.object({
+	id: z.number(),
+	protocol: z.string(),
+	session_id: z.string(),
+	channel_id: z.string().optional(),
+	nonce: z.string(),
+	participants: z.array(z.string()),
+	weight: z.array(z.number()).optional(),
+	quorum: z.string().optional(),
+	version: z.string().optional(),
+	status: z.string(),
+	challenge: z.string().optional(),
+	session_data: z.any().nullable().optional(),
+	created_at: z.string().optional(),
+	updated_at: z.string().optional()
+});
+
+const ChannelsResponseSchema = z.object({
+	success: z.boolean(),
+	data: z.array(ChannelSchema),
+	meta: z.object({
+		timestamp: z.string(),
+		requestId: z.string(),
+		version: z.string(),
+		pagination: z.object({
+			page: z.number(),
+			limit: z.number(),
+			total: z.number(),
+			totalPages: z.number()
+		})
+	})
+});
+
+const SessionsResponseSchema = z.object({
+	success: z.boolean(),
+	data: z.array(AppSessionSchema),
+	meta: z.object({
+		timestamp: z.string(),
+		requestId: z.string(),
+		version: z.string(),
+		pagination: z.object({
+			page: z.number(),
+			limit: z.number(),
+			total: z.number(),
+			totalPages: z.number()
+		})
+	})
+});
+
+export const load: PageServerLoad = async (event) => {
+	const query = event.url.searchParams.get('q') || '';
+	const scope = event.url.searchParams.get('scope') || 'all';
 
 	if (!query) {
 		return {
@@ -20,25 +81,31 @@ export const load: PageServerLoad = async ({ fetch, locals, url }) => {
 
 	try {
 		const results = {
-			channels: [],
-			sessions: [],
-			participants: []
+			channels: [] as any[],
+			sessions: [] as any[],
+			participants: [] as string[]
 		};
 
 		// Search channels if scope allows
 		if (scope === 'all' || scope === 'channels') {
 			try {
-				const channelsRes = await fetch(
-					`${base}/api/v1/channel/list?search=${encodeURIComponent(query)}&limit=20`
+				const channelsPath = `/api/v1/channel/list?q=${encodeURIComponent(query)}&limit=20`;
+				const channelsResult = await apiGet(
+					event,
+					channelsPath,
+					ChannelsResponseSchema,
+					undefined,
+					['/channels/list']
 				);
-				const channelsData = channelsRes.ok ? await channelsRes.json() : null;
-				results.channels =
-					channelsData?.data?.filter(
+
+				if (!channelsResult.notModified) {
+					results.channels = channelsResult.data.data.filter(
 						(channel: any) =>
 							channel.channel_id.toLowerCase().includes(query.toLowerCase()) ||
 							channel.wallet.toLowerCase().includes(query.toLowerCase()) ||
 							channel.participant.toLowerCase().includes(query.toLowerCase())
-					) ?? [];
+					);
+				}
 			} catch (error) {
 				console.error('Channel search failed:', error);
 			}
@@ -47,19 +114,25 @@ export const load: PageServerLoad = async ({ fetch, locals, url }) => {
 		// Search sessions if scope allows
 		if (scope === 'all' || scope === 'sessions') {
 			try {
-				const sessionsRes = await fetch(
-					`${base}/api/v1/app-session/list?search=${encodeURIComponent(query)}&limit=20`
+				const sessionsPath = `/api/v1/app-session/list?q=${encodeURIComponent(query)}&limit=20`;
+				const sessionsResult = await apiGet(
+					event,
+					sessionsPath,
+					SessionsResponseSchema,
+					undefined,
+					['/app-sessions/list']
 				);
-				const sessionsData = sessionsRes.ok ? await sessionsRes.json() : null;
-				results.sessions =
-					sessionsData?.data?.filter(
+
+				if (!sessionsResult.notModified) {
+					results.sessions = sessionsResult.data.data.filter(
 						(session: any) =>
 							session.session_id.toLowerCase().includes(query.toLowerCase()) ||
-							session.channel_id.toLowerCase().includes(query.toLowerCase()) ||
+							session.channel_id?.toLowerCase().includes(query.toLowerCase()) ||
 							session.participants.some((p: string) =>
 								p.toLowerCase().includes(query.toLowerCase())
 							)
-					) ?? [];
+					);
+				}
 			} catch (error) {
 				console.error('Session search failed:', error);
 			}

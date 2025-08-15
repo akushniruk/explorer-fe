@@ -1,0 +1,212 @@
+<script lang="ts">
+	import { shortHex, timeAgo } from '$lib/format';
+	import type { AppSession } from '$lib/types';
+	import { FileText, Users, Clock } from 'lucide-svelte';
+
+	export let data: {
+		session: AppSession | null;
+		notFound?: boolean;
+	};
+</script>
+
+<svelte:head>
+	<title
+		>Session {data.session ? shortHex(data.session.session_id, 8, 6) : 'Not Found'} | YNScan</title
+	>
+	<meta
+		name="description"
+		content="View detailed information for this app session on The Yellow Network. Session participants, status, and activity history."
+	/>
+	<link rel="canonical" href="https://ynscan.xyz/session/{data.session?.session_id || ''}" />
+</svelte:head>
+
+<div class="max-w-7xl mx-auto px-4">
+	{#if data.notFound || !data.session}
+		<div class="text-center py-12">
+			<div class="text-muted-foreground mb-4">
+				<FileText class="w-16 h-16 mx-auto" />
+			</div>
+			<h1 class="text-2xl font-bold mb-2">Session Not Found</h1>
+			<p class="text-muted-foreground mb-4">
+				The session you're looking for doesn't exist or has been removed.
+			</p>
+			<a href="/sessions" class="text-brand hover:text-brand/80">← Back to Sessions</a>
+		</div>
+	{:else}
+		<!-- Header -->
+		<div class="mb-8">
+			<div class="flex items-start justify-between mb-4">
+				<div>
+					<h1 class="text-3xl font-bold mb-2">Session Details</h1>
+					<div class="flex items-center gap-2 mb-2">
+						<span class="text-muted-foreground">Session ID:</span>
+						<code class="font-mono text-lg bg-accent/50 px-3 py-1 rounded text-accent-foreground">
+							{data.session.session_id}
+						</code>
+						<button
+							class="text-sm text-brand hover:text-brand/80"
+							on:click={() => navigator.clipboard.writeText(data.session.session_id)}
+						>
+							Copy
+						</button>
+					</div>
+				</div>
+				<span
+					class="inline-flex px-3 py-1 rounded text-sm font-medium"
+					class:bg-emerald-100={data.session.status === 'active'}
+					class:text-emerald-800={data.session.status === 'active'}
+					class:bg-muted={data.session.status === 'completed'}
+					class:text-muted-foreground={data.session.status === 'completed'}
+					class:bg-yellow-100={data.session.status === 'pending'}
+					class:text-yellow-800={data.session.status === 'pending'}
+					class:bg-red-100={data.session.status === 'failed'}
+					class:text-red-800={data.session.status === 'failed'}
+				>
+					{data.session.status.toUpperCase()}
+				</span>
+			</div>
+		</div>
+
+		<!-- Session Overview Cards -->
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+			<div class="bg-card border border-border rounded-lg p-6 text-center">
+				<div class="flex items-center justify-center mb-2">
+					<Users class="w-6 h-6 text-brand" />
+				</div>
+				<div class="text-2xl font-bold text-brand mb-1">
+					{data.session.participants?.length || 0}
+				</div>
+				<div class="text-sm text-muted-foreground">Participants</div>
+			</div>
+			<div class="bg-card border border-border rounded-lg p-6 text-center">
+				<div class="flex items-center justify-center mb-2">
+					<FileText class="w-6 h-6 text-muted-foreground" />
+				</div>
+				<div class="text-2xl font-bold text-muted-foreground mb-1">
+					{data.session.protocol || 'Unknown'}
+				</div>
+				<div class="text-sm text-muted-foreground">Protocol</div>
+			</div>
+			<div class="bg-card border border-border rounded-lg p-6 text-center">
+				<div class="text-2xl font-bold text-foreground mb-1 capitalize">
+					{data.session.status}
+				</div>
+				<div class="text-sm text-muted-foreground">Status</div>
+			</div>
+			<div class="bg-card border border-border rounded-lg p-6 text-center">
+				<div class="flex items-center justify-center mb-2">
+					<Clock class="w-6 h-6 text-muted-foreground" />
+				</div>
+				<div class="text-2xl font-bold text-muted-foreground mb-1">
+					{timeAgo(data.session.updated_at)}
+				</div>
+				<div class="text-sm text-muted-foreground">Last Activity</div>
+			</div>
+		</div>
+
+		<!-- Session Details -->
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+			<!-- Participants -->
+			<div class="bg-card border border-border rounded-lg">
+				<div class="p-4 border-b border-border">
+					<h2 class="text-lg font-semibold flex items-center gap-2">
+						<Users class="w-5 h-5" />
+						Participants
+					</h2>
+				</div>
+				<div class="p-6 space-y-4">
+					{#if data.session.participants && data.session.participants.length > 0}
+						{#each data.session.participants as participant, index}
+							<div class="flex items-center gap-3">
+								<div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
+									<span class="text-secondary-foreground font-bold text-sm">
+										{participant.slice(2, 4).toUpperCase()}
+									</span>
+								</div>
+								<div class="flex-1 min-w-0">
+									<div class="text-xs text-muted-foreground mb-1">Participant {index + 1}</div>
+									<a
+										href={`/participant/${participant}`}
+										class="font-mono text-sm text-brand hover:text-brand/80 block truncate"
+									>
+										{participant}
+									</a>
+									<button
+										class="text-xs text-muted-foreground hover:text-foreground mt-1"
+										on:click={() => navigator.clipboard.writeText(participant)}
+									>
+										Copy Address
+									</button>
+								</div>
+							</div>
+						{/each}
+					{:else}
+						<div class="text-center py-8 text-muted-foreground">
+							<Users class="w-12 h-12 mx-auto mb-4 opacity-50" />
+							<p>No participants found</p>
+						</div>
+					{/if}
+				</div>
+			</div>
+
+			<!-- Technical Details -->
+			<div class="bg-card border border-border rounded-lg">
+				<div class="p-4 border-b border-border">
+					<h2 class="text-lg font-semibold flex items-center gap-2">
+						<FileText class="w-5 h-5" />
+						Technical Details
+					</h2>
+				</div>
+				<div class="p-6 space-y-4">
+					<div>
+						<div class="text-xs text-muted-foreground uppercase tracking-wider">Session ID</div>
+						<div class="font-mono text-sm mt-1 break-all">{data.session.session_id}</div>
+					</div>
+
+					<div>
+						<div class="text-xs text-muted-foreground uppercase tracking-wider">Channel ID</div>
+						<div class="font-mono text-sm mt-1">
+							<a
+								href={`/channel/${data.session.channel_id}`}
+								class="text-brand hover:text-brand/80"
+							>
+								{shortHex(data.session.channel_id, 12, 8)}
+							</a>
+						</div>
+					</div>
+
+					<div>
+						<div class="text-xs text-muted-foreground uppercase tracking-wider">Protocol</div>
+						<div class="text-sm font-medium mt-1">{data.session.protocol || 'Not specified'}</div>
+					</div>
+
+					<div>
+						<div class="text-xs text-muted-foreground uppercase tracking-wider">Status</div>
+						<div class="text-sm mt-1 capitalize font-medium">{data.session.status}</div>
+					</div>
+
+					<div>
+						<div class="text-xs text-muted-foreground uppercase tracking-wider">Last Updated</div>
+						<div class="text-sm mt-1">{new Date(data.session.updated_at).toLocaleString()}</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Actions -->
+		<div class="mt-8 flex gap-4">
+			<a
+				href="/sessions"
+				class="px-4 py-2 border border-border rounded-lg hover:bg-muted/20 transition-colors"
+			>
+				← Back to Sessions
+			</a>
+			<a
+				href={`/channel/${data.session.channel_id}`}
+				class="px-4 py-2 bg-brand text-brand-foreground rounded-lg hover:brightness-95 transition-all"
+			>
+				View Related Channel
+			</a>
+		</div>
+	{/if}
+</div>

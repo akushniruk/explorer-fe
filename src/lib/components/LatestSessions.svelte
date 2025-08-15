@@ -26,7 +26,7 @@
 								{shortHex(s.session_id, 8, 6)}
 							</a>
 							<span
-								class="inline-flex px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800"
+								class="inline-flex px-2 py-1 rounded text-xs font-medium bg-gray-100 text-foreground"
 							>
 								{s.status}
 							</span>

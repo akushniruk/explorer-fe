@@ -15,82 +15,94 @@
 
 @import 'tailwindcss';
 
-/* --- Design tokens --- */
+/* --- TailwindCSS v4 Design tokens --- */
 @theme {
 	--font-sans: 'Geist Sans', ui-sans-serif, system-ui, sans-serif;
 	--font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, monospace;
 
-	/* Brand - Grayscale */
-	--color-brand: #374151;
-	--color-brand-foreground: #ffffff;
+	/* Light theme (default) - Clean minimal palette */
+	--color-background: #fffffc;
+	--color-foreground: #001011;
+	--color-card: #fffffc;
+	--color-card-foreground: #001011;
+	--color-popover: #fffffc;
+	--color-popover-foreground: #001011;
+	--color-primary: #3b82f6;
+	--color-primary-foreground: #fffffc;
+	--color-secondary: #f8f9fa;
+	--color-secondary-foreground: #001011;
+	--color-muted: #f5f6f7;
+	--color-muted-foreground: #6b7280;
+	--color-accent: #f8f9fa;
+	--color-accent-foreground: #001011;
+	--color-destructive: #ef4444;
+	--color-destructive-foreground: #fffffc;
+	--color-border: #f0f0f0;
+	--color-input: #f0f0f0;
+	--color-ring: #3b82f6;
 
-	/* Dark theme - Modern slate palette */
-	--color-bg: hsl(224 71% 4%);
-	--color-fg: hsl(213 31% 91%);
-	--color-muted: hsl(223 47% 11%);
-	--color-muted-foreground: hsl(215.4 16.3% 56.9%);
-	--color-border: hsl(216 34% 17%);
-	--color-card: hsl(224 71% 6%);
-	--color-card-foreground: hsl(213 31% 91%);
-	--color-popover: hsl(224 71% 4%);
-	--color-accent: hsl(216 34% 17%);
-	--color-accent-foreground: hsl(213 31% 91%);
-	--color-destructive: hsl(0 63% 31%);
-	--color-destructive-foreground: hsl(210 40% 98%);
-	--color-ring: hsl(214.3 31.8% 91.4%);
-	--color-success: hsl(0 0% 27%);
-	--color-warning: hsl(0 0% 60%);
+	/* Brand - Blue for blockchain explorer */
+	--color-brand: #3b82f6;
+	--color-brand-foreground: #fffffc;
 
-	/* Blockchain-specific colors - Grayscale */
-	--color-ethereum: #6b7280;
-	--color-bitcoin: #9ca3af;
-	--color-polygon: #6b7280;
-	--color-address: #374151;
-	--color-hash: #6b7280;
-	--color-status-open: #374151;
-	--color-status-closed: #6b7280;
-	--color-status-pending: #9ca3af;
+	/* Success colors */
+	--color-success: #10b981;
+	--color-success-foreground: #fffffc;
 
-	/* Light palette (activated by .light on <html>) */
-	--color-bg--light: hsl(0 0% 100%);
-	--color-fg--light: hsl(222.2 84% 4.9%);
-	--color-muted--light: hsl(210 40% 96.1%);
-	--color-muted-foreground--light: hsl(215.4 16.3% 46.9%);
-	--color-border--light: hsl(214.3 31.8% 91.4%);
-	--color-brand--light: #6b7280;
-	--color-brand-foreground--light: #ffffff;
+	/* Blockchain-specific colors */
+	--color-ethereum: #627eea;
+	--color-bitcoin: #f7931a;
+	--color-polygon: #8247e5;
 
-	/* Enhanced light theme colors */
-	--color-card--light: hsl(0 0% 100%);
-	--color-card-foreground--light: hsl(222.2 84% 4.9%);
-	--color-popover--light: hsl(0 0% 100%);
-	--color-accent--light: hsl(210 40% 96.1%);
-	--color-accent-foreground--light: hsl(222.2 84% 4.9%);
-	--color-destructive--light: hsl(0 84% 60%);
-	--color-destructive-foreground--light: hsl(210 40% 98%);
-	--color-ring--light: hsl(222.2 84% 4.9%);
-	--color-success--light: hsl(0 0% 27%);
-	--color-warning--light: hsl(0 0% 60%);
+	/* Dark theme overrides */
+	--color-background--dark: #001011;
+	--color-foreground--dark: #fffffc;
+	--color-card--dark: #0a1520;
+	--color-card-foreground--dark: #fffffc;
+	--color-popover--dark: #0a1520;
+	--color-popover-foreground--dark: #fffffc;
+	--color-primary--dark: #60a5fa;
+	--color-primary-foreground--dark: #001011;
+	--color-secondary--dark: #1a2332;
+	--color-secondary-foreground--dark: #fffffc;
+	--color-muted--dark: #1a2332;
+	--color-muted-foreground--dark: #9ca3af;
+	--color-accent--dark: #1a2332;
+	--color-accent-foreground--dark: #fffffc;
+	--color-destructive--dark: #dc2626;
+	--color-destructive-foreground--dark: #fffffc;
+	--color-border--dark: #2d3748;
+	--color-input--dark: #2d3748;
+	--color-ring--dark: #60a5fa;
+
+	/* Success colors - dark */
+	--color-success--dark: #059669;
+	--color-success-foreground--dark: #fffffc;
 }
 
-:root.light {
-	--color-bg: var(--color-bg--light);
-	--color-fg: var(--color-fg--light);
-	--color-muted: var(--color-muted--light);
-	--color-muted-foreground: var(--color-muted-foreground--light);
-	--color-border: var(--color-border--light);
-	--color-brand: var(--color-brand--light);
-	--color-brand-foreground: var(--color-brand-foreground--light);
-	--color-card: var(--color-card--light);
-	--color-card-foreground: var(--color-card-foreground--light);
-	--color-popover: var(--color-popover--light);
-	--color-accent: var(--color-accent--light);
-	--color-accent-foreground: var(--color-accent-foreground--light);
-	--color-destructive: var(--color-destructive--light);
-	--color-destructive-foreground: var(--color-destructive-foreground--light);
-	--color-ring: var(--color-ring--light);
-	--color-success: var(--color-success--light);
-	--color-warning: var(--color-warning--light);
+/* Dark mode activation */
+:root.dark {
+	--color-background: var(--color-background--dark);
+	--color-foreground: var(--color-foreground--dark);
+	--color-card: var(--color-card--dark);
+	--color-card-foreground: var(--color-card-foreground--dark);
+	--color-popover: var(--color-popover--dark);
+	--color-popover-foreground: var(--color-popover-foreground--dark);
+	--color-primary: var(--color-primary--dark);
+	--color-primary-foreground: var(--color-primary-foreground--dark);
+	--color-secondary: var(--color-secondary--dark);
+	--color-secondary-foreground: var(--color-secondary-foreground--dark);
+	--color-muted: var(--color-muted--dark);
+	--color-muted-foreground: var(--color-muted-foreground--dark);
+	--color-accent: var(--color-accent--dark);
+	--color-accent-foreground: var(--color-accent-foreground--dark);
+	--color-destructive: var(--color-destructive--dark);
+	--color-destructive-foreground: var(--color-destructive-foreground--dark);
+	--color-border: var(--color-border--dark);
+	--color-input: var(--color-input--dark);
+	--color-ring: var(--color-ring--dark);
+	--color-success: var(--color-success--dark);
+	--color-success-foreground: var(--color-success-foreground--dark);
 }
 
 /* App shell baseline */
@@ -99,64 +111,28 @@ body,
 #svelte {
 	height: 100%;
 }
-body {
-	font-family: var(--font-sans);
-	background: var(--color-bg);
-	color: var(--color-fg);
-}
 
 /* Hero waves background */
 .hero-waves {
-	background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-	background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z' opacity='.15' fill='%23374151'/%3E%3Cpath d='M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z' opacity='.25' fill='%23374151'/%3E%3Cpath d='M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z' fill='%23374151'/%3E%3C/svg%3E");
+	background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-muted) 100%);
 }
 
-/* Clean yellow brand styling */
-.text-brand {
-	color: var(--color-brand);
-	transition: color 0.15s ease-in-out;
-}
-
-.text-brand:hover {
-	color: var(--color-brand);
-	opacity: 0.8;
-}
-
-.bg-brand {
-	background-color: var(--color-brand);
-	color: var(--color-brand-foreground);
-}
-
-.bg-brand:hover {
-	background-color: var(--color-brand);
-	opacity: 0.9;
-}
-
-/* Solid hero background + grid drawn behind content */
+/* Hero pattern background with grid */
 .hero-pattern {
 	position: relative;
-	isolation: isolate; /* new stacking context */
-	background-color: var(--color-bg); /* solid base */
+	isolation: isolate;
+	background-color: var(--color-background);
 }
 
-/* grid layer */
 .hero-pattern::before {
 	content: '';
 	position: absolute;
 	inset: 0;
-	z-index: 0; /* stays behind */
+	z-index: 0;
 	pointer-events: none;
-	--hero-grid: rgba(255, 255, 255, 0.06); /* dark mode grid color */
 	background-image:
-		linear-gradient(to right, var(--hero-grid) 1px, transparent 1px),
-		linear-gradient(to bottom, var(--hero-grid) 1px, transparent 1px);
+		linear-gradient(to right, var(--color-border) 1px, transparent 1px),
+		linear-gradient(to bottom, var(--color-border) 1px, transparent 1px);
 	background-size: 24px 24px;
-	background-position:
-		0 0,
-		0 0;
-}
-
-/* light mode grid color */
-:root.light .hero-pattern::before {
-	--hero-grid: rgba(0, 0, 0, 0.06);
+	opacity: 0.3;
 }

@@ -4,15 +4,20 @@
 
 	export let data: {
 		nodes: Array<{
-			slug: string;
+			id: number;
 			name: string;
-			latitude: number;
-			longitude: number;
-			status: 'online' | 'offline' | 'unknown';
-			country_code: string;
-			region: string;
-			available: boolean;
+			endpoint: string;
+			location?: string;
+			lat?: number;
+			lng?: number;
+			status: string;
+			latency_ms?: number;
+			available?: boolean;
+			version?: string;
 		}>;
+		total: number;
+		page: number;
+		limit: number;
 	};
 
 	let mapContainer: HTMLDivElement;
@@ -23,9 +28,12 @@
 	let viewBox = '0 0 1000 500';
 
 	// Convert lat/lng to SVG coordinates (simplified projection)
-	function projectCoordinates(lat: number, lng: number) {
-		const x = ((lng + 180) / 360) * 1000;
-		const y = ((90 - lat) / 180) * 500;
+	function projectCoordinates(lat?: number, lng?: number) {
+		// Use default coordinates if not provided (fallback to center of map)
+		const safeLat = lat ?? 0;
+		const safeLng = lng ?? 0;
+		const x = ((safeLng + 180) / 360) * 1000;
+		const y = ((90 - safeLat) / 180) * 500;
 		return { x, y };
 	}
 
@@ -97,13 +105,13 @@
 			</g>
 
 			<!-- Network connection lines between nodes -->
-			<g stroke="rgb(252 208 0 / 0.3)" stroke-width="1" fill="none">
+			<g stroke="rgb(156 163 175 / 0.3)" stroke-width="1" fill="none">
 				{#each data.nodes as node, i}
-					{#if node.status === 'online'}
-						{@const coords = projectCoordinates(node.latitude, node.longitude)}
+					{#if node.status === 'online' && node.lat && node.lng}
+						{@const coords = projectCoordinates(node.lat, node.lng)}
 						{#each data.nodes.slice(i + 1) as otherNode}
-							{#if otherNode.status === 'online'}
-								{@const otherCoords = projectCoordinates(otherNode.latitude, otherNode.longitude)}
+							{#if otherNode.status === 'online' && otherNode.lat && otherNode.lng}
+								{@const otherCoords = projectCoordinates(otherNode.lat, otherNode.lng)}
 								<line
 									x1={coords.x}
 									y1={coords.y}
@@ -119,7 +127,7 @@
 
 			<!-- Node markers -->
 			{#each data.nodes as node}
-				{@const coords = projectCoordinates(node.latitude, node.longitude)}
+				{@const coords = projectCoordinates(node.lat, node.lng)}
 				<g
 					class="cursor-pointer transition-all duration-200 hover:scale-110"
 					on:click={() => handleNodeClick(node)}
@@ -133,7 +141,7 @@
 							cx={coords.x}
 							cy={coords.y}
 							r="8"
-							fill="rgb(252 208 0 / 0.3)"
+							fill="rgb(156 163 175 / 0.3)"
 							filter="url(#glow)"
 						/>
 					{/if}
@@ -144,9 +152,9 @@
 						cy={coords.y}
 						r="5"
 						fill={node.status === 'online'
-							? '#fcd000'
+							? '#374151'
 							: node.status === 'offline'
-								? '#ef4444'
+								? '#9ca3af'
 								: '#6b7280'}
 						stroke="#1e293b"
 						stroke-width="2"
@@ -160,7 +168,7 @@
 						class="text-xs fill-white font-medium"
 						style="text-shadow: 0 1px 3px rgba(0,0,0,0.8);"
 					>
-						{node.country_code}
+						{node.location?.slice(0, 2)?.toUpperCase() || node.name.slice(0, 2)?.toUpperCase() || 'N'}
 					</text>
 				</g>
 			{/each}
@@ -172,15 +180,15 @@
 		<h3 class="font-semibold mb-3">Network Status</h3>
 		<div class="space-y-2 text-sm">
 			<div class="flex items-center gap-2">
-				<div class="w-3 h-3 bg-brand rounded-full"></div>
+				<div class="w-3 h-3 bg-primary rounded-full"></div>
 				<span>Online ({data.nodes.filter((n) => n.status === 'online').length})</span>
 			</div>
 			<div class="flex items-center gap-2">
-				<div class="w-3 h-3 bg-gray-500 rounded-full"></div>
+				<div class="w-3 h-3 bg-muted rounded-full"></div>
 				<span>Offline ({data.nodes.filter((n) => n.status === 'offline').length})</span>
 			</div>
 			<div class="flex items-center gap-2">
-				<div class="w-3 h-3 bg-gray-500 rounded-full"></div>
+				<div class="w-3 h-3 bg-muted-foreground rounded-full"></div>
 				<span>Unknown ({data.nodes.filter((n) => n.status === 'unknown').length})</span>
 			</div>
 		</div>
@@ -191,11 +199,11 @@
 		<h4 class="font-semibold mb-2">Legend</h4>
 		<div class="space-y-1 text-xs">
 			<div class="flex items-center gap-2">
-				<div class="w-2 h-0.5 bg-brand/30"></div>
+				<div class="w-2 h-0.5 bg-muted/30"></div>
 				<span>Network Connections</span>
 			</div>
 			<div class="flex items-center gap-2">
-				<div class="w-3 h-3 bg-brand/30 rounded-full border border-slate-700"></div>
+				<div class="w-3 h-3 bg-muted/30 rounded-full border border-slate-700"></div>
 				<span>Network Nodes</span>
 			</div>
 		</div>
@@ -223,8 +231,8 @@
 
 				<div class="space-y-4">
 					<div>
-						<h3 class="font-medium text-brand text-lg">{selectedNode.name}</h3>
-						<p class="text-sm text-muted-foreground">{selectedNode.slug}</p>
+						<h3 class="font-medium text-foreground text-lg">{selectedNode.name}</h3>
+						<p class="text-sm text-muted-foreground">{selectedNode.endpoint}</p>
 					</div>
 
 					<div class="grid grid-cols-2 gap-4">
@@ -233,9 +241,9 @@
 							<div class="flex items-center gap-2 mt-1">
 								<div
 									class="w-2 h-2 rounded-full"
-									class:bg-gray-800={selectedNode.status === 'online'}
-									class:bg-gray-400={selectedNode.status === 'offline'}
-									class:bg-gray-300={selectedNode.status === 'unknown'}
+									class:bg-primary={selectedNode.status === 'online'}
+									class:bg-muted={selectedNode.status === 'offline'}
+									class:bg-muted={selectedNode.status === 'unknown'}
 								></div>
 								<span class="text-sm font-medium capitalize">{selectedNode.status}</span>
 							</div>
@@ -247,10 +255,10 @@
 							<div class="text-sm font-medium mt-1">
 								<span
 									class="inline-flex px-2 py-1 rounded text-xs"
-									class:bg-gray-100={selectedNode.available}
-									class:text-gray-800={selectedNode.available}
-									class:bg-gray-200={!selectedNode.available}
-									class:text-gray-600={!selectedNode.available}
+									class:bg-secondary={selectedNode.available}
+									class:text-secondary-foreground={selectedNode.available}
+									class:bg-muted={!selectedNode.available}
+									class:text-muted-foreground={!selectedNode.available}
 								>
 									{selectedNode.available ? 'Yes' : 'No'}
 								</span>
@@ -258,22 +266,26 @@
 						</div>
 					</div>
 
+					{#if selectedNode.location}
 					<div>
 						<div class="text-xs text-muted-foreground uppercase tracking-wider">Location</div>
 						<div class="mt-1 space-y-1">
-							<div class="text-sm">{selectedNode.region.replace('_', ' ').toUpperCase()}</div>
-							<div class="text-xs text-muted-foreground">
-								{selectedNode.latitude.toFixed(4)}°, {selectedNode.longitude.toFixed(4)}°
-							</div>
+							<div class="text-sm">{selectedNode.location}</div>
+							{#if selectedNode.lat && selectedNode.lng}
+								<div class="text-xs text-muted-foreground">
+									{selectedNode.lat.toFixed(4)}°, {selectedNode.lng.toFixed(4)}°
+								</div>
+							{/if}
 						</div>
 					</div>
+					{/if}
 
+					{#if selectedNode.version}
 					<div>
-						<div class="text-xs text-muted-foreground uppercase tracking-wider"
-							>Country Code</div
-						>
-						<div class="text-sm font-mono mt-1">{selectedNode.country_code}</div>
+						<div class="text-xs text-muted-foreground uppercase tracking-wider">Version</div>
+						<div class="text-sm font-mono mt-1">{selectedNode.version}</div>
 					</div>
+					{/if}
 
 					{#if selectedNode.latency_ms}
 						<div>
@@ -285,7 +297,7 @@
 
 				<div class="mt-6 pt-6 border-t border-border">
 					<button
-						class="w-full px-4 py-2 bg-brand text-brand-foreground rounded-lg hover:brightness-95 font-medium"
+						class="w-full px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 font-medium"
 					>
 						View Node Details
 					</button>

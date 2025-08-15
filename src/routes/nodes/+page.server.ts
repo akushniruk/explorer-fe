@@ -1,24 +1,105 @@
 import type { PageServerLoad } from './$types';
+import { apiGet } from '$lib/server/api';
+import { z } from 'zod';
 
-export const load: PageServerLoad = async ({ fetch, locals }) => {
-	const base = locals.apiBase ?? '';
+const NodeSchema = z.object({
+	id: z.number(),
+	name: z.string(),
+	endpoint: z.string(),
+	location: z.string().optional(),
+	lat: z.number().optional(),
+	lng: z.number().optional(),
+	status: z.string(),
+	latency_ms: z.number().optional(),
+	available: z.boolean().optional(),
+	version: z.string().optional(),
+	created_at: z.string().optional(),
+	updated_at: z.string().optional()
+});
 
+const NodesResponseSchema = z.object({
+	success: z.boolean(),
+	data: z.array(NodeSchema),
+	meta: z.object({
+		timestamp: z.string(),
+		requestId: z.string(),
+		version: z.string(),
+		pagination: z.object({
+			page: z.number(),
+			limit: z.number(),
+			total: z.number(),
+			totalPages: z.number()
+		})
+	})
+});
+
+export const load: PageServerLoad = async (event) => {
 	try {
-		const response = await fetch(`${base}/api/v1/nodes/list?limit=100`);
-		const data = response.ok ? await response.json() : null;
+		// Build query parameters
+		const page = Number(event.url.searchParams.get('page') ?? '1');
+		const limit = Number(event.url.searchParams.get('limit') ?? '25');
+		const q = event.url.searchParams.get('q') ?? '';
+		const status = event.url.searchParams.get('status') ?? '';
+		const location = event.url.searchParams.get('location') ?? '';
+		const sort = event.url.searchParams.get('sort') ?? 'name';
+		const order = event.url.searchParams.get('order') ?? 'asc';
+
+		// Build the path with query parameters
+		const params = new URLSearchParams();
+		params.set('page', page.toString());
+		params.set('limit', limit.toString());
+		if (q) params.set('q', q);
+		if (status && status !== 'all') params.set('status', status);
+		if (location && location !== 'all') params.set('location', location);
+		if (sort) params.set('sort', sort);
+		if (order) params.set('order', order);
+
+		const path = `/api/v1/nodes/list?${params.toString()}`;
+
+		// Get ETag from request for caching
+		const etag = event.request.headers.get('if-none-match') ?? undefined;
+
+		const result = await apiGet(
+			event,
+			path,
+			NodesResponseSchema,
+			etag,
+			['/nodes/list'] // fallback path
+		);
+
+		if (result.notModified) {
+			return { nodes: [], total: 0, page, limit };
+		}
+
+		// Set response headers for caching
+		if (result.etag) {
+			event.setHeaders({ ETag: result.etag });
+		}
+		event.setHeaders({
+			'Cache-Control': 'public, max-age=15, s-maxage=15, stale-while-revalidate=60'
+		});
+
+		const data = result.data;
+		// Transform API data to match expected format if needed
+		const nodes = data.data.map((node) => ({
+			...node,
+			latency_ms: node.latency_ms || Math.floor(Math.random() * 200) + 50,
+			available: node.available ?? Math.random() > 0.2
+		}));
 
 		return {
-			nodes: (data?.data ?? []).map((node: any) => ({
-				...node,
-				status: node.status || 'unknown',
-				latency_ms: node.latency_ms || Math.floor(Math.random() * 200) + 50,
-				available: node.available ?? Math.random() > 0.2
-			}))
+			nodes,
+			total: data.meta.pagination.total,
+			page: data.meta.pagination.page,
+			limit: data.meta.pagination.limit
 		};
 	} catch (error) {
-		console.error('Failed to load nodes for map:', error);
+		console.error('Failed to fetch nodes:', error);
 		return {
-			nodes: []
+			nodes: [],
+			total: 0,
+			page: Number(event.url.searchParams.get('page') ?? '1'),
+			limit: Number(event.url.searchParams.get('limit') ?? '25')
 		};
 	}
 };

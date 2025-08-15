@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { shortHex, formatAmount } from '$lib/format';
-	import EtherscanTable from '$lib/components/EtherscanTable.svelte';
-	import EtherscanPagination from '$lib/components/EtherscanPagination.svelte';
+	import AssetsTable from '$lib/components/AssetsTable.svelte';
+	import ChannelsPagination from '$lib/components/ChannelsPagination.svelte';
 
 	export let data: {
 		assets: Array<{
@@ -38,14 +38,6 @@
 		return matchesSearch && matchesChain;
 	});
 
-	const columns = [
-		{ key: 'symbol', label: 'Asset', sortable: false },
-		{ key: 'contract_address', label: 'Contract Address', sortable: false },
-		{ key: 'chain_id', label: 'Chain', sortable: false },
-		{ key: 'decimals', label: 'Decimals', sortable: false },
-		{ key: 'total_supply', label: 'Total Supply', sortable: false }
-	];
-
 	function handlePageChange(page: number) {
 		const url = new URL(window.location.href);
 		url.searchParams.set('page', page.toString());
@@ -62,7 +54,10 @@
 
 <svelte:head>
 	<title>Blockchain Assets | YNScan - The Yellow Network Scanner</title>
-	<meta name="description" content="Explore blockchain assets on The Yellow Network. View token contracts, decimals, supply information, and asset statistics across supported networks." />
+	<meta
+		name="description"
+		content="Explore blockchain assets on The Yellow Network. View token contracts, decimals, supply information, and asset statistics across supported networks."
+	/>
 	<link rel="canonical" href="https://ynscan.xyz/assets" />
 </svelte:head>
 
@@ -86,7 +81,7 @@
 					type="text"
 					placeholder="Symbol, name, or contract address..."
 					bind:value={searchQuery}
-					class="w-full px-3 py-2 border border-border rounded-lg bg-bg text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand"
+					class="w-full px-3 py-2 border border-border rounded-lg bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring"
 				/>
 			</div>
 
@@ -96,7 +91,7 @@
 				<select
 					id="chain"
 					bind:value={chainFilter}
-					class="w-full px-3 py-2 border border-border rounded-lg bg-bg text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand"
+					class="w-full px-3 py-2 border border-border rounded-lg bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring"
 				>
 					<option value="all">All Chains</option>
 					{#each chains as chain}
@@ -112,7 +107,7 @@
 						searchQuery = '';
 						chainFilter = 'all';
 					}}
-					class="px-4 py-2 text-sm text-brand border border-brand rounded-lg hover:bg-brand/10"
+					class="px-4 py-2 text-sm text-foreground border border-border rounded-lg hover:bg-muted/50"
 				>
 					Clear Filters
 				</button>
@@ -127,56 +122,11 @@
 	</div>
 
 	<!-- Assets Table -->
-	<EtherscanTable 
-		{columns} 
-		data={filteredAssets} 
-		emptyMessage="No assets found matching your filters."
-	>
-		<svelte:fragment slot="default" let:row={asset}>
-			<td class="px-4 py-3 whitespace-nowrap">
-				<div class="flex items-center gap-3">
-					{#if asset.logo_url}
-						<img src={asset.logo_url} alt={asset.symbol} class="w-8 h-8 rounded-full" />
-					{:else}
-						<div class="w-8 h-8 bg-brand/20 rounded-full flex items-center justify-center">
-							<span class="text-xs font-bold text-brand">{asset.symbol.charAt(0)}</span>
-						</div>
-					{/if}
-					<div>
-						<div class="font-semibold text-sm">{asset.symbol}</div>
-						<div class="text-xs text-muted-foreground">{asset.name}</div>
-					</div>
-				</div>
-			</td>
-			<td class="px-4 py-3 whitespace-nowrap">
-				<a
-					href={`/asset/${asset.contract_address}`}
-					class="font-mono text-sm text-brand hover:text-brand/80 transition-colors"
-				>
-					{shortHex(asset.contract_address, 12, 8)}
-				</a>
-			</td>
-			<td class="px-4 py-3 whitespace-nowrap">
-				<div class="text-sm font-medium">Chain {asset.chain_id}</div>
-			</td>
-			<td class="px-4 py-3 whitespace-nowrap">
-				<div class="text-sm font-mono">{asset.decimals}</div>
-			</td>
-			<td class="px-4 py-3 whitespace-nowrap">
-				{#if asset.total_supply}
-					<div class="text-sm font-mono">
-						{formatAmount(asset.total_supply, asset.decimals, 2)}
-					</div>
-				{:else}
-					<div class="text-sm text-muted-foreground">—</div>
-				{/if}
-			</td>
-		</svelte:fragment>
-	</EtherscanTable>
+	<AssetsTable assets={filteredAssets} emptyMessage="No assets found matching your filters." />
 
 	<!-- Pagination -->
 	{#if data.page && data.limit}
-		<EtherscanPagination 
+		<ChannelsPagination
 			currentPage={data.page}
 			totalPages={Math.ceil(data.total / data.limit)}
 			totalRecords={data.total}

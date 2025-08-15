@@ -9,7 +9,7 @@
 
 <!-- Etherscan-like stats strip (neutral grey/white/dark only) -->
 <section class="relative -mt-16 mb-8">
-	<div class="rounded-2xl border border-border bg-white shadow-lg">
+	<div class="rounded-2xl border border-border bg-card shadow-lg">
 		<div class="grid gap-8 p-6 lg:grid-cols-3 lg:gap-10 lg:divide-x lg:divide-border/60">
 			<!-- Left column -->
 			<div class="space-y-6">

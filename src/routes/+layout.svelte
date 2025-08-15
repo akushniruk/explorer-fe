@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
 	import { theme, applyTheme } from '$lib/theme';
-	import { FileText, ChevronDown } from 'lucide-svelte';
+	import { FileText, ChevronDown, Heart } from 'lucide-svelte';
 
 	let showThemeDropdown = false;
 
@@ -61,16 +61,16 @@
 	<link rel="canonical" href="https://ynscan.xyz" />
 </svelte:head>
 
-<div class="min-h-dvh bg-bg text-fg flex flex-col">
+<div class="min-h-dvh bg-background text-foreground flex flex-col">
 	<!-- Header -->
-	<header class="bg-bg border-b border-border">
+	<header class="bg-background border-b border-border">
 		<div class="max-w-7xl mx-auto px-4">
 			<!-- Top bar -->
 			<div class="flex items-center justify-between py-2 text-xs sm:text-sm">
 				<div class="flex items-center gap-3">
 					<span class="text-muted-foreground">The Yellow Network Explorer</span>
 					<div class="hidden sm:flex items-center gap-2">
-						<span class="inline-block w-2 h-2 rounded-full bg-muted-foreground"></span>
+						<span class="inline-block w-2 h-2 rounded-full bg-green-500"></span>
 						<span class="text-muted-foreground">Online</span>
 					</div>
 				</div>
@@ -92,7 +92,7 @@
 						<button
 							type="button"
 							on:click={() => (showThemeDropdown = !showThemeDropdown)}
-							class="text-muted-foreground hover:text-fg text-xs inline-flex items-center gap-1"
+							class="text-muted-foreground hover:text-foreground text-xs inline-flex items-center gap-1"
 							aria-haspopup="menu"
 							aria-expanded={showThemeDropdown}
 						>
@@ -105,15 +105,15 @@
 
 						{#if showThemeDropdown}
 							<div
-								class="absolute top-full right-0 mt-1 rounded-lg border border-border bg-bg shadow-lg z-50 min-w-[8rem]"
+								class="absolute top-full right-0 mt-1 rounded-lg border border-border bg-background shadow-lg z-50 min-w-[8rem]"
 								role="menu"
 							>
 								<button
 									type="button"
 									on:click={() => setTheme('light')}
-									class="w-full px-3 py-2 text-xs text-left hover:bg-muted/40 rounded-t-lg transition-colors {$theme ===
+									class="w-full px-3 py-2 text-xs text-left hover:bg-accent rounded-t-lg transition-colors {$theme ===
 									'light'
-										? 'bg-muted/30'
+										? 'bg-accent'
 										: ''}"
 									role="menuitem"
 								>
@@ -122,9 +122,9 @@
 								<button
 									type="button"
 									on:click={() => setTheme('dark')}
-									class="w-full px-3 py-2 text-xs text-left hover:bg-muted/40 rounded-b-lg transition-colors {$theme ===
+									class="w-full px-3 py-2 text-xs text-left hover:bg-accent rounded-b-lg transition-colors {$theme ===
 									'dark'
-										? 'bg-muted/30'
+										? 'bg-accent'
 										: ''}"
 									role="menuitem"
 								>
@@ -145,11 +145,34 @@
 
 					<!-- Navigation on right -->
 					<nav class="flex items-center gap-8">
-						<a href="/" class="text-sm hover:text-brand transition-colors">Home</a>
-						<a href="/channels" class="text-sm hover:text-brand transition-colors">Channels</a>
-						<a href="/sessions" class="text-sm hover:text-brand transition-colors">Sessions</a>
-						<a href="/assets" class="text-sm hover:text-brand transition-colors">Assets</a>
-						<a href="/nodes" class="text-sm hover:text-brand transition-colors">Nodes</a>
+						<a
+							href="/"
+							class="text-sm text-foreground hover:text-muted-foreground transition-colors">Home</a
+						>
+						<a
+							href="/channels"
+							class="text-sm text-foreground hover:text-muted-foreground transition-colors"
+							>Channels</a
+						>
+						<a
+							href="/sessions"
+							class="text-sm text-foreground hover:text-muted-foreground transition-colors"
+							>Sessions</a
+						>
+						<a
+							href="/assets"
+							class="text-sm text-foreground hover:text-muted-foreground transition-colors"
+							>Assets</a
+						>
+						<a
+							href="/nodes"
+							class="text-sm text-foreground hover:text-muted-foreground transition-colors">Nodes</a
+						>
+						<a
+							href="/search"
+							class="text-sm text-foreground hover:text-muted-foreground transition-colors"
+							>Search</a
+						>
 					</nav>
 				</div>
 			</div>
@@ -172,7 +195,7 @@
 					<a href="/participant/0x71c7656ec7ab88b098defb751b7401b5f6d8976f" class="underline">
 						0x71c765...d8976f
 					</a>
-					<span class="ml-1" aria-hidden="true">♥</span>
+					<Heart class="w-3 h-3 inline" aria-hidden="true" />
 				</p> -->
 			</div>
 		</div>

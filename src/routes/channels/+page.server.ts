@@ -1,38 +1,95 @@
 import type { PageServerLoad } from './$types';
+import { apiGet } from '$lib/server/api';
+import { z } from 'zod';
+import type { Channel } from '$lib/types';
 
-export const load: PageServerLoad = async ({ fetch, locals, url }) => {
-	const base = locals.apiBase ?? '';
+const ChannelSchema = z.object({
+	channel_id: z.string(),
+	wallet: z.string(),
+	participant: z.string(),
+	amount: z.string(),
+	status: z.string(),
+	chain_id: z.string().optional(),
+	updated_at: z.string().optional(),
+	created_at: z.string().optional()
+});
 
-	// Get pagination params from URL
-	const page = parseInt(url.searchParams.get('page') ?? '1');
-	const limit = parseInt(url.searchParams.get('limit') ?? '50');
-	const sortBy = url.searchParams.get('sortBy') ?? 'updated_at';
-	const order = url.searchParams.get('order') ?? 'desc';
+const ChannelsResponseSchema = z.object({
+	success: z.boolean(),
+	data: z.array(ChannelSchema),
+	meta: z.object({
+		timestamp: z.string(),
+		requestId: z.string(),
+		version: z.string(),
+		pagination: z.object({
+			page: z.number(),
+			limit: z.number(),
+			total: z.number(),
+			totalPages: z.number()
+		})
+	})
+});
 
-	const qs = new URLSearchParams({
-		page: page.toString(),
-		limit: limit.toString(),
-		sortBy,
-		order
-	});
-
+export const load: PageServerLoad = async (event) => {
 	try {
-		const response = await fetch(`${base}/api/v1/channel/list?${qs}`);
-		const data = response.ok ? await response.json() : null;
+		// Build query parameters
+		const page = Number(event.url.searchParams.get('page') ?? '1');
+		const limit = Number(event.url.searchParams.get('limit') ?? '25');
+		const q = event.url.searchParams.get('q') ?? '';
+		const status = event.url.searchParams.get('status') ?? '';
+		const sort =
+			event.url.searchParams.get('sort') ?? event.url.searchParams.get('sortBy') ?? 'updated_at';
+		const order =
+			event.url.searchParams.get('order') ?? event.url.searchParams.get('sortOrder') ?? 'desc';
 
+		// Build the path with query parameters
+		const params = new URLSearchParams();
+		params.set('page', page.toString());
+		params.set('limit', limit.toString());
+		if (q) params.set('q', q);
+		if (status && status !== 'all') params.set('status', status);
+		if (sort) params.set('sort', sort);
+		if (order) params.set('order', order);
+
+		const path = `/api/v1/channel/list?${params.toString()}`;
+
+		// Get ETag from request for caching
+		const etag = event.request.headers.get('if-none-match') ?? undefined;
+
+		const result = await apiGet(
+			event,
+			path,
+			ChannelsResponseSchema,
+			etag,
+			['/channels/list'] // fallback path
+		);
+
+		if (result.notModified) {
+			return { channels: [], total: 0, page, limit };
+		}
+
+		// Set response headers for caching
+		if (result.etag) {
+			event.setHeaders({ ETag: result.etag });
+		}
+		event.setHeaders({
+			'Cache-Control': 'public, max-age=15, s-maxage=15, stale-while-revalidate=60'
+		});
+
+		const data = result.data;
 		return {
-			channels: data?.data ?? [],
-			total: data?.meta?.pagination?.total ?? 0,
-			page,
-			limit
+			channels: data.data as Channel[],
+			total: data.meta.pagination.total,
+			page: data.meta.pagination.page,
+			limit: data.meta.pagination.limit
 		};
 	} catch (error) {
-		console.error('Failed to load channels:', error);
+		console.error('Failed to fetch channels:', error);
 		return {
 			channels: [],
 			total: 0,
-			page,
-			limit
+			page: Number(event.url.searchParams.get('page') ?? '1'),
+			limit: Number(event.url.searchParams.get('limit') ?? '25')
 		};
 	}
 };

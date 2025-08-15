@@ -19,7 +19,10 @@
 
 <svelte:head>
 	<title>Participant {shortHex(data.participantId, 8, 6)} | YNScan</title>
-	<meta name="description" content="View participant details and activity on The Yellow Network. Channel participation, session history, and network statistics." />
+	<meta
+		name="description"
+		content="View participant details and activity on The Yellow Network. Channel participation, session history, and network statistics."
+	/>
 	<link rel="canonical" href="https://ynscan.xyz/participant/{data.participantId}" />
 </svelte:head>
 
@@ -57,7 +60,7 @@
 			<div class="text-sm text-muted-foreground">Total Channels</div>
 		</div>
 		<div class="bg-card border border-border rounded-lg p-4 text-center">
-			<div class="text-2xl font-bold text-gray-800 mb-1">{data.stats.activeChannels}</div>
+			<div class="text-2xl font-bold text-foreground mb-1">{data.stats.activeChannels}</div>
 			<div class="text-sm text-muted-foreground">Active Channels</div>
 		</div>
 		<div class="bg-card border border-border rounded-lg p-4 text-center">
@@ -65,7 +68,7 @@
 			<div class="text-sm text-muted-foreground">Total Sessions</div>
 		</div>
 		<div class="bg-card border border-border rounded-lg p-4 text-center">
-			<div class="text-2xl font-bold text-gray-600 mb-1">{data.stats.activeSessions}</div>
+			<div class="text-2xl font-bold text-muted-foreground mb-1">{data.stats.activeSessions}</div>
 			<div class="text-sm text-muted-foreground">Active Sessions</div>
 		</div>
 	</div>
@@ -134,9 +137,9 @@
 								<span
 									class="inline-flex px-2 py-1 rounded text-xs font-medium"
 									class:bg-gray-100={channel.status === 'open'}
-									class:text-gray-800={channel.status === 'open'}
+									class:text-foreground={channel.status === 'open'}
 									class:bg-gray-200={channel.status === 'closed'}
-									class:text-gray-600={channel.status === 'closed'}
+									class:text-muted-foreground={channel.status === 'closed'}
 								>
 									{channel.status}
 								</span>
@@ -176,9 +179,9 @@
 								<span
 									class="inline-flex px-2 py-1 rounded text-xs font-medium"
 									class:bg-gray-100={session.status === 'active'}
-									class:text-gray-800={session.status === 'active'}
+									class:text-foreground={session.status === 'active'}
 									class:bg-gray-200={session.status === 'closed'}
-									class:text-gray-600={session.status === 'closed'}
+									class:text-muted-foreground={session.status === 'closed'}
 								>
 									{session.status}
 								</span>
@@ -257,9 +260,9 @@
 									<span
 										class="inline-flex px-2 py-1 rounded text-xs font-medium"
 										class:bg-gray-100={channel.status === 'open'}
-										class:text-gray-800={channel.status === 'open'}
+										class:text-foreground={channel.status === 'open'}
 										class:bg-gray-200={channel.status === 'closed'}
-										class:text-gray-600={channel.status === 'closed'}
+										class:text-muted-foreground={channel.status === 'closed'}
 									>
 										{channel.status}
 									</span>
@@ -355,9 +358,9 @@
 									<span
 										class="inline-flex px-2 py-1 rounded text-xs font-medium"
 										class:bg-gray-100={session.status === 'active'}
-										class:text-gray-800={session.status === 'active'}
+										class:text-foreground={session.status === 'active'}
 										class:bg-gray-200={session.status === 'closed'}
-										class:text-gray-600={session.status === 'closed'}
+										class:text-muted-foreground={session.status === 'closed'}
 									>
 										{session.status}
 									</span>

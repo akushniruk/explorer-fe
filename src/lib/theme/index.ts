@@ -3,8 +3,8 @@ export type Theme = 'light' | 'dark';
 const isServer = typeof document === 'undefined';
 
 function initial(): Theme {
-	if (isServer) return 'dark';
-	return (localStorage.getItem('theme') as Theme) ?? 'dark';
+	if (isServer) return 'light';
+	return (localStorage.getItem('theme') as Theme) ?? 'light';
 }
 
 export const theme = writable<Theme>(initial());

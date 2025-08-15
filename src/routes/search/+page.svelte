@@ -2,8 +2,13 @@
 	import { page } from '$app/stores';
 	import { shortHex, formatAmount, timeAgo } from '$lib/format';
 	import type { Channel, AppSession } from '$lib/types';
-	import { Button, Input, Select, Card, Badge } from '$lib/components/ui';
-	import EtherscanTable from '$lib/components/EtherscanTable.svelte';
+	import { Button } from '$lib/components/ui/button';
+	import * as Card from '$lib/components/ui/card';
+	import { Badge } from '$lib/components/ui/badge';
+	import { Link, FileText, User, Search, ChevronRight } from 'lucide-svelte';
+	import SearchTable from '$lib/components/SearchTable.svelte';
+	import SearchAutocomplete from '$lib/components/SearchAutocomplete.svelte';
+	import ChannelsPagination from '$lib/components/ChannelsPagination.svelte';
 
 	export let data: {
 		query: string;
@@ -28,6 +33,26 @@
 		window.location.href = url.toString();
 	}
 
+	function handleAutocompleteSearch(event: CustomEvent<{ query: string }>) {
+		searchInput = event.detail.query;
+		handleSearch();
+	}
+
+	function handleSuggestionSelect(event: CustomEvent<{ suggestion: any }>) {
+		// Handle suggestion selection - could redirect to specific pages
+		const { suggestion } = event.detail;
+		if (suggestion.type === 'channel') {
+			window.location.href = `/channel/${suggestion.id}`;
+		} else if (suggestion.type === 'session') {
+			// Could add session detail page later
+			searchInput = suggestion.text;
+			handleSearch();
+		} else {
+			searchInput = suggestion.text;
+			handleSearch();
+		}
+	}
+
 	const channelColumns = [
 		{ key: 'channel_id', label: 'Channel ID', sortable: false },
 		{ key: 'participants', label: 'Participants', sortable: false },
@@ -47,7 +72,10 @@
 
 <svelte:head>
 	<title>Search: {data.query} | YNScan - The Yellow Network Scanner</title>
-	<meta name="description" content="Search results for {data.query} on The Yellow Network. Find channels, sessions, participants, and assets quickly." />
+	<meta
+		name="description"
+		content="Search results for {data.query} on The Yellow Network. Find channels, sessions, participants, and assets quickly."
+	/>
 	<link rel="canonical" href="https://ynscan.xyz/search" />
 </svelte:head>
 
@@ -68,28 +96,33 @@
 	</div>
 
 	<!-- Search Form -->
-	<Card class="p-6 mb-8">
+	<Card.Root class="p-6 mb-8">
 		<form on:submit|preventDefault={handleSearch} class="space-y-4">
 			<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
 				<!-- Search Input -->
 				<div class="md:col-span-2">
 					<label for="search" class="block text-sm font-medium mb-2">Search Term</label>
-					<Input
-						id="search"
+					<SearchAutocomplete
 						bind:value={searchInput}
 						placeholder="Channel ID, Session ID, or Participant Address..."
+						on:search={handleAutocompleteSearch}
+						on:select={handleSuggestionSelect}
 					/>
 				</div>
 
 				<!-- Scope Filter -->
 				<div>
 					<label for="scope" class="block text-sm font-medium mb-2">Search In</label>
-					<Select bind:value={scope}>
+					<select
+						id="scope"
+						bind:value={scope}
+						class="w-full px-3 py-2 border border-border rounded-lg bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring"
+					>
 						<option value="all">All</option>
 						<option value="channels">Channels</option>
 						<option value="sessions">Sessions</option>
 						<option value="participants">Participants</option>
-					</Select>
+					</select>
 				</div>
 
 				<!-- Search Button -->
@@ -98,174 +131,126 @@
 				</div>
 			</div>
 		</form>
-	</Card>
+	</Card.Root>
 
 	{#if data.query}
+		<!-- Results Statistics -->
+		{#if data.total > 0}
+			<div class="bg-card border border-border rounded-lg p-4 mb-6">
+				<div class="flex flex-wrap items-center gap-6">
+					<div class="flex items-center gap-2">
+						<span class="text-sm font-medium">Total Results:</span>
+						<Badge class="bg-primary text-primary-foreground">{data.total}</Badge>
+					</div>
+					{#if data.results.channels.length > 0}
+						<div class="flex items-center gap-2">
+							<span class="text-sm text-muted-foreground">Channels:</span>
+							<Badge class="bg-secondary text-secondary-foreground"
+								>{data.results.channels.length}</Badge
+							>
+						</div>
+					{/if}
+					{#if data.results.sessions.length > 0}
+						<div class="flex items-center gap-2">
+							<span class="text-sm text-muted-foreground">Sessions:</span>
+							<Badge class="bg-secondary text-secondary-foreground"
+								>{data.results.sessions.length}</Badge
+							>
+						</div>
+					{/if}
+					{#if data.results.participants.length > 0}
+						<div class="flex items-center gap-2">
+							<span class="text-sm text-muted-foreground">Participants:</span>
+							<Badge class="bg-secondary text-secondary-foreground"
+								>{data.results.participants.length}</Badge
+							>
+						</div>
+					{/if}
+				</div>
+			</div>
+		{/if}
+
 		<!-- Results Sections -->
 		<div class="space-y-8">
 			<!-- Channels Results -->
 			{#if data.results.channels.length > 0}
 				<section>
-					<h2 class="text-xl font-semibold mb-4">
-						Channels ({data.results.channels.length})
-					</h2>
-					<EtherscanTable 
-						columns={channelColumns} 
+					<div class="flex items-center justify-between mb-4">
+						<h2 class="text-xl font-semibold flex items-center gap-2">
+							<Link class="w-5 h-5 text-muted-foreground" />
+							Channels ({data.results.channels.length})
+						</h2>
+					</div>
+					<SearchTable
+						columns={channelColumns}
 						data={data.results.channels}
+						tableType="channels"
 						emptyMessage="No channels found."
-					>
-						<svelte:fragment slot="default" let:row={channel}>
-							<td class="px-4 py-3 whitespace-nowrap">
-								<a
-									href={`/channel/${channel.channel_id}`}
-									class="font-mono text-sm text-brand hover:text-brand/80 transition-colors"
-								>
-									{shortHex(channel.channel_id, 12, 8)}
-								</a>
-							</td>
-							<td class="px-4 py-3">
-								<div class="text-sm space-y-1">
-									<div class="flex items-center gap-2">
-										<span class="text-muted-foreground text-xs">From:</span>
-										<a
-											href={`/participant/${channel.wallet}`}
-											class="font-mono text-brand hover:text-brand/80 transition-colors"
-										>
-											{shortHex(channel.wallet, 6, 4)}
-										</a>
-									</div>
-									<div class="flex items-center gap-2">
-										<span class="text-muted-foreground text-xs">To:</span>
-										<a
-											href={`/participant/${channel.participant}`}
-											class="font-mono text-brand hover:text-brand/80 transition-colors"
-										>
-											{shortHex(channel.participant, 6, 4)}
-										</a>
-									</div>
-								</div>
-							</td>
-							<td class="px-4 py-3 whitespace-nowrap">
-								<div class="text-sm font-mono">
-									{formatAmount(channel.amount, 18, 4)} ETH
-								</div>
-							</td>
-							<td class="px-4 py-3 whitespace-nowrap">
-								<span
-									class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium border"
-									class:bg-green-50={channel.status === 'open'}
-									class:text-green-700={channel.status === 'open'}
-									class:border-green-200={channel.status === 'open'}
-									class:bg-gray-50={channel.status === 'closed'}
-									class:text-gray-600={channel.status === 'closed'}
-									class:border-gray-200={channel.status === 'closed'}
-								>
-									{channel.status}
-								</span>
-							</td>
-							<td class="px-4 py-3 whitespace-nowrap">
-								<div class="text-sm text-muted-foreground">
-									{timeAgo(channel.updated_at)}
-								</div>
-							</td>
-						</svelte:fragment>
-					</EtherscanTable>
+					/>
 				</section>
 			{/if}
 
 			<!-- Sessions Results -->
 			{#if data.results.sessions.length > 0}
 				<section>
-					<h2 class="text-xl font-semibold mb-4">
-						Sessions ({data.results.sessions.length})
-					</h2>
-					<EtherscanTable 
-						columns={sessionColumns} 
+					<div class="flex items-center justify-between mb-4">
+						<h2 class="text-xl font-semibold flex items-center gap-2">
+							<FileText class="w-5 h-5 text-muted-foreground" />
+							Sessions ({data.results.sessions.length})
+						</h2>
+					</div>
+					<SearchTable
+						columns={sessionColumns}
 						data={data.results.sessions}
+						tableType="sessions"
 						emptyMessage="No sessions found."
-					>
-						<svelte:fragment slot="default" let:row={session}>
-							<td class="px-4 py-3 whitespace-nowrap">
-								<a
-									href={`/session/${session.session_id}`}
-									class="font-mono text-sm text-brand hover:text-brand/80 transition-colors"
-								>
-									{shortHex(session.session_id, 12, 8)}
-								</a>
-							</td>
-							<td class="px-4 py-3 whitespace-nowrap">
-								<span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
-									{session.protocol || 'unknown'}
-								</span>
-							</td>
-							<td class="px-4 py-3">
-								<div class="text-sm space-y-1">
-									{#each session.participants.slice(0, 3) as participant, i}
-										<div class="flex items-center gap-2">
-											<span class="text-muted-foreground text-xs">#{i + 1}:</span>
-											<a
-												href={`/participant/${participant}`}
-												class="font-mono text-brand hover:text-brand/80 transition-colors"
-											>
-												{shortHex(participant, 6, 4)}
-											</a>
-										</div>
-									{/each}
-									{#if session.participants.length > 3}
-										<div class="text-xs text-muted-foreground">
-											+{session.participants.length - 3} more
-										</div>
-									{/if}
-								</div>
-							</td>
-							<td class="px-4 py-3 whitespace-nowrap">
-								<span
-									class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium border"
-									class:bg-green-50={session.status === 'active'}
-									class:text-green-700={session.status === 'active'}
-									class:border-green-200={session.status === 'active'}
-									class:bg-gray-50={session.status === 'closed'}
-									class:text-gray-600={session.status === 'closed'}
-									class:border-gray-200={session.status === 'closed'}
-								>
-									{session.status}
-								</span>
-							</td>
-							<td class="px-4 py-3 whitespace-nowrap">
-								<div class="text-sm text-muted-foreground">
-									{timeAgo(session.updated_at)}
-								</div>
-							</td>
-						</svelte:fragment>
-					</EtherscanTable>
+					/>
 				</section>
 			{/if}
 
 			<!-- Participants Results -->
 			{#if data.results.participants.length > 0}
 				<section>
-					<h2 class="text-xl font-semibold mb-4">
-						Participants ({data.results.participants.length})
-					</h2>
+					<div class="flex items-center justify-between mb-4">
+						<h2 class="text-xl font-semibold flex items-center gap-2">
+							<User class="w-5 h-5 text-muted-foreground" />
+							Participants ({data.results.participants.length})
+						</h2>
+					</div>
 					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 						{#each data.results.participants as participant}
 							<div
-								class="bg-card border border-border rounded-lg p-4 hover:shadow-md transition-shadow"
+								class="bg-card border border-border rounded-lg p-4 hover:shadow-md transition-all hover:border-muted-foreground"
 							>
 								<div class="flex items-center gap-3">
-									<div class="w-10 h-10 bg-brand/20 rounded-full flex items-center justify-center">
-										<span class="text-brand font-bold text-sm">
+									<div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
+										<span class="text-secondary-foreground font-bold text-sm">
 											{participant.slice(2, 4).toUpperCase()}
 										</span>
 									</div>
 									<div class="flex-1 min-w-0">
 										<a
 											href={`/participant/${participant}`}
-											class="block font-mono text-sm text-brand hover:text-brand/80 truncate"
+											class="block font-mono text-sm text-foreground hover:text-foreground truncate font-medium"
 										>
 											{participant}
 										</a>
-										<div class="text-xs text-muted-foreground">Click to view details</div>
+										<div class="text-xs text-muted-foreground">View participant activity</div>
+									</div>
+									<div class="flex-shrink-0">
+										<svg
+											class="w-4 h-4 text-muted-foreground"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M9 5l7 7-7 7"
+											/>
+										</svg>
 									</div>
 								</div>
 							</div>
@@ -276,25 +261,48 @@
 
 			<!-- No Results -->
 			{#if data.total === 0}
-				<div class="text-center py-12">
-					<div class="text-muted-foreground mb-4">
-						<svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<div class="text-center py-16">
+					<div class="text-muted-foreground mb-6">
+						<svg
+							class="w-20 h-20 mx-auto text-muted"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
 							<path
 								stroke-linecap="round"
 								stroke-linejoin="round"
-								stroke-width="2"
+								stroke-width="1.5"
 								d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
 							/>
 						</svg>
 					</div>
-					<h3 class="text-lg font-medium mb-2">No results found</h3>
-					<p class="text-muted-foreground mb-4">Try adjusting your search terms or search scope.</p>
-					<div class="text-sm text-muted-foreground">
-						<p>Search tips:</p>
-						<ul class="list-disc list-inside mt-2 space-y-1">
-							<li>Use full or partial channel/session IDs</li>
-							<li>Search by participant addresses</li>
-							<li>Try different search scopes</li>
+					<h3 class="text-xl font-semibold mb-3 text-foreground">No results found</h3>
+					<p class="text-muted-foreground mb-6 max-w-md mx-auto">
+						We couldn't find anything matching "<strong>{data.query}</strong>" in {data.scope ===
+						'all'
+							? 'any category'
+							: data.scope}.
+					</p>
+					<div class="bg-muted rounded-lg p-6 max-w-md mx-auto">
+						<h4 class="text-sm font-semibold text-foreground mb-3">Search Tips:</h4>
+						<ul class="text-sm text-muted-foreground space-y-2 text-left">
+							<li class="flex items-start gap-2">
+								<span class="text-muted-foreground">•</span>
+								<span>Use full or partial channel/session IDs</span>
+							</li>
+							<li class="flex items-start gap-2">
+								<span class="text-muted-foreground">•</span>
+								<span>Search by participant wallet addresses</span>
+							</li>
+							<li class="flex items-start gap-2">
+								<span class="text-muted-foreground">•</span>
+								<span>Try expanding your search scope to "All"</span>
+							</li>
+							<li class="flex items-start gap-2">
+								<span class="text-muted-foreground">•</span>
+								<span>Check for typos in addresses or IDs</span>
+							</li>
 						</ul>
 					</div>
 				</div>

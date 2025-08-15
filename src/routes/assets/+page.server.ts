@@ -1,69 +1,105 @@
 import type { PageServerLoad } from './$types';
+import { apiGet } from '$lib/server/api';
+import { z } from 'zod';
 
-export const load: PageServerLoad = async ({ fetch, locals }) => {
-	const base = locals.apiBase ?? '';
+const AssetSchema = z.object({
+	token: z.string(),
+	chain_id: z.string(),
+	symbol: z.string(),
+	decimals: z.string(),
+	name: z.string().optional(),
+	total_supply: z.string().optional(),
+	logo_url: z.string().optional(),
+	created_at: z.string().optional(),
+	updated_at: z.string().optional()
+});
 
+const AssetsResponseSchema = z.object({
+	success: z.boolean(),
+	data: z.array(AssetSchema),
+	meta: z.object({
+		timestamp: z.string(),
+		requestId: z.string(),
+		version: z.string(),
+		pagination: z.object({
+			page: z.number(),
+			limit: z.number(),
+			total: z.number(),
+			totalPages: z.number()
+		})
+	})
+});
+
+export const load: PageServerLoad = async (event) => {
 	try {
-		const response = await fetch(`${base}/api/v1/asset/list`);
-		const data = response.ok ? await response.json() : null;
+		// Build query parameters
+		const page = Number(event.url.searchParams.get('page') ?? '1');
+		const limit = Number(event.url.searchParams.get('limit') ?? '25');
+		const q = event.url.searchParams.get('q') ?? '';
+		const chain = event.url.searchParams.get('chain') ?? '';
+		const sort = event.url.searchParams.get('sort') ?? 'symbol';
+		const order = event.url.searchParams.get('order') ?? 'asc';
 
-		// Mock some sample assets if API doesn't return them
-		const mockAssets = [
-			{
-				id: '1',
-				symbol: 'ETH',
-				name: 'Ethereum',
-				contract_address: '0x0000000000000000000000000000000000000000',
-				chain_id: '1',
-				decimals: 18,
-				total_supply: '120,000,000'
-			},
-			{
-				id: '2',
-				symbol: 'USDC',
-				name: 'USD Coin',
-				contract_address: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
-				chain_id: '137',
-				decimals: 6,
-				total_supply: '52,000,000,000'
-			},
-			{
-				id: '3',
-				symbol: 'MATIC',
-				name: 'Polygon',
-				contract_address: '0x0000000000000000000000000000000000001010',
-				chain_id: '137',
-				decimals: 18,
-				total_supply: '10,000,000,000'
-			},
-			{
-				id: '4',
-				symbol: 'WETH',
-				name: 'Wrapped Ethereum',
-				contract_address: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
-				chain_id: '137',
-				decimals: 18
-			},
-			{
-				id: '5',
-				symbol: 'USDT',
-				name: 'Tether USD',
-				contract_address: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
-				chain_id: '137',
-				decimals: 6,
-				total_supply: '83,000,000,000'
-			}
-		];
+		// Build the path with query parameters
+		const params = new URLSearchParams();
+		params.set('page', page.toString());
+		params.set('limit', limit.toString());
+		if (q) params.set('q', q);
+		if (chain && chain !== 'all') params.set('chain', chain);
+		if (sort) params.set('sort', sort);
+		if (order) params.set('order', order);
+
+		const path = `/api/v1/asset/list?${params.toString()}`;
+
+		// Get ETag from request for caching
+		const etag = event.request.headers.get('if-none-match') ?? undefined;
+
+		const result = await apiGet(
+			event,
+			path,
+			AssetsResponseSchema,
+			etag,
+			['/assets/list'] // fallback path
+		);
+
+		if (result.notModified) {
+			return { assets: [], total: 0, page, limit };
+		}
+
+		// Set response headers for caching
+		if (result.etag) {
+			event.setHeaders({ ETag: result.etag });
+		}
+		event.setHeaders({
+			'Cache-Control': 'public, max-age=15, s-maxage=15, stale-while-revalidate=60'
+		});
+
+		const data = result.data;
+		// Transform API data to match expected format
+		const assets = data.data.map((asset) => ({
+			id: asset.token,
+			symbol: asset.symbol,
+			name: asset.name || asset.symbol.toUpperCase(),
+			contract_address: asset.token,
+			chain_id: asset.chain_id,
+			decimals: parseInt(asset.decimals),
+			total_supply: asset.total_supply,
+			logo_url: asset.logo_url
+		}));
 
 		return {
-			assets: data?.data ?? mockAssets,
-			total: data?.data?.length ?? mockAssets.length
+			assets,
+			total: data.meta.pagination.total,
+			page: data.meta.pagination.page,
+			limit: data.meta.pagination.limit
 		};
 	} catch (error) {
-		console.error('Failed to load assets:', error);
+		console.error('Failed to fetch assets:', error);
 		return {
 			assets: [],
-			total: 0
+			total: 0,
+			page: Number(event.url.searchParams.get('page') ?? '1'),
+			limit: Number(event.url.searchParams.get('limit') ?? '25')
 		};
 	}
 };

@@ -11,9 +11,9 @@
 		const originalTheme = $theme;
 		theme.set('dark');
 		applyTheme('dark');
-		
+
 		const unsubscribe = theme.subscribe(applyTheme);
-		
+
 		return () => {
 			unsubscribe();
 			theme.set(originalTheme);

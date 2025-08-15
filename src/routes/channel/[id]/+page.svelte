@@ -12,7 +12,10 @@
 	<title
 		>Channel {data.channel ? shortHex(data.channel.channel_id, 8, 6) : 'Not Found'} | YNScan</title
 	>
-	<meta name="description" content="View detailed information for this payment channel on The Yellow Network. Channel participants, amounts, status, and transaction history." />
+	<meta
+		name="description"
+		content="View detailed information for this payment channel on The Yellow Network. Channel participants, amounts, status, and transaction history."
+	/>
 	<link rel="canonical" href="https://ynscan.xyz/channel/{data.channel?.channel_id || ''}" />
 </svelte:head>
 
@@ -56,12 +59,12 @@
 				</div>
 				<span
 					class="inline-flex px-3 py-1 rounded text-sm font-medium"
-					class:bg-gray-100={data.channel.status === 'open'}
-					class:text-gray-800={data.channel.status === 'open'}
-					class:bg-gray-200={data.channel.status === 'closed'}
-					class:text-gray-600={data.channel.status === 'closed'}
-					class:bg-gray-50={data.channel.status === 'pending'}
-					class:text-gray-700={data.channel.status === 'pending'}
+					class:bg-emerald-100={data.channel.status === 'open'}
+					class:text-emerald-800={data.channel.status === 'open'}
+					class:bg-muted={data.channel.status === 'closed'}
+					class:text-muted-foreground={data.channel.status === 'closed'}
+					class:bg-yellow-100={data.channel.status === 'pending'}
+					class:text-yellow-800={data.channel.status === 'pending'}
 				>
 					{data.channel.status.toUpperCase()}
 				</span>
@@ -77,17 +80,21 @@
 				<div class="text-sm text-muted-foreground">ETH Amount</div>
 			</div>
 			<div class="bg-card border border-border rounded-lg p-6 text-center">
-				<div class="text-2xl font-bold text-gray-600 mb-1">Chain {data.channel.chain_id}</div>
+				<div class="text-2xl font-bold text-muted-foreground mb-1">
+					Chain {data.channel.chain_id}
+				</div>
 				<div class="text-sm text-muted-foreground">Network</div>
 			</div>
 			<div class="bg-card border border-border rounded-lg p-6 text-center">
-				<div class="text-2xl font-bold text-gray-800 mb-1">
+				<div class="text-2xl font-bold text-foreground mb-1">
 					{data.channel.status === 'open' ? 'Active' : 'Inactive'}
 				</div>
 				<div class="text-sm text-muted-foreground">Channel State</div>
 			</div>
 			<div class="bg-card border border-border rounded-lg p-6 text-center">
-				<div class="text-2xl font-bold text-gray-600 mb-1">{timeAgo(data.channel.updated_at)}</div>
+				<div class="text-2xl font-bold text-muted-foreground mb-1">
+					{timeAgo(data.channel.updated_at)}
+				</div>
 				<div class="text-sm text-muted-foreground">Last Updated</div>
 			</div>
 		</div>
@@ -130,8 +137,8 @@
 					<div>
 						<h3 class="text-sm font-medium text-muted-foreground mb-2">To (Participant)</h3>
 						<div class="flex items-center gap-3">
-							<div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-								<span class="text-gray-600 font-bold text-sm">
+							<div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
+								<span class="text-muted-foreground font-bold text-sm">
 									{data.channel.participant.slice(2, 4).toUpperCase()}
 								</span>
 							</div>
@@ -163,9 +170,7 @@
 				</div>
 				<div class="p-6 space-y-4">
 					<div>
-						<div class="text-xs text-muted-foreground uppercase tracking-wider"
-							>Token Contract</div
-						>
+						<div class="text-xs text-muted-foreground uppercase tracking-wider">Token Contract</div>
 						<div class="font-mono text-sm mt-1">
 							<a href={`/asset/${data.channel.token}`} class="text-brand hover:text-brand/80">
 								{shortHex(data.channel.token, 12, 8)}
@@ -179,9 +184,7 @@
 					</div>
 
 					<div>
-						<div class="text-xs text-muted-foreground uppercase tracking-wider"
-							>Amount (Wei)</div
-						>
+						<div class="text-xs text-muted-foreground uppercase tracking-wider">Amount (Wei)</div>
 						<div class="font-mono text-sm mt-1">{data.channel.amount}</div>
 					</div>
 
@@ -191,9 +194,7 @@
 					</div>
 
 					<div>
-						<div class="text-xs text-muted-foreground uppercase tracking-wider"
-							>Last Updated</div
-						>
+						<div class="text-xs text-muted-foreground uppercase tracking-wider">Last Updated</div>
 						<div class="text-sm mt-1">{new Date(data.channel.updated_at).toLocaleString()}</div>
 					</div>
 				</div>
