@@ -1,5 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { apiGet } from '$lib/server/api';
+import { getTokenInfo } from '$lib/tokens';
 import { z } from 'zod';
 
 const AssetSchema = z.object({
@@ -75,17 +76,23 @@ export const load: PageServerLoad = async (event) => {
 		});
 
 		const data = result.data;
-		// Transform API data to match expected format
-		const assets = data.data.map((asset) => ({
-			id: asset.token,
-			symbol: asset.symbol,
-			name: asset.name || asset.symbol.toUpperCase(),
-			contract_address: asset.token,
-			chain_id: asset.chain_id,
-			decimals: parseInt(asset.decimals),
-			total_supply: asset.total_supply,
-			logo_url: asset.logo_url
-		}));
+		// Transform API data to match expected format with Uniswap token enrichment
+		const assets = await Promise.all(
+			data.data.map(async (asset) => {
+				const tokenInfo = await getTokenInfo(parseInt(asset.chain_id), asset.token, asset.symbol);
+
+				return {
+					id: asset.token,
+					symbol: asset.symbol,
+					name: tokenInfo?.name || asset.name || asset.symbol.toUpperCase(),
+					contract_address: asset.token,
+					chain_id: asset.chain_id,
+					decimals: parseInt(asset.decimals),
+					total_supply: asset.total_supply,
+					logo_url: tokenInfo?.logoUrl || ''
+				};
+			})
+		);
 
 		return {
 			assets,

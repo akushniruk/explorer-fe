@@ -4,6 +4,7 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-svelte';
 	import type { AppSession } from '$lib/types';
+	import CopyButton from './ui/CopyButton.svelte';
 
 	export let sessions: AppSession[] = [];
 	export let sortKey = '';
@@ -140,11 +141,12 @@
 						<Table.Cell class="font-mono">
 							<a
 								href={`/session/${session.session_id}`}
-								class="text-foreground hover:text-foreground text-sm cursor-pointer"
+								class="text-foreground underline hover:text-foreground text-sm cursor-pointer"
 								title={session.session_id}
 							>
 								{shortHex(session.session_id, 12, 8)}
 							</a>
+							<CopyButton value={session.session_id} />
 						</Table.Cell>
 
 						<!-- Protocol -->
@@ -162,11 +164,12 @@
 										<span class="text-muted-foreground text-xs">#{i + 1}:</span>
 										<a
 											href={`/address/${participant}`}
-											class="font-mono text-foreground hover:text-foreground cursor-pointer"
+											class="font-mono underline text-foreground hover:text-foreground cursor-pointer"
 											title={participant}
 										>
 											{shortHex(participant, 6, 4)}
 										</a>
+										<CopyButton value={participant} />
 									</div>
 								{/each}
 								{#if session.participants.length > 3}
@@ -182,7 +185,7 @@
 							{#if session.channel_id}
 								<a
 									href={`/channel/${session.channel_id}`}
-									class="text-foreground hover:text-foreground text-sm cursor-pointer"
+									class="text-foreground underline hover:text-foreground text-sm cursor-pointer"
 									title={session.channel_id}
 								>
 									{shortHex(session.channel_id, 6, 4)}

@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { shortHex, formatAmount } from '$lib/format';
 	import * as Table from '$lib/components/ui/table';
-	import { Badge } from '$lib/components/ui/badge';
 	import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-svelte';
+	import Chain from './Chain.svelte';
+	import { getChainById } from '$lib/ctypto/utils';
+	import CopyButton from './ui/CopyButton.svelte';
+	import TokenIcon from './ui/TokenIcon.svelte';
 
 	type Asset = {
 		id: string;
@@ -34,8 +37,7 @@
 		{ key: 'symbol', label: 'Asset', sortable: false },
 		{ key: 'contract_address', label: 'Contract Address', sortable: false },
 		{ key: 'chain_id', label: 'Chain', sortable: false },
-		{ key: 'decimals', label: 'Decimals', sortable: false },
-		{ key: 'total_supply', label: 'Total Supply', sortable: false }
+		{ key: 'decimals', label: 'Decimals', sortable: false }
 	];
 
 	function triggerSort(col: Column) {
@@ -47,6 +49,12 @@
 		if (!column.sortable) return null;
 		if (sortKey !== column.key) return ChevronsUpDown;
 		return sortDirection === 'asc' ? ChevronUp : ChevronDown;
+	}
+
+	function getBlockExplorerUrl(address: string, chainId: number) {
+		const chain = getChainById(chainId);
+		if (!chain?.blockExplorers?.default.url) return null;
+		return `${chain.blockExplorers.default.url}/address/${address}`;
 	}
 </script>
 
@@ -93,56 +101,45 @@
 				</Table.Row>
 			{:else}
 				{#each assets as asset}
+					{@const blockExplorerUrl = getBlockExplorerUrl(
+						asset.contract_address,
+						Number(asset.chain_id)
+					)}
 					<Table.Row class="hover:bg-muted/50">
 						<!-- Asset -->
 						<Table.Cell>
 							<div class="flex items-center gap-3">
-								{#if asset.logo_url}
-									<img src={asset.logo_url} alt={asset.symbol} class="w-8 h-8 rounded-full" />
-								{:else}
-									<div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-										<span class="text-xs font-bold text-gray-700">{asset.symbol.charAt(0)}</span>
-									</div>
-								{/if}
-								<div>
-									<div class="font-semibold text-sm">{asset.symbol}</div>
+								<TokenIcon symbol={asset.symbol} logoUrl={asset.logo_url} size={24} />
+								<div class="flex items-baseline gap-1">
 									<div class="text-xs text-muted-foreground">{asset.name}</div>
+									<div class="font-semibold text-sm uppercase">({asset.symbol})</div>
 								</div>
 							</div>
 						</Table.Cell>
 
 						<!-- Contract Address -->
 						<Table.Cell class="font-mono">
-							<a
-								href={`/asset/${asset.contract_address}`}
-								class="text-foreground hover:text-foreground text-sm cursor-pointer"
-								title={asset.contract_address}
-							>
-								{shortHex(asset.contract_address, 12, 8)}
-							</a>
+							<div class="flex items-center gap-2">
+								<a
+									href={blockExplorerUrl}
+									class="text-foreground underline hover:text-foreground text-sm cursor-pointer"
+									title={asset.contract_address}
+									target="_blank"
+								>
+									{shortHex(asset.contract_address, 12, 8)}
+								</a>
+								<CopyButton value={asset.contract_address} />
+							</div>
 						</Table.Cell>
 
 						<!-- Chain -->
 						<Table.Cell>
-							<Badge class="bg-secondary text-secondary-foreground hover:bg-secondary">
-								Chain {asset.chain_id}
-							</Badge>
+							<Chain chainId={Number(asset.chain_id)} />
 						</Table.Cell>
 
 						<!-- Decimals -->
 						<Table.Cell>
 							<span class="text-sm font-mono">{asset.decimals}</span>
-						</Table.Cell>
-
-						<!-- Total Supply -->
-						<Table.Cell>
-							{#if asset.total_supply}
-								<div class="text-sm font-mono">
-									{formatAmount(asset.total_supply, asset.decimals, 2)}
-								</div>
-							{:else}
-								<span class="text-muted-foreground text-sm">—</span>
-							{/if}
 						</Table.Cell>
 					</Table.Row>
 				{/each}
