@@ -16,7 +16,14 @@ const ChannelSchema = z.object({
 	version: z.string(),
 	adjudicator: z.string(),
 	created_at: z.string(),
-	updated_at: z.string()
+	updated_at: z.string(),
+	asset: z
+		.object({
+			symbol: z.string(),
+			decimals: z.string()
+		})
+		.nullable()
+		.optional()
 });
 
 const ChannelsResponseSchema = z.object({

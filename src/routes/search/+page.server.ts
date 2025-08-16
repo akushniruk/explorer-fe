@@ -10,7 +10,14 @@ const ChannelSchema = z.object({
 	status: z.string(),
 	chain_id: z.string().optional(),
 	updated_at: z.string().optional(),
-	created_at: z.string().optional()
+	created_at: z.string().optional(),
+	asset: z
+		.object({
+			symbol: z.string(),
+			decimals: z.string()
+		})
+		.nullable()
+		.optional()
 });
 
 const AppSessionSchema = z.object({

@@ -1,3 +1,8 @@
+export type Asset = {
+	symbol: string;
+	decimals: string;
+};
+
 export type Channel = {
 	channel_id: string;
 	chain_id: string;
@@ -7,6 +12,7 @@ export type Channel = {
 	amount: string;
 	status: string;
 	updated_at: string;
+	asset?: Asset | null;
 };
 
 export type AppSession = {

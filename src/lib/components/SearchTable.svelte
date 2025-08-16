@@ -105,7 +105,12 @@
 							<!-- Amount -->
 							<Table.Cell>
 								<div class="text-sm font-mono">
-									{formatAmount(row.amount, 18, 4)} ETH
+									{formatAmount(
+										row.amount,
+										row.asset?.decimals ? parseInt(row.asset.decimals) : 18,
+										4
+									)}
+									{row.asset?.symbol || 'ETH'}
 								</div>
 							</Table.Cell>
 

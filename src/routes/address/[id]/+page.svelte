@@ -127,7 +127,12 @@
 									{shortHex(channel.channel_id, 8, 6)}
 								</a>
 								<div class="text-xs text-muted-foreground mt-1">
-									{formatAmount(channel.amount, 18, 4)} ETH
+									{formatAmount(
+										channel.amount,
+										channel.asset?.decimals ? parseInt(channel.asset.decimals) : 18,
+										4
+									)}
+									{channel.asset?.symbol || 'ETH'}
 								</div>
 							</div>
 							<div class="text-right">
@@ -250,7 +255,12 @@
 								</td>
 								<td class="px-6 py-4 whitespace-nowrap">
 									<div class="text-sm font-medium">
-										{formatAmount(channel.amount, 18, 4)} ETH
+										{formatAmount(
+											channel.amount,
+											channel.asset?.decimals ? parseInt(channel.asset.decimals) : 18,
+											4
+										)}
+										{channel.asset?.symbol || 'ETH'}
 									</div>
 								</td>
 								<td class="px-6 py-4 whitespace-nowrap">

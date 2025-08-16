@@ -75,9 +75,15 @@
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 			<div class="bg-card border border-border rounded-lg p-6 text-center">
 				<div class="text-2xl font-bold text-brand mb-1">
-					{formatAmount(data.channel.amount, 18, 4)}
+					{formatAmount(
+						data.channel.amount,
+						data.channel.asset?.decimals ? parseInt(data.channel.asset.decimals) : 18,
+						4
+					)}
 				</div>
-				<div class="text-sm text-muted-foreground">ETH Amount</div>
+				<div class="text-sm text-muted-foreground">
+					{data.channel.asset?.symbol || 'ETH'} Amount
+				</div>
 			</div>
 			<div class="bg-card border border-border rounded-lg p-6 text-center">
 				<div class="text-2xl font-bold text-muted-foreground mb-1">

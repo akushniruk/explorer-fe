@@ -19,11 +19,20 @@ const ChannelSchema = z.object({
 	channel_id: z.string(),
 	wallet: z.string(),
 	participant: z.string(),
+	token: z.string(),
+	adjudicator: z.string(),
 	amount: z.string(),
 	status: z.string(),
 	chain_id: z.string().optional(),
 	updated_at: z.string().optional(),
-	created_at: z.string().optional()
+	created_at: z.string().optional(),
+	asset: z
+		.object({
+			symbol: z.string(),
+			decimals: z.string()
+		})
+		.nullable()
+		.optional()
 });
 
 const AppSessionSchema = z.object({

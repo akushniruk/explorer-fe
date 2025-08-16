@@ -9,7 +9,14 @@ const ChannelSchema = z.object({
 	participant: z.string(),
 	amount: z.string(),
 	status: z.string(),
-	chain_id: z.string().optional()
+	chain_id: z.string().optional(),
+	asset: z
+		.object({
+			symbol: z.string(),
+			decimals: z.string()
+		})
+		.nullable()
+		.optional()
 });
 
 const AppSessionSchema = z.object({

@@ -50,5 +50,6 @@ export async function apiGet<T>(
 
 	const newEtag = res.headers.get('etag') ?? undefined;
 	const json = await res.json();
+
 	return { data: schema.parse(json), etag: newEtag };
 }

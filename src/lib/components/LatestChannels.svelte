@@ -3,7 +3,6 @@
 	import type { Channel } from '$lib/types';
 
 	export let channels: Channel[];
-	console.log('channels', channels);
 </script>
 
 <!-- Latest Channels -->
@@ -50,7 +49,10 @@
 					</div>
 				</div>
 				<div class="text-right">
-					<div class="font-medium">{formatAmount(ch.amount, 18, 4)} ETH</div>
+					<div class="font-medium uppercase">
+						{formatAmount(ch.amount, ch.asset?.decimals ? parseInt(ch.asset.decimals) : 18, 4)}
+						{ch.asset?.symbol || ''}
+					</div>
 					<div class="text-xs text-muted-foreground">{timeAgo(ch.updated_at)}</div>
 				</div>
 			</div>

@@ -144,7 +144,14 @@
 
 						<!-- Amount -->
 						<Table.Cell class="text-right">
-							<span class="font-mono text-sm">{formatAmount(channel.amount, 18, 4)} ETH</span>
+							<span class="font-mono text-sm">
+								{formatAmount(
+									channel.amount,
+									channel.asset?.decimals ? parseInt(channel.asset.decimals) : 18,
+									4
+								)}
+								{channel.asset?.symbol || 'ETH'}
+							</span>
 						</Table.Cell>
 
 						<!-- Status -->
