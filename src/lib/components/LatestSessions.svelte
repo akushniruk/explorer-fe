@@ -3,6 +3,7 @@
 	import type { AppSession } from '$lib/types';
 
 	export let sessions: AppSession[];
+	console.log('sessions:', sessions);
 </script>
 
 <!-- Latest App Sessions -->
@@ -52,7 +53,7 @@
 					</div>
 				</div>
 				<div class="text-right">
-					<div class="font-mono text-sm">Ch: {shortHex(s.channel_id, 6, 4)}</div>
+					<!-- <div class="font-mono text-sm">Ch: {shortHex(s.channel_id, 6, 4)}</div> -->
 					<div class="text-xs text-muted-foreground">{timeAgo(s.updated_at)}</div>
 				</div>
 			</div>
