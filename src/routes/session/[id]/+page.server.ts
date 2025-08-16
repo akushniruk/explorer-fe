@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ params, fetch, locals }) => {
 	const sessionId = params.id;
 
 	try {
-		const response = await fetch(`${base}/api/v1/session/${sessionId}`);
+		const response = await fetch(`${base}/api/v1/app-session/${sessionId}`);
 
 		if (!response.ok) {
 			if (response.status === 404) {
