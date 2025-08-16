@@ -103,7 +103,7 @@ export const GET: RequestHandler = async (event) => {
 							id: participant,
 							text: participant,
 							type: 'participant',
-							description: 'Participant'
+							description: 'Address'
 						});
 					}
 				});
@@ -129,7 +129,7 @@ export const GET: RequestHandler = async (event) => {
 							id: participant,
 							text: participant,
 							type: 'participant',
-							description: 'Participant'
+							description: 'Address'
 						});
 					}
 				});

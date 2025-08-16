@@ -82,7 +82,7 @@
 									<div class="flex items-center gap-2">
 										<span class="text-muted-foreground text-xs">From:</span>
 										<a
-											href={`/participant/${row.wallet}`}
+											href={`/address/${row.wallet}`}
 											class="font-mono text-foreground hover:text-foreground cursor-pointer"
 											title={row.wallet}
 										>
@@ -92,7 +92,7 @@
 									<div class="flex items-center gap-2">
 										<span class="text-muted-foreground text-xs">To:</span>
 										<a
-											href={`/participant/${row.participant}`}
+											href={`/address/${row.participant}`}
 											class="font-mono text-foreground hover:text-foreground cursor-pointer"
 											title={row.participant}
 										>
@@ -148,7 +148,7 @@
 										<div class="flex items-center gap-2">
 											<span class="text-muted-foreground text-xs">#{i + 1}:</span>
 											<a
-												href={`/participant/${participant}`}
+												href={`/address/${participant}`}
 												class="font-mono text-foreground hover:text-foreground cursor-pointer"
 												title={participant}
 											>

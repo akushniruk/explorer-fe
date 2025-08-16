@@ -24,7 +24,7 @@
 
 	const columns: Column[] = [
 		{ key: 'channel_id', label: 'Channel ID', sortable: true },
-		{ key: 'participants', label: 'Participants', sortable: false },
+		{ key: 'participants', label: 'Addresses', sortable: false },
 		{ key: 'amount', label: 'Amount', sortable: true, align: 'right' },
 		{ key: 'status', label: 'Status', sortable: true },
 		{ key: 'chain_id', label: 'Chain', sortable: false },
@@ -120,7 +120,7 @@
 								<div class="flex items-center gap-2">
 									<span class="text-muted-foreground text-xs">From:</span>
 									<a
-										href={`/participant/${channel.wallet}`}
+										href={`/address/${channel.wallet}`}
 										class="font-mono text-foreground hover:text-foreground cursor-pointer"
 										title={channel.wallet}
 									>
@@ -131,7 +131,7 @@
 								<div class="flex items-center gap-2">
 									<span class="text-muted-foreground text-xs">To:</span>
 									<a
-										href={`/participant/${channel.participant}`}
+										href={`/address/${channel.participant}`}
 										class="font-mono text-foreground hover:text-foreground cursor-pointer"
 										title={channel.participant}
 									>

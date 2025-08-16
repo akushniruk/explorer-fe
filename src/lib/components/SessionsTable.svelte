@@ -24,7 +24,7 @@
 	const columns: Column[] = [
 		{ key: 'session_id', label: 'Session ID', sortable: true },
 		{ key: 'protocol', label: 'Protocol', sortable: false },
-		{ key: 'participants', label: 'Participants', sortable: false },
+		{ key: 'participants', label: 'Addresses', sortable: false },
 		{ key: 'channel_id', label: 'Channel', sortable: false },
 		{ key: 'status', label: 'Status', sortable: true },
 		{ key: 'updated_at', label: 'Updated', sortable: true }
@@ -124,7 +124,7 @@
 									<div class="flex items-center gap-2">
 										<span class="text-muted-foreground text-xs">#{i + 1}:</span>
 										<a
-											href={`/participant/${participant}`}
+											href={`/address/${participant}`}
 											class="font-mono text-foreground hover:text-foreground cursor-pointer"
 											title={participant}
 										>

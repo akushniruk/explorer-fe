@@ -186,7 +186,7 @@
 				<p class="m-0">ynscan © 2025</p>
 				<!-- <p class="m-0 text-center md:text-right">
 					Donations:
-					<a href="/participant/0x71c7656ec7ab88b098defb751b7401b5f6d8976f" class="underline">
+					<a href="/address/0x71c7656ec7ab88b098defb751b7401b5f6d8976f" class="underline">
 						0x71c765...d8976f
 					</a>
 					<Heart class="w-3 h-3 inline" aria-hidden="true" />

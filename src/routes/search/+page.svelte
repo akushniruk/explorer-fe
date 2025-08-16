@@ -9,6 +9,7 @@
 	import SearchTable from '$lib/components/SearchTable.svelte';
 	import SearchAutocomplete from '$lib/components/SearchAutocomplete.svelte';
 	import ChannelsPagination from '$lib/components/ChannelsPagination.svelte';
+	import AddressAvatar from '$lib/components/ui/AddressAvatar.svelte';
 
 	export let data: {
 		query: string;
@@ -55,7 +56,7 @@
 
 	const channelColumns = [
 		{ key: 'channel_id', label: 'Channel ID', sortable: false },
-		{ key: 'participants', label: 'Participants', sortable: false },
+		{ key: 'participants', label: 'Addresses', sortable: false },
 		{ key: 'amount', label: 'Amount', sortable: false },
 		{ key: 'status', label: 'Status', sortable: false },
 		{ key: 'updated_at', label: 'Updated', sortable: false }
@@ -64,7 +65,7 @@
 	const sessionColumns = [
 		{ key: 'session_id', label: 'Session ID', sortable: false },
 		{ key: 'protocol', label: 'Protocol', sortable: false },
-		{ key: 'participants', label: 'Participants', sortable: false },
+		{ key: 'participants', label: 'Addresses', sortable: false },
 		{ key: 'status', label: 'Status', sortable: false },
 		{ key: 'updated_at', label: 'Updated', sortable: false }
 	];
@@ -74,7 +75,7 @@
 	<title>Search: {data.query} | ynscan - The Yellow Network Scanner</title>
 	<meta
 		name="description"
-		content="Search results for {data.query} on The Yellow Network. Find channels, sessions, participants, and assets quickly."
+		content="Search results for {data.query} on The Yellow Network. Find channels, sessions, addresses, and assets quickly."
 	/>
 	<link rel="canonical" href="https://ynscan.xyz/search" />
 </svelte:head>
@@ -90,7 +91,7 @@
 			</p>
 		{:else}
 			<p class="text-muted-foreground">
-				Enter a search term to find channels, sessions, or participants
+				Enter a search term to find channels, sessions, or addresses
 			</p>
 		{/if}
 	</div>
@@ -104,7 +105,7 @@
 					<label for="search" class="block text-sm font-medium mb-2">Search Term</label>
 					<SearchAutocomplete
 						bind:value={searchInput}
-						placeholder="Channel ID, Session ID, or Participant Address..."
+						placeholder="Channel ID, Session ID, or Address..."
 						on:search={handleAutocompleteSearch}
 						on:select={handleSuggestionSelect}
 					/>
@@ -121,7 +122,7 @@
 						<option value="all">All</option>
 						<option value="channels">Channels</option>
 						<option value="sessions">Sessions</option>
-						<option value="participants">Participants</option>
+						<option value="participants">Addresses</option>
 					</select>
 				</div>
 
@@ -160,7 +161,7 @@
 					{/if}
 					{#if data.results.participants.length > 0}
 						<div class="flex items-center gap-2">
-							<span class="text-sm text-muted-foreground">Participants:</span>
+							<span class="text-sm text-muted-foreground">Addresses:</span>
 							<Badge class="bg-secondary text-secondary-foreground"
 								>{data.results.participants.length}</Badge
 							>
@@ -214,7 +215,7 @@
 					<div class="flex items-center justify-between mb-4">
 						<h2 class="text-xl font-semibold flex items-center gap-2">
 							<User class="w-5 h-5 text-muted-foreground" />
-							Participants ({data.results.participants.length})
+							Addresses ({data.results.participants.length})
 						</h2>
 					</div>
 					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -223,19 +224,15 @@
 								class="bg-card border border-border rounded-lg p-4 hover:shadow-md transition-all hover:border-muted-foreground"
 							>
 								<div class="flex items-center gap-3">
-									<div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
-										<span class="text-secondary-foreground font-bold text-sm">
-											{participant.slice(2, 4).toUpperCase()}
-										</span>
-									</div>
+									<AddressAvatar address={participant} size={40} />
 									<div class="flex-1 min-w-0">
 										<a
-											href={`/participant/${participant}`}
+											href={`/address/${participant}`}
 											class="block font-mono text-sm text-foreground hover:text-foreground truncate font-medium"
 										>
 											{participant}
 										</a>
-										<div class="text-xs text-muted-foreground">View participant activity</div>
+										<div class="text-xs text-muted-foreground">View address activity</div>
 									</div>
 									<div class="flex-shrink-0">
 										<svg
@@ -293,7 +290,7 @@
 							</li>
 							<li class="flex items-start gap-2">
 								<span class="text-muted-foreground">•</span>
-								<span>Search by participant wallet addresses</span>
+								<span>Search by wallet addresses</span>
 							</li>
 							<li class="flex items-start gap-2">
 								<span class="text-muted-foreground">•</span>

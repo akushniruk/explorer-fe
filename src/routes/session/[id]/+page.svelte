@@ -2,6 +2,7 @@
 	import { shortHex, timeAgo } from '$lib/format';
 	import type { AppSession } from '$lib/types';
 	import { FileText, Users, Clock } from 'lucide-svelte';
+	import AddressAvatar from '$lib/components/ui/AddressAvatar.svelte';
 
 	export let data: {
 		session: AppSession | null;
@@ -76,7 +77,7 @@
 				<div class="text-2xl font-bold text-brand mb-1">
 					{data.session.participants?.length || 0}
 				</div>
-				<div class="text-sm text-muted-foreground">Participants</div>
+				<div class="text-sm text-muted-foreground">Addresses</div>
 			</div>
 			<div class="bg-card border border-border rounded-lg p-6 text-center">
 				<div class="flex items-center justify-center mb-2">
@@ -111,22 +112,18 @@
 				<div class="p-4 border-b border-border">
 					<h2 class="text-lg font-semibold flex items-center gap-2">
 						<Users class="w-5 h-5" />
-						Participants
+						Addresses
 					</h2>
 				</div>
 				<div class="p-6 space-y-4">
 					{#if data.session.participants && data.session.participants.length > 0}
 						{#each data.session.participants as participant, index}
 							<div class="flex items-center gap-3">
-								<div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
-									<span class="text-secondary-foreground font-bold text-sm">
-										{participant.slice(2, 4).toUpperCase()}
-									</span>
-								</div>
+								<AddressAvatar address={participant} size={40} />
 								<div class="flex-1 min-w-0">
-									<div class="text-xs text-muted-foreground mb-1">Participant {index + 1}</div>
+									<div class="text-xs text-muted-foreground mb-1">Address {index + 1}</div>
 									<a
-										href={`/participant/${participant}`}
+										href={`/address/${participant}`}
 										class="font-mono text-sm text-brand hover:text-brand/80 block truncate"
 									>
 										{participant}
@@ -143,7 +140,7 @@
 					{:else}
 						<div class="text-center py-8 text-muted-foreground">
 							<Users class="w-12 h-12 mx-auto mb-4 opacity-50" />
-							<p>No participants found</p>
+							<p>No addresses found</p>
 						</div>
 					{/if}
 				</div>

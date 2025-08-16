@@ -36,13 +36,13 @@
 						<div class="text-xs text-muted-foreground mt-1">
 							{#if s.participants && s.participants.length > 0}
 								<a
-									href={`/participant/${s.participants[0]}`}
+									href={`/address/${s.participants[0]}`}
 									class="font-mono text-brand hover:text-brand/80 cursor-pointer"
 									>{shortHex(s.participants[0], 6, 4)}</a
 								>
 								{#if s.participants.length > 1}
 									& <a
-										href={`/participant/${s.participants[1]}`}
+										href={`/address/${s.participants[1]}`}
 										class="font-mono text-brand hover:text-brand/80 cursor-pointer"
 										>{shortHex(s.participants[1], 6, 4)}</a
 									>

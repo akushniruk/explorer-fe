@@ -3,6 +3,7 @@
 	import type { Channel } from '$lib/types';
 
 	export let channels: Channel[];
+	console.log('channels', channels);
 </script>
 
 <!-- Latest Channels -->
@@ -35,13 +36,13 @@
 						</div>
 						<div class="text-xs text-muted-foreground mt-1">
 							From <a
-								href={`/participant/${ch.wallet}`}
+								href={`/address/${ch.wallet}`}
 								class="font-mono text-brand hover:text-brand/80 cursor-pointer"
 								>{shortHex(ch.wallet, 6, 4)}</a
 							>
 							to
 							<a
-								href={`/participant/${ch.participant}`}
+								href={`/address/${ch.participant}`}
 								class="font-mono text-brand hover:text-brand/80 cursor-pointer"
 								>{shortHex(ch.participant, 6, 4)}</a
 							>

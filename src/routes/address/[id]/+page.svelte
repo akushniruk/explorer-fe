@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { shortHex, formatAmount, timeAgo } from '$lib/format';
 	import type { Channel, AppSession } from '$lib/types';
+	import AddressAvatar from '$lib/components/ui/AddressAvatar.svelte';
 
 	export let data: {
 		participantId: string;
@@ -18,25 +19,21 @@
 </script>
 
 <svelte:head>
-	<title>Participant {shortHex(data.participantId, 8, 6)} | ynscan</title>
+	<title>Address {shortHex(data.participantId, 8, 6)} | ynscan</title>
 	<meta
 		name="description"
-		content="View participant details and activity on The Yellow Network. Channel participation, session history, and network statistics."
+		content="View address details and activity on The Yellow Network. Channel participation, session history, and network statistics."
 	/>
-	<link rel="canonical" href="https://ynscan.xyz/participant/{data.participantId}" />
+	<link rel="canonical" href="https://ynscan.xyz/address/{data.participantId}" />
 </svelte:head>
 
 <div class="max-w-7xl mx-auto px-4">
 	<!-- Header -->
 	<div class="mb-8">
 		<div class="flex items-start gap-4 mb-4">
-			<div class="w-16 h-16 bg-brand/20 rounded-full flex items-center justify-center">
-				<span class="text-brand font-bold text-xl">
-					{data.participantId.slice(2, 4).toUpperCase()}
-				</span>
-			</div>
+			<AddressAvatar address={data.participantId} size={64} />
 			<div class="flex-1">
-				<h1 class="text-3xl font-bold mb-2">Participant Details</h1>
+				<h1 class="text-3xl font-bold mb-2">Address Details</h1>
 				<div class="flex items-center gap-2 mb-2">
 					<span class="text-muted-foreground">Address:</span>
 					<code class="font-mono text-lg bg-accent/50 px-3 py-1 rounded text-accent-foreground">
@@ -172,7 +169,7 @@
 									{shortHex(session.session_id, 8, 6)}
 								</a>
 								<div class="text-xs text-muted-foreground mt-1">
-									{session.participants.length} participants
+									{session.participants.length} addresses
 								</div>
 							</div>
 							<div class="text-right">
@@ -211,7 +208,7 @@
 							<th
 								class="px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider"
 							>
-								Counterparty
+								Address
 							</th>
 							<th
 								class="px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider"
@@ -245,7 +242,7 @@
 								</td>
 								<td class="px-6 py-4 whitespace-nowrap">
 									<a
-										href={`/participant/${counterparty}`}
+										href={`/address/${counterparty}`}
 										class="font-mono text-sm text-brand hover:text-brand/80"
 									>
 										{shortHex(counterparty, 6, 4)}
@@ -276,7 +273,7 @@
 						{:else}
 							<tr>
 								<td colspan="5" class="px-6 py-8 text-center text-muted-foreground">
-									No channels found for this participant.
+									No channels found for this address.
 								</td>
 							</tr>
 						{/each}
@@ -304,7 +301,7 @@
 							<th
 								class="px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider"
 							>
-								Other Participants
+								Other Addresses
 							</th>
 							<th
 								class="px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider"
@@ -341,7 +338,7 @@
 									<div class="text-sm space-y-1">
 										{#each otherParticipants.slice(0, 2) as participant}
 											<a
-												href={`/participant/${participant}`}
+												href={`/address/${participant}`}
 												class="block font-mono text-brand hover:text-brand/80"
 											>
 												{shortHex(participant, 6, 4)}
@@ -374,7 +371,7 @@
 						{:else}
 							<tr>
 								<td colspan="5" class="px-6 py-8 text-center text-muted-foreground">
-									No sessions found for this participant.
+									No sessions found for this address.
 								</td>
 							</tr>
 						{/each}

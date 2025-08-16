@@ -117,7 +117,7 @@
 							</div>
 							<div>
 								<a
-									href={`/participant/${data.channel.wallet}`}
+									href={`/address/${data.channel.wallet}`}
 									class="font-mono text-brand hover:text-brand/80"
 								>
 									{data.channel.wallet}
@@ -144,7 +144,7 @@
 							</div>
 							<div>
 								<a
-									href={`/participant/${data.channel.participant}`}
+									href={`/address/${data.channel.participant}`}
 									class="font-mono text-brand hover:text-brand/80"
 								>
 									{data.channel.participant}
