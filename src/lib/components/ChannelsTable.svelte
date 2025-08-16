@@ -6,6 +6,7 @@
 	import CopyButton from '$lib/components/ui/CopyButton.svelte';
 	import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-svelte';
 	import type { Channel } from '$lib/types';
+	import Chain from './Chain.svelte';
 
 	export let channels: Channel[] = [];
 	export let sortKey = '';
@@ -13,6 +14,7 @@
 	export let onSort: ((key: string) => void) | null = null;
 	export let loading = false;
 	export let emptyMessage = 'No channels found for your filters.';
+	export let pageSize = 25;
 
 	type Column = {
 		key: string;
@@ -23,12 +25,12 @@
 	};
 
 	const columns: Column[] = [
-		{ key: 'channel_id', label: 'Channel ID', sortable: true },
+		{ key: 'channel_id', label: 'Channel ID', sortable: false },
 		{ key: 'participants', label: 'Addresses', sortable: false },
-		{ key: 'amount', label: 'Amount', sortable: true, align: 'right' },
-		{ key: 'status', label: 'Status', sortable: true },
+		{ key: 'amount', label: 'Amount', sortable: false, align: 'right' },
+		{ key: 'status', label: 'Status', sortable: false },
 		{ key: 'chain_id', label: 'Chain', sortable: false },
-		{ key: 'updated_at', label: 'Updated', sortable: true }
+		{ key: 'updated_at', label: 'Updated', sortable: false }
 	];
 
 	function triggerSort(col: Column) {
@@ -82,13 +84,51 @@
 		</Table.Header>
 		<Table.Body>
 			{#if loading}
-				{#each Array(10) as _}
-					<Table.Row>
-						{#each columns as _}
-							<Table.Cell>
-								<div class="h-4 w-3/4 animate-pulse rounded bg-muted"></div>
-							</Table.Cell>
-						{/each}
+				{#each Array(pageSize) as _}
+					<Table.Row class="hover:bg-muted/50 h-[76px]">
+						<!-- Channel ID -->
+						<Table.Cell class="font-mono">
+							<div class="flex items-center gap-2">
+								<div class="h-4 w-40 animate-pulse rounded bg-muted"></div>
+								<div class="h-4 w-4 animate-pulse rounded bg-muted"></div>
+							</div>
+						</Table.Cell>
+
+						<!-- Participants -->
+						<Table.Cell>
+							<div class="space-y-1 text-sm">
+								<div class="flex items-center gap-2">
+									<div class="h-3 w-5 animate-pulse rounded bg-muted"></div>
+									<div class="h-4 w-20 animate-pulse rounded bg-muted"></div>
+									<div class="h-4 w-4 animate-pulse rounded bg-muted"></div>
+								</div>
+								<div class="flex items-center gap-2">
+									<div class="h-3 w-5 animate-pulse rounded bg-muted"></div>
+									<div class="h-4 w-20 animate-pulse rounded bg-muted"></div>
+									<div class="h-4 w-4 animate-pulse rounded bg-muted"></div>
+								</div>
+							</div>
+						</Table.Cell>
+
+						<!-- Amount -->
+						<Table.Cell class="text-right">
+							<div class="h-4 w-24 animate-pulse rounded bg-muted ml-auto"></div>
+						</Table.Cell>
+
+						<!-- Status -->
+						<Table.Cell>
+							<div class="h-6 w-16 animate-pulse rounded-full bg-muted"></div>
+						</Table.Cell>
+
+						<!-- Chain -->
+						<Table.Cell>
+							<div class="h-6 w-20 animate-pulse rounded bg-muted"></div>
+						</Table.Cell>
+
+						<!-- Updated -->
+						<Table.Cell>
+							<div class="h-4 w-32 animate-pulse rounded bg-muted"></div>
+						</Table.Cell>
 					</Table.Row>
 				{/each}
 			{:else if channels.length === 0}
@@ -105,7 +145,7 @@
 							<div class="flex items-center gap-2">
 								<a
 									href={`/channel/${channel.channel_id}`}
-									class="text-foreground hover:text-foreground text-sm cursor-pointer"
+									class="text-foreground underline hover:text-foreground text-sm cursor-pointer"
 									title={channel.channel_id}
 								>
 									{shortHex(channel.channel_id, 12, 8)}
@@ -118,10 +158,10 @@
 						<Table.Cell>
 							<div class="space-y-1 text-sm">
 								<div class="flex items-center gap-2">
-									<span class="text-muted-foreground text-xs">From:</span>
+									<span class="text-muted-foreground text-xs">#1</span>
 									<a
 										href={`/address/${channel.wallet}`}
-										class="font-mono text-foreground hover:text-foreground cursor-pointer"
+										class="font-mono underline text-foreground hover:text-foreground cursor-pointer"
 										title={channel.wallet}
 									>
 										{shortHex(channel.wallet, 6, 4)}
@@ -129,10 +169,10 @@
 									<CopyButton value={channel.wallet} />
 								</div>
 								<div class="flex items-center gap-2">
-									<span class="text-muted-foreground text-xs">To:</span>
+									<span class="text-muted-foreground text-xs">#2</span>
 									<a
 										href={`/address/${channel.participant}`}
-										class="font-mono text-foreground hover:text-foreground cursor-pointer"
+										class="font-mono underline text-foreground hover:text-foreground cursor-pointer"
 										title={channel.participant}
 									>
 										{shortHex(channel.participant, 6, 4)}
@@ -144,34 +184,28 @@
 
 						<!-- Amount -->
 						<Table.Cell class="text-right">
-							<span class="font-mono text-sm">
+							<span class="font-mono text-sm uppercase">
 								{formatAmount(
 									channel.amount,
 									channel.asset?.decimals ? parseInt(channel.asset.decimals) : 18,
 									4
 								)}
-								{channel.asset?.symbol || 'ETH'}
+								{channel.asset?.symbol || ''}
 							</span>
 						</Table.Cell>
 
 						<!-- Status -->
 						<Table.Cell>
-							<Badge class={getStatusColor(channel.status)}>
-								{channel.status}
-							</Badge>
+							<Badge class={getStatusColor(channel.status)}>{channel.status}</Badge>
 						</Table.Cell>
-
-						<!-- Chain -->
 						<Table.Cell>
-							<span class="text-sm text-muted-foreground">Chain {channel.chain_id}</span>
+							<Chain chainId={Number(channel.chain_id)} />
 						</Table.Cell>
 
 						<!-- Updated -->
 						<Table.Cell>
 							<div class="text-sm text-muted-foreground" title={channel.updated_at}>
-								{channel.updated_at
-									? `${new Date(channel.updated_at).toLocaleString()} · ${timeAgo(channel.updated_at)}`
-									: '—'}
+								{channel.updated_at ? `${new Date(channel.updated_at).toLocaleString()}` : '—'}
 							</div>
 						</Table.Cell>
 					</Table.Row>

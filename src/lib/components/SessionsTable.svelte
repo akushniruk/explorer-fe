@@ -12,6 +12,7 @@
 	export let onSort: ((key: string) => void) | null = null;
 	export let loading = false;
 	export let emptyMessage = 'No sessions found for your filters.';
+	export let pageSize = 25;
 
 	type Column = {
 		key: string;
@@ -81,13 +82,50 @@
 		</Table.Header>
 		<Table.Body>
 			{#if loading}
-				{#each Array(10) as _}
-					<Table.Row>
-						{#each columns as _}
-							<Table.Cell>
-								<div class="h-4 w-3/4 animate-pulse rounded bg-gray-200"></div>
-							</Table.Cell>
-						{/each}
+				{#each Array(pageSize) as _}
+					<Table.Row class="hover:bg-muted/50 h-[76px]">
+						<!-- Session ID -->
+						<Table.Cell class="font-mono">
+							<div class="h-4 w-40 animate-pulse rounded bg-muted"></div>
+						</Table.Cell>
+
+						<!-- Protocol -->
+						<Table.Cell>
+							<div class="h-6 w-20 animate-pulse rounded-full bg-muted"></div>
+						</Table.Cell>
+
+						<!-- Participants -->
+						<Table.Cell>
+							<div class="text-sm space-y-1">
+								<div class="flex items-center gap-2">
+									<div class="h-3 w-6 animate-pulse rounded bg-muted"></div>
+									<div class="h-4 w-16 animate-pulse rounded bg-muted"></div>
+								</div>
+								<div class="flex items-center gap-2">
+									<div class="h-3 w-6 animate-pulse rounded bg-muted"></div>
+									<div class="h-4 w-16 animate-pulse rounded bg-muted"></div>
+								</div>
+								<div class="flex items-center gap-2">
+									<div class="h-3 w-6 animate-pulse rounded bg-muted"></div>
+									<div class="h-4 w-16 animate-pulse rounded bg-muted"></div>
+								</div>
+							</div>
+						</Table.Cell>
+
+						<!-- Channel -->
+						<Table.Cell class="font-mono">
+							<div class="h-4 w-24 animate-pulse rounded bg-muted"></div>
+						</Table.Cell>
+
+						<!-- Status -->
+						<Table.Cell>
+							<div class="h-6 w-16 animate-pulse rounded-full bg-muted"></div>
+						</Table.Cell>
+
+						<!-- Updated -->
+						<Table.Cell>
+							<div class="h-4 w-20 animate-pulse rounded bg-muted"></div>
+						</Table.Cell>
 					</Table.Row>
 				{/each}
 			{:else if sessions.length === 0}

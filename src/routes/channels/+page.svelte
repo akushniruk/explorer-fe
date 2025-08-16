@@ -4,47 +4,77 @@
 	import ChannelsTable from '$lib/components/ChannelsTable.svelte';
 	import ChannelsPagination from '$lib/components/ChannelsPagination.svelte';
 	import type { PageData } from './$types';
+	import type { Channel } from '$lib/types';
 
 	export let data: PageData;
 
-	// read from URL (single source of truth)
-	function qp(name: string, fallback = '') {
-		return $page.url.searchParams.get(name) ?? fallback;
-	}
-	$: q = qp('q', '');
-	$: status = qp('status', 'all');
-	$: sortBy = qp('sortBy', qp('sort', 'updated_at'));
-	$: sortOrder = qp('sortOrder', qp('order', 'desc')) as 'asc' | 'desc';
+	// Simple reactive state
+	let channels: Channel[] = data.channels;
+	let total = data.total;
+	let currentPage = data.page;
+	let limit = data.limit;
+	let loading = false;
 
-	function setQuery(updates: Record<string, string | number | null>) {
-		const url = new URL($page.url);
-		for (const [k, v] of Object.entries(updates)) {
-			if (v === null || v === '' || v === undefined) url.searchParams.delete(k);
-			else url.searchParams.set(k, String(v));
+	// Read filters from URL
+	$: q = $page.url.searchParams.get('q') ?? '';
+	$: status = $page.url.searchParams.get('status') ?? 'all';
+	$: sortBy = $page.url.searchParams.get('sort') ?? 'updated_at';
+	$: sortOrder = ($page.url.searchParams.get('order') ?? 'desc') as 'asc' | 'desc';
+
+	async function fetchChannels() {
+		loading = true;
+		try {
+			const params = new URLSearchParams();
+			params.set('page', currentPage.toString());
+			params.set('limit', limit.toString());
+			if (q) params.set('q', q);
+			if (status && status !== 'all') params.set('status', status);
+			if (sortBy) params.set('sort', sortBy);
+			if (sortOrder) params.set('order', sortOrder);
+
+			const response = await fetch(
+				`http://localhost:3000/api/v1/channel/list?${params.toString()}`
+			);
+			const result = await response.json();
+
+			if (result.success) {
+				channels = result.data;
+				total = result.meta.pagination.total;
+			}
+		} catch (error) {
+			console.error('Failed to fetch channels:', error);
+		} finally {
+			loading = false;
 		}
-		// reset page on filter/sort change unless explicitly set
-		if (!('page' in updates)) url.searchParams.set('page', '1');
-		goto(url, { keepFocus: true, replaceState: true });
 	}
 
-	// debounced search
-	let t: ReturnType<typeof setTimeout> | null = null;
-	function onSearchInput(val: string) {
-		if (t) clearTimeout(t);
-		t = setTimeout(() => setQuery({ q: val }), 250);
+	function updateUrl() {
+		const url = new URL($page.url);
+		url.searchParams.set('page', currentPage.toString());
+		url.searchParams.set('limit', limit.toString());
+		history.replaceState(null, '', url);
+	}
+
+	async function onPageChange(p: number) {
+		currentPage = p;
+		updateUrl();
+		await fetchChannels();
+	}
+
+	async function onPageSizeChange(size: number) {
+		limit = size;
+		currentPage = 1;
+		updateUrl();
+		await fetchChannels();
 	}
 
 	function onSort(key: string) {
 		const next = sortBy === key ? (sortOrder === 'desc' ? 'asc' : 'desc') : 'desc';
-		// prefer canonical backend params: sort + order
-		setQuery({ sort: key, order: next, sortBy: null, sortOrder: null });
-	}
-
-	function onPageChange(p: number) {
-		setQuery({ page: p });
-	}
-	function onPageSizeChange(size: number) {
-		setQuery({ limit: size, page: 1 });
+		const url = new URL($page.url);
+		url.searchParams.set('sort', key);
+		url.searchParams.set('order', next);
+		url.searchParams.set('page', '1');
+		goto(url, { keepFocus: true, replaceState: true });
 	}
 </script>
 
@@ -64,20 +94,25 @@
 
 	<!-- Table -->
 	<ChannelsTable
-		channels={data.channels}
+		{channels}
 		sortKey={sortBy}
 		sortDirection={sortOrder}
 		{onSort}
 		emptyMessage="No channels found for your filters."
+		{loading}
+		pageSize={limit}
 	/>
 
 	<!-- Bottom pagination -->
-	<ChannelsPagination
-		currentPage={data.page}
-		totalPages={Math.max(1, Math.ceil(data.total / data.limit))}
-		totalRecords={data.total}
-		recordsPerPage={data.limit}
-		{onPageChange}
-		{onPageSizeChange}
-	/>
+	{#key `${currentPage}-${limit}-${total}`}
+		<ChannelsPagination
+			{currentPage}
+			totalPages={Math.max(1, Math.ceil(total / limit))}
+			totalRecords={total}
+			recordsPerPage={limit}
+			{onPageChange}
+			{onPageSizeChange}
+			{loading}
+		/>
+	{/key}
 </div>

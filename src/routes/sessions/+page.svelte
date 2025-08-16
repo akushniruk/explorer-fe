@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import SessionsTable from '$lib/components/SessionsTable.svelte';
 	import ChannelsPagination from '$lib/components/ChannelsPagination.svelte';
 	import type { AppSession } from '$lib/types';
@@ -10,50 +12,83 @@
 		limit: number;
 	};
 
-	let searchQuery = '';
-	let statusFilter = 'all';
-	let protocolFilter = 'all';
-	let sortBy = 'updated_at';
-	let sortOrder: 'asc' | 'desc' = 'desc';
+	// Simple reactive state
+	let sessions: AppSession[] = data.sessions;
+	let total = data.total;
+	let currentPage = data.page;
+	let limit = data.limit;
+	let loading = false;
 
-	// Extract unique protocols for filter
-	$: protocols = [...new Set(data.sessions.map((s) => s.protocol || 'unknown'))];
+	$: totalPages = Math.max(1, Math.ceil(total / limit));
 
-	// Client-side filtering
-	$: filteredSessions = data.sessions.filter((session) => {
-		const matchesSearch =
-			searchQuery === '' ||
-			session.session_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			session.channel_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			session.participants.some((p) => p.toLowerCase().includes(searchQuery.toLowerCase()));
+	// Read filters from URL
+	$: q = $page.url.searchParams.get('q') ?? '';
+	$: status = $page.url.searchParams.get('status') ?? 'all';
+	$: sortBy = $page.url.searchParams.get('sort') ?? 'updated_at';
+	$: sortOrder = ($page.url.searchParams.get('order') ?? 'desc') as 'asc' | 'desc';
 
-		const matchesStatus = statusFilter === 'all' || session.status === statusFilter;
-		const matchesProtocol =
-			protocolFilter === 'all' || (session.protocol || 'unknown') === protocolFilter;
+	async function fetchSessions() {
+		loading = true;
+		try {
+			const params = new URLSearchParams();
+			params.set('page', currentPage.toString());
+			params.set('limit', limit.toString());
+			if (q) params.set('q', q);
+			if (status && status !== 'all') params.set('status', status);
+			if (sortBy) params.set('sort', sortBy);
+			if (sortOrder) params.set('order', sortOrder);
 
-		return matchesSearch && matchesStatus && matchesProtocol;
-	});
+			const response = await fetch(
+				`http://localhost:3000/api/v1/app-session/list?${params.toString()}`
+			);
+			const result = await response.json();
 
-	function handleSort(key: string) {
-		if (sortBy === key) {
-			sortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
-		} else {
-			sortBy = key;
-			sortOrder = 'desc';
+			if (result.success) {
+				sessions = result.data;
+				total = result.meta.pagination.total;
+			}
+		} catch (error) {
+			console.error('Failed to fetch sessions:', error);
+		} finally {
+			loading = false;
 		}
 	}
 
-	function handlePageChange(page: number) {
-		const url = new URL(window.location.href);
-		url.searchParams.set('page', page.toString());
-		window.location.href = url.toString();
+	function updateUrl() {
+		const url = new URL($page.url);
+		url.searchParams.set('page', currentPage.toString());
+		url.searchParams.set('limit', limit.toString());
+		history.replaceState(null, '', url);
 	}
 
-	function handlePageSizeChange(size: number) {
-		const url = new URL(window.location.href);
+	async function onPageChange(p: number) {
+		currentPage = p;
+		updateUrl();
+		await fetchSessions();
+	}
+
+	async function onPageSizeChange(size: number) {
+		const currentRecord = (currentPage - 1) * limit + 1;
+		const newPage = Math.max(1, Math.ceil(currentRecord / size));
+
+		currentPage = newPage;
+		limit = size;
+
+		const url = new URL($page.url);
 		url.searchParams.set('limit', size.toString());
+		url.searchParams.set('page', newPage.toString());
+		history.replaceState(null, '', url);
+
+		await fetchSessions();
+	}
+
+	function onSort(key: string) {
+		const next = sortBy === key ? (sortOrder === 'desc' ? 'asc' : 'desc') : 'desc';
+		const url = new URL($page.url);
+		url.searchParams.set('sort', key);
+		url.searchParams.set('order', next);
 		url.searchParams.set('page', '1');
-		window.location.href = url.toString();
+		goto(url, { keepFocus: true, replaceState: true });
 	}
 </script>
 
@@ -70,20 +105,25 @@
 
 	<!-- Sessions Table -->
 	<SessionsTable
-		sessions={filteredSessions}
+		{sessions}
 		sortKey={sortBy}
 		sortDirection={sortOrder}
-		onSort={handleSort}
+		{onSort}
 		emptyMessage="No sessions found matching your filters."
+		pageSize={limit}
+		{loading}
 	/>
 
 	<!-- Pagination -->
-	<ChannelsPagination
-		currentPage={data.page}
-		totalPages={Math.ceil(data.total / data.limit)}
-		totalRecords={data.total}
-		recordsPerPage={data.limit}
-		onPageChange={handlePageChange}
-		onPageSizeChange={handlePageSizeChange}
-	/>
+	{#key `${currentPage}-${limit}-${total}`}
+		<ChannelsPagination
+			{currentPage}
+			totalPages={Math.max(1, Math.ceil(total / limit))}
+			totalRecords={total}
+			recordsPerPage={limit}
+			{onPageChange}
+			{onPageSizeChange}
+			{loading}
+		/>
+	{/key}
 </div>
