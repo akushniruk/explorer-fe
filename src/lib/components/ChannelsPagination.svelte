@@ -95,7 +95,6 @@
 						<option value={option}>{option}</option>
 					{/each}
 				</select>
-				<span class="text-sm text-muted-foreground">records</span>
 			</div>
 		{/if}
 
@@ -119,12 +118,7 @@
 				class="cursor-pointer disabled:cursor-not-allowed"
 			>
 				<ChevronLeft class="h-4 w-4" />
-				Previous
 			</Button>
-
-			<div class="mx-2 text-sm text-muted-foreground hidden sm:block">
-				Page {currentPage.toLocaleString()} of {calculatedTotalPages.toLocaleString()}
-			</div>
 
 			{#each visiblePages as p}
 				{#if p === '...'}
@@ -149,7 +143,6 @@
 				onclick={() => safeChange(currentPage + 1)}
 				class="cursor-pointer disabled:cursor-not-allowed"
 			>
-				Next
 				<ChevronRight class="h-4 w-4" />
 			</Button>
 

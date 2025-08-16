@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { shortHex, timeAgo } from '$lib/format';
-	import { Button } from '$lib/components/ui/button';
 	import * as Table from '$lib/components/ui/table';
 	import { Badge } from '$lib/components/ui/badge';
 	import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-svelte';
@@ -23,12 +22,12 @@
 	};
 
 	const columns: Column[] = [
-		{ key: 'session_id', label: 'Session ID', sortable: true },
+		{ key: 'session_id', label: 'Session ID', sortable: false },
 		{ key: 'protocol', label: 'Protocol', sortable: false },
 		{ key: 'participants', label: 'Addresses', sortable: false },
-		{ key: 'channel_id', label: 'Channel', sortable: false },
-		{ key: 'status', label: 'Status', sortable: true },
-		{ key: 'updated_at', label: 'Updated', sortable: true }
+		// { key: 'channel_id', label: 'Channel', sortable: false },
+		{ key: 'status', label: 'Status', sortable: false },
+		{ key: 'updated_at', label: 'Updated', sortable: false }
 	];
 
 	function triggerSort(col: Column) {
@@ -112,10 +111,10 @@
 							</div>
 						</Table.Cell>
 
-						<!-- Channel -->
+						<!-- Channel
 						<Table.Cell class="font-mono">
 							<div class="h-4 w-24 animate-pulse rounded bg-muted"></div>
-						</Table.Cell>
+						</Table.Cell> -->
 
 						<!-- Status -->
 						<Table.Cell>
@@ -179,7 +178,7 @@
 						</Table.Cell>
 
 						<!-- Channel -->
-						<Table.Cell class="font-mono">
+						<!-- <Table.Cell class="font-mono">
 							{#if session.channel_id}
 								<a
 									href={`/channel/${session.channel_id}`}
@@ -191,7 +190,7 @@
 							{:else}
 								<span class="text-muted-foreground text-sm">—</span>
 							{/if}
-						</Table.Cell>
+						</Table.Cell> -->
 
 						<!-- Status -->
 						<Table.Cell>
