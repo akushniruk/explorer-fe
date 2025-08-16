@@ -68,7 +68,6 @@
 			<!-- Top bar -->
 			<div class="flex items-center justify-between py-2 text-xs sm:text-sm">
 				<div class="flex items-center gap-3">
-					<span class="text-muted-foreground">The Yellow Network Explorer</span>
 					<div class="hidden sm:flex items-center gap-2">
 						<span class="inline-block w-2 h-2 rounded-full bg-green-500"></span>
 						<span class="text-muted-foreground">Online</span>
@@ -92,7 +91,7 @@
 						<button
 							type="button"
 							on:click={() => (showThemeDropdown = !showThemeDropdown)}
-							class="text-muted-foreground hover:text-foreground text-xs inline-flex items-center gap-1"
+							class="text-muted-foreground hover:text-foreground cursor-pointer inline-flex items-center gap-1"
 							aria-haspopup="menu"
 							aria-expanded={showThemeDropdown}
 						>
@@ -105,13 +104,13 @@
 
 						{#if showThemeDropdown}
 							<div
-								class="absolute top-full right-0 mt-1 rounded-lg border border-border bg-background shadow-lg z-50 min-w-[8rem]"
+								class="absolute top-full right-0 mt-1 cursor-pointer rounded-lg border border-border bg-background shadow-lg z-50 min-w-[8rem]"
 								role="menu"
 							>
 								<button
 									type="button"
 									on:click={() => setTheme('light')}
-									class="w-full px-3 py-2 text-xs text-left hover:bg-accent rounded-t-lg transition-colors {$theme ===
+									class="w-full px-3 py-2 text-xs text-left cursor-pointer hover:bg-accent rounded-t-lg transition-colors {$theme ===
 									'light'
 										? 'bg-accent'
 										: ''}"
@@ -122,7 +121,7 @@
 								<button
 									type="button"
 									on:click={() => setTheme('dark')}
-									class="w-full px-3 py-2 text-xs text-left hover:bg-accent rounded-b-lg transition-colors {$theme ===
+									class="w-full px-3 py-2 text-xs text-left cursor-pointer hover:bg-accent rounded-b-lg transition-colors {$theme ===
 									'dark'
 										? 'bg-accent'
 										: ''}"

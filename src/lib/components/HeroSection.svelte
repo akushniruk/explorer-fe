@@ -34,9 +34,7 @@
 	}
 </script>
 
-<section
-	class="hero-pattern relative z-0 border-b border-border/60 pt-12 pb-16 max-h-[274px] overflow-hidden"
->
+<section class="hero-pattern relative z-0 border-b border-border/60 pt-12 pb-16">
 	<div class="relative z-10 max-w-7xl mx-auto px-4">
 		<div class="flex items-center justify-between gap-6">
 			<div class="flex-1 max-w-2xl">
@@ -60,7 +58,7 @@
 						<button
 							type="button"
 							on:click={handleSearchClick}
-							class="inline-flex items-center justify-center px-4 py-2.5 rounded-md border border-border/60 bg-muted/20 hover:bg-muted/30 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring/20 transition-colors"
+							class="inline-flex cursor-pointer items-center justify-center px-4 py-2.5 rounded-md border border-border/60 bg-muted/20 hover:bg-muted/30 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring/20 transition-colors"
 							aria-label="Search"
 						>
 							<Search class="h-4 w-4 text-muted-foreground" aria-hidden="true" />
