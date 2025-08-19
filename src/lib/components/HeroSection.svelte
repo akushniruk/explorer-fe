@@ -34,7 +34,7 @@
 	}
 </script>
 
-<section class="hero-pattern relative z-0 border-b border-border/60 pt-12 pb-16">
+<section class="relative z-0 border-b border-border/60 pt-12 pb-16">
 	<div class="relative z-10 max-w-7xl mx-auto px-4">
 		<div class="flex items-center justify-between gap-6">
 			<div class="flex-1 max-w-2xl">
