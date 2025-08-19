@@ -3,7 +3,7 @@ import type { Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import { dev } from '$app/environment';
-import { env } from '$env/dynamic/private';
+import { env } from '$env/dynamic/public';
 
 const handleApi: Handle = ({ event, resolve }) => {
 	// Always use localhost:3000 for API in both dev and preview modes

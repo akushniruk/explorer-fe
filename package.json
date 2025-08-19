@@ -14,7 +14,7 @@
 		"test": "npm run test:unit -- --run && npm run test:e2e",
 		"test:e2e": "playwright test",
 		"dev": "vite",
-		"build": "vite build",
+		"build": "paraglide-js compile --outdir ./src/lib/paraglide --strategy cookie globalVariable baseLocale && vite build",
 		"start": "node build"
 	},
 	"devDependencies": {

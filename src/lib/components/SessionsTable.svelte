@@ -57,131 +57,132 @@
 </script>
 
 <div class="bg-card border border-border rounded-lg">
-	<Table.Root>
-		<Table.Header>
-			<Table.Row class="hover:bg-transparent border-b border-border">
-				{#each columns as column}
-					<Table.Head
-						class="h-12 {column.align === 'right' ? 'text-right' : 'text-left'} {column.sortable
-							? 'cursor-pointer select-none'
-							: ''}"
-						onclick={() => triggerSort(column)}
-					>
-						<div class="flex items-center gap-2 {column.align === 'right' ? 'justify-end' : ''}">
-							<span class="font-medium text-muted-foreground text-sm">{column.label}</span>
-							{#if column.sortable}
-								{@const IconComponent = getSortIcon(column)}
-								{#if IconComponent}
-									<IconComponent class="h-4 w-4 text-muted-foreground" />
+	<div class="overflow-x-auto">
+		<Table.Root class="min-w-[700px]">
+			<Table.Header>
+				<Table.Row class="hover:bg-transparent border-b border-border">
+					{#each columns as column}
+						<Table.Head
+							class="h-12 {column.align === 'right' ? 'text-right' : 'text-left'} {column.sortable
+								? 'cursor-pointer select-none'
+								: ''}"
+							onclick={() => triggerSort(column)}
+						>
+							<div class="flex items-center gap-2 {column.align === 'right' ? 'justify-end' : ''}">
+								<span class="font-medium text-muted-foreground text-sm">{column.label}</span>
+								{#if column.sortable}
+									{@const IconComponent = getSortIcon(column)}
+									{#if IconComponent}
+										<IconComponent class="h-4 w-4 text-muted-foreground" />
+									{/if}
 								{/if}
-							{/if}
-						</div>
-					</Table.Head>
-				{/each}
-			</Table.Row>
-		</Table.Header>
-		<Table.Body>
-			{#if loading}
-				{#each Array(pageSize) as _}
-					<Table.Row class="hover:bg-muted/50 h-[76px]">
-						<!-- Session ID -->
-						<Table.Cell class="font-mono">
-							<div class="h-4 w-40 animate-pulse rounded bg-muted"></div>
-						</Table.Cell>
-
-						<!-- Protocol -->
-						<Table.Cell>
-							<div class="h-6 w-20 animate-pulse rounded-full bg-muted"></div>
-						</Table.Cell>
-
-						<!-- Participants -->
-						<Table.Cell>
-							<div class="text-sm space-y-1">
-								<div class="flex items-center gap-2">
-									<div class="h-3 w-6 animate-pulse rounded bg-muted"></div>
-									<div class="h-4 w-16 animate-pulse rounded bg-muted"></div>
-								</div>
-								<div class="flex items-center gap-2">
-									<div class="h-3 w-6 animate-pulse rounded bg-muted"></div>
-									<div class="h-4 w-16 animate-pulse rounded bg-muted"></div>
-								</div>
-								<div class="flex items-center gap-2">
-									<div class="h-3 w-6 animate-pulse rounded bg-muted"></div>
-									<div class="h-4 w-16 animate-pulse rounded bg-muted"></div>
-								</div>
 							</div>
-						</Table.Cell>
+						</Table.Head>
+					{/each}
+				</Table.Row>
+			</Table.Header>
+			<Table.Body>
+				{#if loading}
+					{#each Array(pageSize) as _}
+						<Table.Row class="hover:bg-muted/50 h-[76px]">
+							<!-- Session ID -->
+							<Table.Cell class="font-mono">
+								<div class="h-4 w-40 animate-pulse rounded bg-muted"></div>
+							</Table.Cell>
 
-						<!-- Channel
+							<!-- Protocol -->
+							<Table.Cell>
+								<div class="h-6 w-20 animate-pulse rounded-full bg-muted"></div>
+							</Table.Cell>
+
+							<!-- Participants -->
+							<Table.Cell>
+								<div class="text-sm space-y-1">
+									<div class="flex items-center gap-2">
+										<div class="h-3 w-6 animate-pulse rounded bg-muted"></div>
+										<div class="h-4 w-16 animate-pulse rounded bg-muted"></div>
+									</div>
+									<div class="flex items-center gap-2">
+										<div class="h-3 w-6 animate-pulse rounded bg-muted"></div>
+										<div class="h-4 w-16 animate-pulse rounded bg-muted"></div>
+									</div>
+									<div class="flex items-center gap-2">
+										<div class="h-3 w-6 animate-pulse rounded bg-muted"></div>
+										<div class="h-4 w-16 animate-pulse rounded bg-muted"></div>
+									</div>
+								</div>
+							</Table.Cell>
+
+							<!-- Channel
 						<Table.Cell class="font-mono">
 							<div class="h-4 w-24 animate-pulse rounded bg-muted"></div>
 						</Table.Cell> -->
 
-						<!-- Status -->
-						<Table.Cell>
-							<div class="h-6 w-16 animate-pulse rounded-full bg-muted"></div>
-						</Table.Cell>
+							<!-- Status -->
+							<Table.Cell>
+								<div class="h-6 w-16 animate-pulse rounded-full bg-muted"></div>
+							</Table.Cell>
 
-						<!-- Updated -->
-						<Table.Cell>
-							<div class="h-4 w-20 animate-pulse rounded bg-muted"></div>
+							<!-- Updated -->
+							<Table.Cell>
+								<div class="h-4 w-20 animate-pulse rounded bg-muted"></div>
+							</Table.Cell>
+						</Table.Row>
+					{/each}
+				{:else if sessions.length === 0}
+					<Table.Row>
+						<Table.Cell colspan={columns.length} class="h-24 text-center text-muted-foreground">
+							{emptyMessage}
 						</Table.Cell>
 					</Table.Row>
-				{/each}
-			{:else if sessions.length === 0}
-				<Table.Row>
-					<Table.Cell colspan={columns.length} class="h-24 text-center text-muted-foreground">
-						{emptyMessage}
-					</Table.Cell>
-				</Table.Row>
-			{:else}
-				{#each sessions as session, i}
-					<Table.Row class="hover:bg-muted/50">
-						<!-- Session ID -->
-						<Table.Cell class="font-mono">
-							<a
-								href={`/session/${session.session_id}`}
-								class="text-foreground underline hover:text-foreground text-sm cursor-pointer"
-								title={session.session_id}
-							>
-								{shortHex(session.session_id, 12, 8)}
-							</a>
-							<CopyButton value={session.session_id} />
-						</Table.Cell>
+				{:else}
+					{#each sessions as session, i}
+						<Table.Row class="hover:bg-muted/50">
+							<!-- Session ID -->
+							<Table.Cell class="font-mono">
+								<a
+									href={`/session/${session.session_id}`}
+									class="text-foreground underline hover:text-foreground text-sm cursor-pointer"
+									title={session.session_id}
+								>
+									{shortHex(session.session_id, 12, 8)}
+								</a>
+								<CopyButton value={session.session_id} />
+							</Table.Cell>
 
-						<!-- Protocol -->
-						<Table.Cell>
-							<Badge class="bg-secondary text-secondary-foreground hover:bg-secondary">
-								{session.protocol || 'unknown'}
-							</Badge>
-						</Table.Cell>
+							<!-- Protocol -->
+							<Table.Cell>
+								<Badge class="bg-secondary text-secondary-foreground hover:bg-secondary">
+									{session.protocol || 'unknown'}
+								</Badge>
+							</Table.Cell>
 
-						<!-- Participants -->
-						<Table.Cell>
-							<div class="text-sm space-y-1">
-								{#each session.participants.slice(0, 3) as participant, i}
-									<div class="flex items-center gap-2">
-										<span class="text-muted-foreground text-xs">#{i + 1}:</span>
-										<a
-											href={`/address/${participant}`}
-											class="font-mono underline text-foreground hover:text-foreground cursor-pointer"
-											title={participant}
-										>
-											{shortHex(participant, 6, 4)}
-										</a>
-										<CopyButton value={participant} />
-									</div>
-								{/each}
-								{#if session.participants.length > 3}
-									<div class="text-xs text-muted-foreground">
-										+{session.participants.length - 3} more
-									</div>
-								{/if}
-							</div>
-						</Table.Cell>
+							<!-- Participants -->
+							<Table.Cell>
+								<div class="text-sm space-y-1">
+									{#each session.participants.slice(0, 3) as participant, i}
+										<div class="flex items-center gap-2">
+											<span class="text-muted-foreground text-xs">#{i + 1}:</span>
+											<a
+												href={`/address/${participant}`}
+												class="font-mono underline text-foreground hover:text-foreground cursor-pointer"
+												title={participant}
+											>
+												{shortHex(participant, 6, 4)}
+											</a>
+											<CopyButton value={participant} />
+										</div>
+									{/each}
+									{#if session.participants.length > 3}
+										<div class="text-xs text-muted-foreground">
+											+{session.participants.length - 3} more
+										</div>
+									{/if}
+								</div>
+							</Table.Cell>
 
-						<!-- Channel -->
-						<!-- <Table.Cell class="font-mono">
+							<!-- Channel -->
+							<!-- <Table.Cell class="font-mono">
 							{#if session.channel_id}
 								<a
 									href={`/channel/${session.channel_id}`}
@@ -195,22 +196,23 @@
 							{/if}
 						</Table.Cell> -->
 
-						<!-- Status -->
-						<Table.Cell>
-							<Badge class={getStatusColor(session.status)}>
-								{session.status}
-							</Badge>
-						</Table.Cell>
+							<!-- Status -->
+							<Table.Cell>
+								<Badge class={getStatusColor(session.status)}>
+									{session.status}
+								</Badge>
+							</Table.Cell>
 
-						<!-- Updated -->
-						<Table.Cell>
-							<div class="text-sm text-muted-foreground" title={session.updated_at}>
-								{timeAgo(session.updated_at)}
-							</div>
-						</Table.Cell>
-					</Table.Row>
-				{/each}
-			{/if}
-		</Table.Body>
-	</Table.Root>
+							<!-- Updated -->
+							<Table.Cell>
+								<div class="text-sm text-muted-foreground" title={session.updated_at}>
+									{timeAgo(session.updated_at)}
+								</div>
+							</Table.Cell>
+						</Table.Row>
+					{/each}
+				{/if}
+			</Table.Body>
+		</Table.Root>
+	</div>
 </div>

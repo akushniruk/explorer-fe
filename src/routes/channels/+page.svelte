@@ -107,7 +107,6 @@
 	{#key `${currentPage}-${limit}-${total}`}
 		<ChannelsPagination
 			{currentPage}
-			totalPages={Math.max(1, Math.ceil(total / limit))}
 			totalRecords={total}
 			recordsPerPage={limit}
 			{onPageChange}

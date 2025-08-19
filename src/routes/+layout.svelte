@@ -3,9 +3,10 @@
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
 	import { theme, applyTheme } from '$lib/theme';
-	import { FileText, ChevronDown, Heart } from 'lucide-svelte';
+	import { FileText, ChevronDown, Heart, Menu, X } from 'lucide-svelte';
 
 	let showThemeDropdown = false;
+	let showMobileMenu = false;
 
 	function setTheme(newTheme: 'light' | 'dark') {
 		theme.set(newTheme);
@@ -19,6 +20,7 @@
 	function handleClickOutside(event: MouseEvent) {
 		const target = event.target as Element;
 		if (!target.closest('[data-theme-dropdown]')) showThemeDropdown = false;
+		if (!target.closest('[data-mobile-menu]')) showMobileMenu = false;
 	}
 
 	onMount(() => {
@@ -137,13 +139,13 @@
 
 			<!-- Main header -->
 			<div class="py-3">
-				<div class="flex items-center justify-between gap-8">
+				<div class="flex items-center justify-between gap-4">
 					<a href="/" class="flex items-center gap-3 flex-shrink-0">
 						<span class="text-lg font-semibold tracking-tight">ynscan</span>
 					</a>
 
-					<!-- Navigation on right -->
-					<nav class="flex items-center gap-8">
+					<!-- Desktop Navigation -->
+					<nav class="hidden md:flex items-center gap-8">
 						<a
 							href="/"
 							class="text-sm text-foreground hover:text-muted-foreground transition-colors">Home</a
@@ -168,7 +170,55 @@
 							class="text-sm text-foreground hover:text-muted-foreground transition-colors">Nodes</a
 						>
 					</nav>
+
+					<!-- Mobile menu button -->
+					<button
+						type="button"
+						class="md:hidden p-1 text-foreground hover:text-muted-foreground"
+						on:click={() => (showMobileMenu = !showMobileMenu)}
+						aria-label="Toggle mobile menu"
+						data-mobile-menu
+					>
+						{#if showMobileMenu}
+							<X class="w-5 h-5" />
+						{:else}
+							<Menu class="w-5 h-5" />
+						{/if}
+					</button>
 				</div>
+
+				<!-- Mobile Navigation -->
+				{#if showMobileMenu}
+					<div class="md:hidden mt-4 pb-4 border-t border-border pt-4" data-mobile-menu>
+						<nav class="flex flex-col gap-3">
+							<a
+								href="/"
+								class="text-sm text-foreground hover:text-muted-foreground transition-colors py-2"
+								on:click={() => (showMobileMenu = false)}>Home</a
+							>
+							<a
+								href="/channels"
+								class="text-sm text-foreground hover:text-muted-foreground transition-colors py-2"
+								on:click={() => (showMobileMenu = false)}>Channels</a
+							>
+							<a
+								href="/sessions"
+								class="text-sm text-foreground hover:text-muted-foreground transition-colors py-2"
+								on:click={() => (showMobileMenu = false)}>Sessions</a
+							>
+							<a
+								href="/assets"
+								class="text-sm text-foreground hover:text-muted-foreground transition-colors py-2"
+								on:click={() => (showMobileMenu = false)}>Assets</a
+							>
+							<a
+								href="/nodes"
+								class="text-sm text-foreground hover:text-muted-foreground transition-colors py-2"
+								on:click={() => (showMobileMenu = false)}>Nodes</a
+							>
+						</nav>
+					</div>
+				{/if}
 			</div>
 		</div>
 	</header>

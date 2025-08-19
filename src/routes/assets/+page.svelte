@@ -70,7 +70,6 @@
 	{#if data.page && data.limit}
 		<ChannelsPagination
 			currentPage={data.page}
-			totalPages={Math.ceil(data.total / data.limit)}
 			totalRecords={data.total}
 			recordsPerPage={data.limit}
 			onPageChange={handlePageChange}

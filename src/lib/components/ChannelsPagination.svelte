@@ -3,7 +3,6 @@
 	import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-svelte';
 
 	export let currentPage = 1;
-	export let totalPages = 1;
 	export let totalRecords = 0;
 	export let recordsPerPage = 25;
 	export let onPageChange: (page: number) => void = () => {};
