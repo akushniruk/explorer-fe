@@ -108,7 +108,7 @@
 
 					<div class="text-right">
 						<div class="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">
-							Nodes Online
+							Active Nodes
 						</div>
 						<span class="text-base font-semibold">{fmt(counts.nodes)}</span>
 					</div>

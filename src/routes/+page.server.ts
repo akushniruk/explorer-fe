@@ -84,37 +84,6 @@ const SessionsResponseSchema = z.object({
 	})
 });
 
-const NodeSchema = z.object({
-	id: z.number().optional(),
-	name: z.string(),
-	endpoint: z.string().optional(),
-	location: z.string().optional(),
-	lat: z.number().optional(),
-	lng: z.number().optional(),
-	status: z.string(),
-	latency_ms: z.number().optional(),
-	available: z.boolean().optional(),
-	version: z.string().optional(),
-	created_at: z.string().optional(),
-	updated_at: z.string().optional()
-});
-
-const NodesResponseSchema = z.object({
-	success: z.boolean(),
-	data: z.array(NodeSchema),
-	meta: z.object({
-		timestamp: z.string(),
-		requestId: z.string(),
-		version: z.string(),
-		pagination: z.object({
-			page: z.number(),
-			limit: z.number(),
-			total: z.number(),
-			totalPages: z.number()
-		})
-	})
-});
-
 export const load: PageServerLoad = async (event) => {
 	try {
 		const qs = new URLSearchParams({
@@ -129,7 +98,7 @@ export const load: PageServerLoad = async (event) => {
 			apiGet(event, '/api/v1/app-session/count', CountResponseSchema),
 			apiGet(event, '/api/v1/network/count', CountResponseSchema),
 			apiGet(event, '/api/v1/asset/count', CountResponseSchema),
-			apiGet(event, `/api/v1/nodes/list?limit=1`, NodesResponseSchema), // nodes for count
+			apiGet(event, '/api/v1/nodes/count-active', CountResponseSchema), // active nodes count
 			apiGet(event, `/api/v1/channel/list?${qs}`, ChannelsResponseSchema),
 			apiGet(event, `/api/v1/app-session/list?${qs}`, SessionsResponseSchema)
 		]);
@@ -140,7 +109,7 @@ export const load: PageServerLoad = async (event) => {
 			sessionsCount,
 			networksCount,
 			assetsCount,
-			nodesList,
+			activeNodesCount,
 			latestChannels,
 			latestSessions
 		] = results.map((result) =>
@@ -158,7 +127,10 @@ export const load: PageServerLoad = async (event) => {
 				sessions: sessionsCount?.data?.total ?? sessionsCount?.data?.count ?? 0,
 				networks: networksCount?.data?.total ?? networksCount?.data?.count ?? 0,
 				assets: assetsCount?.data?.total ?? assetsCount?.data?.count ?? 0,
-				nodes: nodesList?.meta?.pagination?.total ?? 0
+				nodes:
+					(activeNodesCount?.data as { total?: number; count?: number })?.total ??
+					(activeNodesCount?.data as { total?: number; count?: number })?.count ??
+					0
 			},
 			latest: {
 				channels: latestChannels?.data ?? [],

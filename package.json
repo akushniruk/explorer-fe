@@ -54,8 +54,10 @@
 	"dependencies": {
 		"@inlang/paraglide-js": "^2.0.0",
 		"@melt-ui/svelte": "0.86.6",
+		"@types/d3": "7.4.3",
 		"bits-ui": "2.9.3",
 		"clsx": "2.1.1",
+		"d3": "7.9.0",
 		"jdenticon": "3.3.0",
 		"lodash-es": "4.17.21",
 		"lucide-svelte": "0.539.0",

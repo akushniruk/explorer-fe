@@ -40,7 +40,7 @@ export const load: PageServerLoad = async (event) => {
 	try {
 		// Build query parameters
 		const page = Number(event.url.searchParams.get('page') ?? '1');
-		const limit = Number(event.url.searchParams.get('limit') ?? '25');
+		const limit = Number(event.url.searchParams.get('limit') ?? '100');
 		const q = event.url.searchParams.get('q') ?? '';
 		const status = event.url.searchParams.get('status') ?? '';
 		const location = event.url.searchParams.get('location') ?? '';
