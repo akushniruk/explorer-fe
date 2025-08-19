@@ -6,22 +6,24 @@ import { dev } from '$app/environment';
 import { env } from '$env/dynamic/private';
 
 const handleApi: Handle = ({ event, resolve }) => {
-	event.locals.apiBase = env.PUBLIC_API_BASE ?? (dev ? 'http://localhost:3000' : '');
+	// Always use localhost:3000 for API in both dev and preview modes
+	// In production deployment, PUBLIC_API_BASE should be set to the actual API URL
+	event.locals.apiBase = env.PUBLIC_API_BASE ?? 'http://localhost:3000';
 	return resolve(event);
 };
 
 const handleParaglide: Handle = ({ event, resolve }) =>
 	paraglideMiddleware(event.request, ({ request, locale }) => {
 		event.request = request;
-		event.setHeaders({
-			'Referrer-Policy': 'strict-origin-when-cross-origin',
-			'X-Frame-Options': 'DENY',
-			'X-Content-Type-Options': 'nosniff',
-			'Permissions-Policy': 'camera=(), microphone=(), geolocation=()'
-			// Add CSP after you enumerate domains (fonts, API, analytics, map tiles, etc.)
-		});
 		return resolve(event, {
-			transformPageChunk: ({ html }) => html.replace('%paraglide.lang%', locale)
+			transformPageChunk: ({ html }) => html.replace('%paraglide.lang%', locale),
+			setHeaders: {
+				'Referrer-Policy': 'strict-origin-when-cross-origin',
+				'X-Frame-Options': 'DENY',
+				'X-Content-Type-Options': 'nosniff',
+				'Permissions-Policy': 'camera=(), microphone=(), geolocation=()'
+				// Add CSP after you enumerate domains (fonts, API, analytics, map tiles, etc.)
+			}
 		});
 	});
 
