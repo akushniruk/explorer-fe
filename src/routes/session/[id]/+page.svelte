@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { shortHex, timeAgo } from '$lib/format';
 	import type { AppSession } from '$lib/types';
-	import { FileText, Users, Clock } from 'lucide-svelte';
+	import { FileText, Users, Clock, ExternalLink, Activity } from 'lucide-svelte';
 	import AddressAvatar from '$lib/components/ui/AddressAvatar.svelte';
+	import CopyButton from '$lib/components/ui/CopyButton.svelte';
 
 	export let data: {
 		session: AppSession | null;
@@ -21,7 +22,7 @@
 	<link rel="canonical" href="https://ynscan.xyz/session/{data.session?.session_id || ''}" />
 </svelte:head>
 
-<div class="max-w-7xl mx-auto px-4">
+<div class="max-w-7xl mx-auto px-4 py-6">
 	{#if data.notFound || !data.session}
 		<div class="text-center py-12">
 			<div class="text-muted-foreground mb-4">
@@ -44,12 +45,7 @@
 						<code class="font-mono text-lg bg-accent/50 px-3 py-1 rounded text-accent-foreground">
 							{data.session.session_id}
 						</code>
-						<button
-							class="text-sm text-brand hover:text-brand/80"
-							on:click={() => navigator.clipboard.writeText(data.session.session_id)}
-						>
-							Copy
-						</button>
+						<CopyButton value={data.session.session_id} />
 					</div>
 				</div>
 				<span
@@ -72,7 +68,7 @@
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 			<div class="bg-card border border-border rounded-lg p-6 text-center">
 				<div class="flex items-center justify-center mb-2">
-					<Users class="w-6 h-6 text-brand" />
+					<Users class="w-6 h-6 text-muted-foreground" />
 				</div>
 				<div class="text-2xl font-bold text-brand mb-1">
 					{data.session.participants?.length || 0}
@@ -83,13 +79,20 @@
 				<div class="flex items-center justify-center mb-2">
 					<FileText class="w-6 h-6 text-muted-foreground" />
 				</div>
-				<div class="text-2xl font-bold text-muted-foreground mb-1">
+				<div class="text-lg font-medium text-foreground mb-1">
 					{data.session.protocol || 'Unknown'}
 				</div>
 				<div class="text-sm text-muted-foreground">Protocol</div>
 			</div>
 			<div class="bg-card border border-border rounded-lg p-6 text-center">
-				<div class="text-2xl font-bold text-foreground mb-1 capitalize">
+				<div class="flex items-center justify-center mb-2">
+					<Activity class="w-6 h-6 text-muted-foreground" />
+				</div>
+				<div
+					class="text-lg font-medium {data.session.status === 'active'
+						? 'text-emerald-600'
+						: 'text-muted-foreground'} mb-1 capitalize"
+				>
 					{data.session.status}
 				</div>
 				<div class="text-sm text-muted-foreground">Status</div>
@@ -98,7 +101,7 @@
 				<div class="flex items-center justify-center mb-2">
 					<Clock class="w-6 h-6 text-muted-foreground" />
 				</div>
-				<div class="text-2xl font-bold text-muted-foreground mb-1">
+				<div class="text-lg font-medium text-muted-foreground mb-1">
 					{timeAgo(data.session.updated_at)}
 				</div>
 				<div class="text-sm text-muted-foreground">Last Activity</div>
@@ -128,12 +131,7 @@
 									>
 										{participant}
 									</a>
-									<button
-										class="text-xs text-muted-foreground hover:text-foreground mt-1"
-										on:click={() => navigator.clipboard.writeText(participant)}
-									>
-										Copy Address
-									</button>
+									<CopyButton value={participant} />
 								</div>
 							</div>
 						{/each}
@@ -197,12 +195,6 @@
 				class="px-4 py-2 border border-border rounded-lg hover:bg-muted/20 transition-colors"
 			>
 				← Back to Sessions
-			</a>
-			<a
-				href={`/channel/${data.session.channel_id}`}
-				class="px-4 py-2 bg-brand text-brand-foreground rounded-lg hover:brightness-95 transition-all"
-			>
-				View Related Channel
 			</a>
 		</div>
 	{/if}

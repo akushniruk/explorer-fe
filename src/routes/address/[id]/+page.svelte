@@ -2,6 +2,12 @@
 	import { shortHex, formatAmount, timeAgo } from '$lib/format';
 	import type { Channel, AppSession } from '$lib/types';
 	import AddressAvatar from '$lib/components/ui/AddressAvatar.svelte';
+	import * as Table from '$lib/components/ui/table';
+	import { Badge } from '$lib/components/ui/badge';
+	import CopyButton from '$lib/components/ui/CopyButton.svelte';
+	import { getChainById } from '$lib/ctypto/utils';
+	import Chain from '$lib/components/Chain.svelte';
+	import { ExternalLink, Users, CreditCard, Activity, Clock } from 'lucide-svelte';
 
 	export let data: {
 		participantId: string;
@@ -27,7 +33,7 @@
 	<link rel="canonical" href="https://ynscan.xyz/address/{data.participantId}" />
 </svelte:head>
 
-<div class="max-w-7xl mx-auto px-4">
+<div class="max-w-7xl mx-auto px-4 py-6">
 	<!-- Header -->
 	<div class="mb-8">
 		<div class="flex items-start gap-4 mb-4">
@@ -39,12 +45,7 @@
 					<code class="font-mono text-lg bg-accent/50 px-3 py-1 rounded text-accent-foreground">
 						{data.participantId}
 					</code>
-					<button
-						class="text-sm text-brand hover:text-brand/80"
-						on:click={() => navigator.clipboard.writeText(data.participantId)}
-					>
-						Copy
-					</button>
+					<CopyButton value={data.participantId} />
 				</div>
 			</div>
 		</div>
@@ -52,19 +53,31 @@
 
 	<!-- Stats Cards -->
 	<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-		<div class="bg-card border border-border rounded-lg p-4 text-center">
+		<div class="bg-card border border-border rounded-lg p-6 text-center">
+			<div class="flex items-center justify-center mb-2">
+				<CreditCard class="w-6 h-6 text-muted-foreground" />
+			</div>
 			<div class="text-2xl font-bold text-brand mb-1">{data.stats.totalChannels}</div>
 			<div class="text-sm text-muted-foreground">Total Channels</div>
 		</div>
-		<div class="bg-card border border-border rounded-lg p-4 text-center">
-			<div class="text-2xl font-bold text-foreground mb-1">{data.stats.activeChannels}</div>
+		<div class="bg-card border border-border rounded-lg p-6 text-center">
+			<div class="flex items-center justify-center mb-2">
+				<Activity class="w-6 h-6 text-muted-foreground" />
+			</div>
+			<div class="text-2xl font-bold text-emerald-600 mb-1">{data.stats.activeChannels}</div>
 			<div class="text-sm text-muted-foreground">Active Channels</div>
 		</div>
-		<div class="bg-card border border-border rounded-lg p-4 text-center">
+		<div class="bg-card border border-border rounded-lg p-6 text-center">
+			<div class="flex items-center justify-center mb-2">
+				<Users class="w-6 h-6 text-muted-foreground" />
+			</div>
 			<div class="text-2xl font-bold text-brand mb-1">{data.stats.totalSessions}</div>
 			<div class="text-sm text-muted-foreground">Total Sessions</div>
 		</div>
-		<div class="bg-card border border-border rounded-lg p-4 text-center">
+		<div class="bg-card border border-border rounded-lg p-6 text-center">
+			<div class="flex items-center justify-center mb-2">
+				<Clock class="w-6 h-6 text-muted-foreground" />
+			</div>
 			<div class="text-2xl font-bold text-muted-foreground mb-1">{data.stats.activeSessions}</div>
 			<div class="text-sm text-muted-foreground">Active Sessions</div>
 		</div>
@@ -200,194 +213,186 @@
 		</div>
 	{:else if activeTab === 'channels'}
 		<!-- Channels Tab -->
-		<div class="bg-card border border-border rounded-lg overflow-hidden">
-			<div class="overflow-x-auto">
-				<table class="w-full">
-					<thead class="bg-muted/30">
-						<tr class="text-left">
-							<th
-								class="px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider"
-							>
-								Channel ID
-							</th>
-							<th
-								class="px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider"
-							>
-								Address
-							</th>
-							<th
-								class="px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider"
-							>
-								Amount
-							</th>
-							<th
-								class="px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider"
-							>
-								Status
-							</th>
-							<th
-								class="px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider"
-							>
-								Updated
-							</th>
-						</tr>
-					</thead>
-					<tbody class="divide-y divide-border/60">
-						{#each data.channels as channel (channel.channel_id)}
-							{@const counterparty =
-								channel.wallet === data.participantId ? channel.participant : channel.wallet}
-							<tr class="hover:bg-muted/10 transition-colors">
-								<td class="px-6 py-4 whitespace-nowrap">
+		<div class="bg-card border border-border rounded-lg">
+			<Table.Root>
+				<Table.Header>
+					<Table.Row class="hover:bg-transparent border-b border-border">
+						<Table.Head class="font-medium text-muted-foreground text-sm">Channel ID</Table.Head>
+						<Table.Head class="font-medium text-muted-foreground text-sm">Counterparty</Table.Head>
+						<Table.Head class="font-medium text-muted-foreground text-sm text-right"
+							>Amount</Table.Head
+						>
+						<Table.Head class="font-medium text-muted-foreground text-sm">Status</Table.Head>
+						<Table.Head class="font-medium text-muted-foreground text-sm">Chain</Table.Head>
+						<Table.Head class="font-medium text-muted-foreground text-sm">Updated</Table.Head>
+						<Table.Head class="font-medium text-muted-foreground text-sm">Action</Table.Head>
+					</Table.Row>
+				</Table.Header>
+				<Table.Body>
+					{#each data.channels as channel (channel.channel_id)}
+						{@const counterparty =
+							channel.wallet === data.participantId ? channel.participant : channel.wallet}
+						{@const chain = getChainById(Number(channel.chain_id))}
+						<Table.Row class="hover:bg-muted/50">
+							<Table.Cell class="font-mono">
+								<div class="flex items-center gap-2">
 									<a
 										href={`/channel/${channel.channel_id}`}
-										class="font-mono text-sm text-brand hover:text-brand/80"
+										class="text-foreground underline hover:text-foreground text-sm cursor-pointer"
+										title={channel.channel_id}
 									>
 										{shortHex(channel.channel_id, 12, 8)}
 									</a>
-								</td>
-								<td class="px-6 py-4 whitespace-nowrap">
+									<CopyButton value={channel.channel_id} />
+								</div>
+							</Table.Cell>
+							<Table.Cell class="font-mono">
+								<div class="flex items-center gap-2">
+									<AddressAvatar address={counterparty} size={24} />
 									<a
 										href={`/address/${counterparty}`}
-										class="font-mono text-sm text-brand hover:text-brand/80"
+										class="text-foreground underline hover:text-foreground text-sm cursor-pointer"
+										title={counterparty}
 									>
 										{shortHex(counterparty, 6, 4)}
 									</a>
-								</td>
-								<td class="px-6 py-4 whitespace-nowrap">
-									<div class="text-sm font-medium">
-										{formatAmount(
-											channel.amount,
-											channel.asset?.decimals ? parseInt(channel.asset.decimals) : 18,
-											4
-										)}
-										{channel.asset?.symbol || 'ETH'}
-									</div>
-								</td>
-								<td class="px-6 py-4 whitespace-nowrap">
-									<span
-										class="inline-flex px-2 py-1 rounded text-xs font-medium"
-										class:bg-gray-100={channel.status === 'open'}
-										class:text-foreground={channel.status === 'open'}
-										class:bg-gray-200={channel.status === 'closed'}
-										class:text-muted-foreground={channel.status === 'closed'}
+									<CopyButton value={counterparty} />
+								</div>
+							</Table.Cell>
+							<Table.Cell class="text-right font-mono text-sm uppercase">
+								{formatAmount(
+									channel.amount,
+									channel.asset?.decimals ? parseInt(channel.asset.decimals) : 18,
+									4
+								)}
+								{channel.asset?.symbol || 'ETH'}
+							</Table.Cell>
+							<Table.Cell>
+								<Badge
+									class={channel.status === 'open'
+										? 'bg-emerald-100 text-emerald-800'
+										: 'bg-gray-100 text-gray-800'}
+								>
+									{channel.status}
+								</Badge>
+							</Table.Cell>
+							<Table.Cell>
+								<Chain chainId={Number(channel.chain_id)} />
+							</Table.Cell>
+							<Table.Cell>
+								<div class="text-sm text-muted-foreground">
+									{timeAgo(channel.updated_at)}
+								</div>
+							</Table.Cell>
+							<Table.Cell>
+								{#if chain}
+									<a
+										href={`${chain.blockExplorers?.default.url}/address/${counterparty}`}
+										target="_blank"
+										rel="noopener noreferrer"
+										class="flex items-center gap-1 text-muted-foreground hover:text-foreground text-xs"
+										title={`View ${counterparty} on ${chain.blockExplorers?.default.name}`}
 									>
-										{channel.status}
-									</span>
-								</td>
-								<td class="px-6 py-4 whitespace-nowrap">
-									<div class="text-sm text-muted-foreground">
-										{timeAgo(channel.updated_at)}
-									</div>
-								</td>
-							</tr>
-						{:else}
-							<tr>
-								<td colspan="5" class="px-6 py-8 text-center text-muted-foreground">
-									No channels found for this address.
-								</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
+										<ExternalLink class="w-3 h-3" />
+										Explorer
+									</a>
+								{/if}
+							</Table.Cell>
+						</Table.Row>
+					{:else}
+						<Table.Row>
+							<Table.Cell colspan={7} class="h-24 text-center text-muted-foreground">
+								No channels found for this address.
+							</Table.Cell>
+						</Table.Row>
+					{/each}
+				</Table.Body>
+			</Table.Root>
 		</div>
 	{:else if activeTab === 'sessions'}
 		<!-- Sessions Tab -->
-		<div class="bg-card border border-border rounded-lg overflow-hidden">
-			<div class="overflow-x-auto">
-				<table class="w-full">
-					<thead class="bg-muted/30">
-						<tr class="text-left">
-							<th
-								class="px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider"
-							>
-								Session ID
-							</th>
-							<th
-								class="px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider"
-							>
-								Protocol
-							</th>
-							<th
-								class="px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider"
-							>
-								Other Addresses
-							</th>
-							<th
-								class="px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider"
-							>
-								Status
-							</th>
-							<th
-								class="px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider"
-							>
-								Updated
-							</th>
-						</tr>
-					</thead>
-					<tbody class="divide-y divide-border/60">
-						{#each data.sessions as session (session.session_id)}
-							{@const otherParticipants = session.participants.filter(
-								(p) => p !== data.participantId
-							)}
-							<tr class="hover:bg-muted/10 transition-colors">
-								<td class="px-6 py-4 whitespace-nowrap">
+		<div class="bg-card border border-border rounded-lg">
+			<Table.Root>
+				<Table.Header>
+					<Table.Row class="hover:bg-transparent border-b border-border">
+						<Table.Head class="font-medium text-muted-foreground text-sm">Session ID</Table.Head>
+						<Table.Head class="font-medium text-muted-foreground text-sm">Protocol</Table.Head>
+						<Table.Head class="font-medium text-muted-foreground text-sm"
+							>Other Addresses</Table.Head
+						>
+						<Table.Head class="font-medium text-muted-foreground text-sm">Status</Table.Head>
+						<Table.Head class="font-medium text-muted-foreground text-sm">Updated</Table.Head>
+					</Table.Row>
+				</Table.Header>
+				<Table.Body>
+					{#each data.sessions as session (session.session_id)}
+						{@const otherParticipants = session.participants.filter(
+							(p) => p !== data.participantId
+						)}
+						<Table.Row class="hover:bg-muted/50">
+							<Table.Cell class="font-mono">
+								<div class="flex items-center gap-2">
 									<a
 										href={`/session/${session.session_id}`}
-										class="font-mono text-sm text-brand hover:text-brand/80"
+										class="text-foreground underline hover:text-foreground text-sm cursor-pointer"
+										title={session.session_id}
 									>
 										{shortHex(session.session_id, 12, 8)}
 									</a>
-								</td>
-								<td class="px-6 py-4 whitespace-nowrap">
-									<span class="text-sm bg-accent/50 px-2 py-1 rounded text-accent-foreground">
-										{session.protocol || 'unknown'}
-									</span>
-								</td>
-								<td class="px-6 py-4">
-									<div class="text-sm space-y-1">
-										{#each otherParticipants.slice(0, 2) as participant}
+									<CopyButton value={session.session_id} />
+								</div>
+							</Table.Cell>
+							<Table.Cell>
+								<Badge class="bg-secondary text-secondary-foreground hover:bg-secondary">
+									{session.protocol || 'unknown'}
+								</Badge>
+							</Table.Cell>
+							<Table.Cell>
+								<div class="text-sm space-y-1">
+									{#each otherParticipants.slice(0, 2) as participant}
+										<div class="flex items-center gap-2">
+											<AddressAvatar address={participant} size={20} />
 											<a
 												href={`/address/${participant}`}
-												class="block font-mono text-brand hover:text-brand/80"
+												class="font-mono underline text-foreground hover:text-foreground cursor-pointer"
+												title={participant}
 											>
 												{shortHex(participant, 6, 4)}
 											</a>
-										{/each}
-										{#if otherParticipants.length > 2}
-											<div class="text-xs text-muted-foreground">
-												+{otherParticipants.length - 2} more
-											</div>
-										{/if}
-									</div>
-								</td>
-								<td class="px-6 py-4 whitespace-nowrap">
-									<span
-										class="inline-flex px-2 py-1 rounded text-xs font-medium"
-										class:bg-gray-100={session.status === 'active'}
-										class:text-foreground={session.status === 'active'}
-										class:bg-gray-200={session.status === 'closed'}
-										class:text-muted-foreground={session.status === 'closed'}
-									>
-										{session.status}
-									</span>
-								</td>
-								<td class="px-6 py-4 whitespace-nowrap">
-									<div class="text-sm text-muted-foreground">
-										{timeAgo(session.updated_at)}
-									</div>
-								</td>
-							</tr>
-						{:else}
-							<tr>
-								<td colspan="5" class="px-6 py-8 text-center text-muted-foreground">
-									No sessions found for this address.
-								</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
+											<CopyButton value={participant} />
+										</div>
+									{/each}
+									{#if otherParticipants.length > 2}
+										<div class="text-xs text-muted-foreground">
+											+{otherParticipants.length - 2} more
+										</div>
+									{/if}
+								</div>
+							</Table.Cell>
+							<Table.Cell>
+								<Badge
+									class={session.status === 'active'
+										? 'bg-emerald-100 text-emerald-800'
+										: 'bg-gray-100 text-gray-800'}
+								>
+									{session.status}
+								</Badge>
+							</Table.Cell>
+							<Table.Cell>
+								<div class="text-sm text-muted-foreground">
+									{timeAgo(session.updated_at)}
+								</div>
+							</Table.Cell>
+						</Table.Row>
+					{:else}
+						<Table.Row>
+							<Table.Cell colspan={5} class="h-24 text-center text-muted-foreground">
+								No sessions found for this address.
+							</Table.Cell>
+						</Table.Row>
+					{/each}
+				</Table.Body>
+			</Table.Root>
 		</div>
 	{/if}
 </div>

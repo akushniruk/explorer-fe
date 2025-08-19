@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { shortHex, formatAmount, timeAgo } from '$lib/format';
 	import type { Channel } from '$lib/types';
+	import CopyButton from '$lib/components/ui/CopyButton.svelte';
+	import AddressAvatar from '$lib/components/ui/AddressAvatar.svelte';
+	import { getChainById } from '$lib/ctypto/utils';
+	import Chain from '$lib/components/Chain.svelte';
+	import { CreditCard, Users, Activity, Clock, Coins } from 'lucide-svelte';
 
 	export let data: {
 		channel: Channel | null;
@@ -19,7 +24,7 @@
 	<link rel="canonical" href="https://ynscan.xyz/channel/{data.channel?.channel_id || ''}" />
 </svelte:head>
 
-<div class="max-w-7xl mx-auto px-4">
+<div class="max-w-7xl mx-auto px-4 py-6">
 	{#if data.notFound || !data.channel}
 		<div class="text-center py-12">
 			<div class="text-muted-foreground mb-4">
@@ -49,12 +54,7 @@
 						<code class="font-mono text-lg bg-accent/50 px-3 py-1 rounded text-accent-foreground">
 							{data.channel.channel_id}
 						</code>
-						<button
-							class="text-sm text-brand hover:text-brand/80"
-							on:click={() => navigator.clipboard.writeText(data.channel.channel_id)}
-						>
-							Copy
-						</button>
+						<CopyButton value={data.channel.channel_id} />
 					</div>
 				</div>
 				<span
@@ -74,6 +74,9 @@
 		<!-- Channel Overview Cards -->
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 			<div class="bg-card border border-border rounded-lg p-6 text-center">
+				<div class="flex items-center justify-center mb-2">
+					<Coins class="w-6 h-6 text-muted-foreground" />
+				</div>
 				<div class="text-2xl font-bold text-brand mb-1">
 					{formatAmount(
 						data.channel.amount,
@@ -86,19 +89,32 @@
 				</div>
 			</div>
 			<div class="bg-card border border-border rounded-lg p-6 text-center">
-				<div class="text-2xl font-bold text-muted-foreground mb-1">
-					Chain {data.channel.chain_id}
+				<div class="flex items-center justify-center mb-2">
+					<Users class="w-6 h-6 text-muted-foreground" />
+				</div>
+				<div class="text-lg font-medium text-foreground mb-1">
+					<Chain chainId={Number(data.channel.chain_id)} />
 				</div>
 				<div class="text-sm text-muted-foreground">Network</div>
 			</div>
 			<div class="bg-card border border-border rounded-lg p-6 text-center">
-				<div class="text-2xl font-bold text-foreground mb-1">
+				<div class="flex items-center justify-center mb-2">
+					<Activity class="w-6 h-6 text-muted-foreground" />
+				</div>
+				<div
+					class="text-lg font-medium {data.channel.status === 'open'
+						? 'text-emerald-600'
+						: 'text-muted-foreground'} mb-1"
+				>
 					{data.channel.status === 'open' ? 'Active' : 'Inactive'}
 				</div>
 				<div class="text-sm text-muted-foreground">Channel State</div>
 			</div>
 			<div class="bg-card border border-border rounded-lg p-6 text-center">
-				<div class="text-2xl font-bold text-muted-foreground mb-1">
+				<div class="flex items-center justify-center mb-2">
+					<Clock class="w-6 h-6 text-muted-foreground" />
+				</div>
+				<div class="text-lg font-medium text-muted-foreground mb-1">
 					{timeAgo(data.channel.updated_at)}
 				</div>
 				<div class="text-sm text-muted-foreground">Last Updated</div>
@@ -107,104 +123,137 @@
 
 		<!-- Channel Details -->
 		<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-			<!-- Participants -->
-			<div class="bg-card border border-border rounded-lg">
-				<div class="p-4 border-b border-border">
-					<h2 class="text-lg font-semibold">Participants</h2>
-				</div>
-				<div class="p-6 space-y-6">
-					<div>
-						<h3 class="text-sm font-medium text-muted-foreground mb-2">From (Wallet)</h3>
-						<div class="flex items-center gap-3">
-							<div class="w-10 h-10 bg-brand/20 rounded-full flex items-center justify-center">
-								<span class="text-brand font-bold text-sm">
-									{data.channel.wallet.slice(2, 4).toUpperCase()}
-								</span>
-							</div>
-							<div>
-								<a
-									href={`/address/${data.channel.wallet}`}
-									class="font-mono text-brand hover:text-brand/80"
-								>
-									{data.channel.wallet}
-								</a>
-								<div class="text-xs text-muted-foreground">
-									<button
-										class="hover:text-fg"
-										on:click={() => navigator.clipboard.writeText(data.channel.wallet)}
+			{#if data.channel}
+				{@const chain = getChainById(Number(data.channel.chain_id))}
+				<!-- Participants -->
+				<div class="bg-card border border-border rounded-lg">
+					<div class="p-4 border-b border-border">
+						<h2 class="text-lg font-semibold flex items-center gap-2">
+							<Users class="w-5 h-5 text-muted-foreground" />
+							Addresses
+						</h2>
+					</div>
+					<div class="p-6 space-y-6">
+						<div>
+							<h3 class="text-sm font-medium text-muted-foreground mb-2">From (Wallet)</h3>
+							<div class="flex items-center gap-3">
+								<AddressAvatar address={data.channel.wallet} size={40} />
+								<div class="flex-1 min-w-0">
+									<a
+										href={`/address/${data.channel.wallet}`}
+										class="font-mono text-brand hover:text-brand/80 block truncate"
 									>
-										Copy Address
-									</button>
+										{data.channel.wallet}
+									</a>
+									<div class="flex items-center gap-2 mt-1">
+										<CopyButton value={data.channel.wallet} />
+										{#if chain}
+											<a
+												href={`${chain.blockExplorers?.default.url}/address/${data.channel.wallet}`}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="text-xs text-muted-foreground hover:text-foreground"
+												title={`View ${data.channel.wallet} on ${chain.blockExplorers?.default.name}`}
+											>
+												View on Explorer
+											</a>
+										{/if}
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<h3 class="text-sm font-medium text-muted-foreground mb-2">To (Participant)</h3>
+							<div class="flex items-center gap-3">
+								<AddressAvatar address={data.channel.participant} size={40} />
+								<div class="flex-1 min-w-0">
+									<a
+										href={`/address/${data.channel.participant}`}
+										class="font-mono text-brand hover:text-brand/80 block truncate"
+									>
+										{data.channel.participant}
+									</a>
+									<div class="flex items-center gap-2 mt-1">
+										<CopyButton value={data.channel.participant} />
+										{#if chain}
+											<a
+												href={`${chain.blockExplorers?.default.url}/address/${data.channel.participant}`}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="text-xs text-muted-foreground hover:text-foreground"
+												title={`View ${data.channel.participant} on ${chain.blockExplorers?.default.name}`}
+											>
+												View on Explorer
+											</a>
+										{/if}
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
+				</div>
 
-					<div>
-						<h3 class="text-sm font-medium text-muted-foreground mb-2">To (Participant)</h3>
-						<div class="flex items-center gap-3">
-							<div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
-								<span class="text-muted-foreground font-bold text-sm">
-									{data.channel.participant.slice(2, 4).toUpperCase()}
-								</span>
+				<!-- Technical Details -->
+				<div class="bg-card border border-border rounded-lg">
+					<div class="p-4 border-b border-border">
+						<h2 class="text-lg font-semibold flex items-center gap-2">
+							<CreditCard class="w-5 h-5 text-muted-foreground" />
+							Technical Details
+						</h2>
+					</div>
+					<div class="p-6 space-y-4">
+						<div>
+							<div class="text-xs text-muted-foreground uppercase tracking-wider">Channel ID</div>
+							<div class="font-mono text-sm mt-1 break-all">{data.channel.channel_id}</div>
+						</div>
+
+						<div>
+							<div class="text-xs text-muted-foreground uppercase tracking-wider">
+								Token Contract
 							</div>
-							<div>
-								<a
-									href={`/address/${data.channel.participant}`}
-									class="font-mono text-brand hover:text-brand/80"
-								>
-									{data.channel.participant}
-								</a>
-								<div class="text-xs text-muted-foreground">
-									<button
-										class="hover:text-fg"
-										on:click={() => navigator.clipboard.writeText(data.channel.participant)}
-									>
-										Copy Address
-									</button>
+							<div class="font-mono text-sm mt-1">
+								<div class="flex items-center gap-2">
+									<a href={`/asset/${data.channel.token}`} class="text-brand hover:text-brand/80">
+										{shortHex(data.channel.token, 12, 8)}
+									</a>
+									{#if chain}
+										<a
+											href={`${chain.blockExplorers?.default.url}/token/${data.channel.token}`}
+											target="_blank"
+											rel="noopener noreferrer"
+											class="text-xs text-muted-foreground hover:text-foreground"
+											title={`View ${data.channel.token} on ${chain.blockExplorers?.default.name}`}
+										>
+											View Token
+										</a>
+									{/if}
 								</div>
 							</div>
 						</div>
-					</div>
-				</div>
-			</div>
 
-			<!-- Technical Details -->
-			<div class="bg-card border border-border rounded-lg">
-				<div class="p-4 border-b border-border">
-					<h2 class="text-lg font-semibold">Technical Details</h2>
-				</div>
-				<div class="p-6 space-y-4">
-					<div>
-						<div class="text-xs text-muted-foreground uppercase tracking-wider">Token Contract</div>
-						<div class="font-mono text-sm mt-1">
-							<a href={`/asset/${data.channel.token}`} class="text-brand hover:text-brand/80">
-								{shortHex(data.channel.token, 12, 8)}
-							</a>
+						<div>
+							<div class="text-xs text-muted-foreground uppercase tracking-wider">Chain ID</div>
+							<div class="text-sm font-medium mt-1">{data.channel.chain_id}</div>
+						</div>
+
+						<div>
+							<div class="text-xs text-muted-foreground uppercase tracking-wider">Amount (Wei)</div>
+							<div class="font-mono text-sm mt-1">{data.channel.amount}</div>
+						</div>
+
+						<div>
+							<div class="text-xs text-muted-foreground uppercase tracking-wider">Status</div>
+							<div class="text-sm mt-1 capitalize font-medium">{data.channel.status}</div>
+						</div>
+
+						<div>
+							<div class="text-xs text-muted-foreground uppercase tracking-wider">Last Updated</div>
+							<div class="text-sm mt-1">{new Date(data.channel.updated_at).toLocaleString()}</div>
 						</div>
 					</div>
-
-					<div>
-						<div class="text-xs text-muted-foreground uppercase tracking-wider">Chain ID</div>
-						<div class="text-sm font-medium mt-1">{data.channel.chain_id}</div>
-					</div>
-
-					<div>
-						<div class="text-xs text-muted-foreground uppercase tracking-wider">Amount (Wei)</div>
-						<div class="font-mono text-sm mt-1">{data.channel.amount}</div>
-					</div>
-
-					<div>
-						<div class="text-xs text-muted-foreground uppercase tracking-wider">Created</div>
-						<div class="text-sm mt-1">{new Date(data.channel.updated_at).toLocaleString()}</div>
-					</div>
-
-					<div>
-						<div class="text-xs text-muted-foreground uppercase tracking-wider">Last Updated</div>
-						<div class="text-sm mt-1">{new Date(data.channel.updated_at).toLocaleString()}</div>
-					</div>
 				</div>
-			</div>
+			{/if}
 		</div>
 
 		<!-- Actions -->
@@ -215,11 +264,6 @@
 			>
 				← Back to Channels
 			</a>
-			<button
-				class="px-4 py-2 bg-brand text-brand-foreground rounded-lg hover:brightness-95 transition-all"
-			>
-				View on Block Explorer
-			</button>
 		</div>
 	{/if}
 </div>
