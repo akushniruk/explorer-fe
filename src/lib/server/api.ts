@@ -14,8 +14,9 @@ function joinUrl(base: string | undefined, path: string) {
 		return path;
 	}
 	
-	// Deduplicate common prefixes like /api or /api/v1 when accidentally repeated
-	const joined = `${b}${p}`.replace(/(\/api(?:\/v\d+)?)\1\//, '$1/');
+	// Simple join without complex regex that might cause issues
+	const joined = `${b}${p}`;
+	console.log(`[joinUrl] base: "${base}" -> "${b}", path: "${path}" -> "${p}", joined: "${joined}"`);
 	return joined;
 }
 
@@ -28,6 +29,9 @@ export async function apiGet<T>(
 ): Promise<ApiResult<T>> {
 	const base = event.locals.apiBase;
 	const url = joinUrl(base, path);
+	
+	// Debug logging
+	console.log(`[apiGet] base: "${base}", path: "${path}", final URL: "${url}"`);
 
 	const res = await event.fetch(url, {
 		headers: etag ? { 'If-None-Match': etag } : undefined
