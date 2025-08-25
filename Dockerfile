@@ -1,5 +1,5 @@
 # Frontend Dockerfile for SvelteKit application
-FROM node:20-alpine AS base
+FROM node:20-alpine
 
 # Install pnpm globally
 RUN npm install -g pnpm
@@ -15,34 +15,21 @@ RUN pnpm install --frozen-lockfile
 # Copy source code
 COPY . .
 
-# Build stage
-FROM base AS build
-
-# Build argument for API base URL
-ARG PUBLIC_API_BASE
+# Build arguments for environment variables
+ARG PUBLIC_API_BASE=https://explorer-apps.up.railway.app
 ENV PUBLIC_API_BASE=$PUBLIC_API_BASE
 
 # Build the application
 RUN pnpm build
 
-# Production stage
-FROM node:20-alpine AS production
+# Clean up dev dependencies and install only production deps
+RUN rm -rf node_modules && pnpm install --prod --frozen-lockfile
 
-# Install pnpm
-RUN npm install -g pnpm
-
-WORKDIR /app
-
-# Copy built application and dependencies
-COPY --from=build /app/build ./build
-COPY --from=build /app/package.json ./
-COPY --from=build /app/pnpm-lock.yaml ./
-
-# Install only production dependencies
-RUN pnpm install --prod --frozen-lockfile
+# Railway sets PORT environment variable
+ENV PORT=3000
 
 # Expose port
-EXPOSE 3000
+EXPOSE $PORT
 
 # Start the application
-CMD ["node", "build"]
+CMD ["node", "build/index.js"]

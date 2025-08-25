@@ -8,7 +8,9 @@ import { env } from '$env/dynamic/public';
 const handleApi: Handle = ({ event, resolve }) => {
 	// Always use localhost:3000 for API in both dev and preview modes
 	// In production deployment, PUBLIC_API_BASE should be set to the actual API URL
-	event.locals.apiBase = env.PUBLIC_API_BASE ?? 'http://localhost:3000';
+	const apiBase = env.PUBLIC_API_BASE ?? 'http://localhost:3000';
+	console.log('API Base URL:', apiBase); // Debug logging
+	event.locals.apiBase = apiBase;
 	return resolve(event);
 };
 

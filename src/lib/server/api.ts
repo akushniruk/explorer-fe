@@ -7,6 +7,13 @@ export type ApiResult<T> = { data: T; etag?: string; notModified?: boolean };
 function joinUrl(base: string | undefined, path: string) {
 	const b = (base ?? '').replace(/\/+$/, ''); // trim trailing slash
 	const p = path.startsWith('/') ? path : `/${path}`;
+	
+	// Handle empty base case
+	if (!b) {
+		console.error('API base URL is empty or undefined!');
+		return path;
+	}
+	
 	// Deduplicate common prefixes like /api or /api/v1 when accidentally repeated
 	const joined = `${b}${p}`.replace(/(\/api(?:\/v\d+)?)\1\//, '$1/');
 	return joined;
