@@ -40,6 +40,8 @@
 	--color-border: #f0f0f0;
 	--color-input: #f0f0f0;
 	--color-ring: #3b82f6;
+	--color-hero-bg: #090909;
+	--color-text-secondary: #fffffc;
 
 	/* Brand - Blue for blockchain explorer */
 	--color-brand: #3b82f6;
@@ -74,6 +76,8 @@
 	--color-border--dark: #2d3748;
 	--color-input--dark: #2d3748;
 	--color-ring--dark: #60a5fa;
+	--color-hero-bg--dark: #090909;
+	--color-text-secondary--dark: #fffffc;
 
 	/* Success colors - dark */
 	--color-success--dark: #059669;
@@ -91,6 +95,7 @@
 	--color-primary: var(--color-primary--dark);
 	--color-primary-foreground: var(--color-primary-foreground--dark);
 	--color-secondary: var(--color-secondary--dark);
+	--color-hero-bg: var(--color-hero-bg--dark);
 	--color-secondary-foreground: var(--color-secondary-foreground--dark);
 	--color-muted: var(--color-muted--dark);
 	--color-muted-foreground: var(--color-muted-foreground--dark);

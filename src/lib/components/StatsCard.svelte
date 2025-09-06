@@ -26,7 +26,7 @@
 						<div class="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">
 							Channels
 						</div>
-						<a href="/channel/list" class="text-base font-semibold hover:underline"
+						<a href="/channels" class="text-base font-semibold hover:underline"
 							>{fmt(counts.channels)}</a
 						>
 						<span class="text-[11px] text-muted-foreground ml-2">active</span>
@@ -46,7 +46,7 @@
 						<div class="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">
 							App Sessions
 						</div>
-						<a href="/app-session/list" class="text-base font-semibold hover:underline"
+						<a href="/sessions" class="text-base font-semibold hover:underline"
 							>{fmt(counts.sessions)}</a
 						>
 					</div>
@@ -66,7 +66,7 @@
 						<div class="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">
 							Assets
 						</div>
-						<a href="/asset/list" class="text-base font-semibold hover:underline"
+						<a href="/assets" class="text-base font-semibold hover:underline"
 							>{fmt(counts.assets)}</a
 						>
 						<span class="text-[11px] text-muted-foreground ml-2">tracked</span>
@@ -86,7 +86,7 @@
 						<div class="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">
 							Networks
 						</div>
-						<a href="/network/list" class="text-base font-semibold hover:underline"
+						<a href="/assets" class="text-base font-semibold hover:underline"
 							>{fmt(counts.networks)}</a
 						>
 						<span class="text-[11px] text-muted-foreground ml-2">connected</span>
