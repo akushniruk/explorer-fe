@@ -8,6 +8,7 @@
 	import { getChainById } from '$lib/ctypto/utils';
 	import Chain from '$lib/components/Chain.svelte';
 	import { ExternalLink, Users, CreditCard, Activity, Clock } from 'lucide-svelte';
+	import { createAddressSEO } from '$lib/utils/seo';
 
 	export let data: {
 		participantId: string;
@@ -22,15 +23,34 @@
 	};
 
 	let activeTab = 'overview';
+	$: seoData = createAddressSEO(data.participantId, data.stats);
 </script>
 
 <svelte:head>
-	<title>Address {shortHex(data.participantId, 8, 6)} | ynscan</title>
-	<meta
-		name="description"
-		content="View address details and activity on The Yellow Network. Channel participation, session history, and network statistics."
-	/>
-	<link rel="canonical" href="https://ynscan.xyz/address/{data.participantId}" />
+	<title>{seoData.title}</title>
+	<meta name="description" content={seoData.description} />
+	<meta name="keywords" content={seoData.keywords} />
+	<meta name="author" content="ynscan" />
+	<meta name="format-detection" content="telephone=no" />
+	
+	<!-- Open Graph meta tags -->
+	<meta property="og:title" content={seoData.ogTitle} />
+	<meta property="og:description" content={seoData.ogDescription} />
+	<meta property="og:type" content="website" />
+	<meta property="og:site_name" content="ynscan" />
+	<meta property="og:url" content={seoData.ogUrl} />
+	<meta property="og:image" content={seoData.ogImage} />
+	<meta property="og:image:alt" content="Visit ynscan" />
+	
+	<!-- Twitter meta tags -->
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={seoData.twitterTitle} />
+	<meta name="twitter:description" content={seoData.twitterDescription} />
+	<meta name="twitter:site" content="@yellownetwork" />
+	<meta property="twitter:image" content={seoData.ogImage} />
+	<meta name="twitter:image:alt" content="Visit ynscan" />
+	
+	<link rel="canonical" href={seoData.canonical} />
 </svelte:head>
 
 <div class="max-w-7xl mx-auto px-4 py-6">

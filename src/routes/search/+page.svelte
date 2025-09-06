@@ -10,6 +10,7 @@
 	import SearchAutocomplete from '$lib/components/SearchAutocomplete.svelte';
 	import ChannelsPagination from '$lib/components/ChannelsPagination.svelte';
 	import AddressAvatar from '$lib/components/ui/AddressAvatar.svelte';
+	import { createSearchSEO } from '$lib/utils/seo';
 
 	export let data: {
 		query: string;
@@ -24,6 +25,7 @@
 
 	$: query = $page.url.searchParams.get('q') || '';
 	$: scope = $page.url.searchParams.get('scope') || 'all';
+	$: seoData = createSearchSEO(data.query || query, data.total);
 
 	let searchInput = query;
 
@@ -72,11 +74,30 @@
 </script>
 
 <svelte:head>
-	<title>Search: {data.query} | ynscan - The Yellow Network Scanner</title>
-	<meta
-		name="description"
-		content="Search results for {data.query} on The Yellow Network. Find channels, sessions, addresses, and assets quickly."
-	/>
+	<title>{seoData.title}</title>
+	<meta name="description" content={seoData.description} />
+	<meta name="keywords" content={seoData.keywords} />
+	<meta name="author" content="ynscan" />
+	<meta name="format-detection" content="telephone=no" />
+	
+	<!-- Open Graph meta tags -->
+	<meta property="og:title" content={seoData.ogTitle} />
+	<meta property="og:description" content={seoData.ogDescription} />
+	<meta property="og:type" content="website" />
+	<meta property="og:site_name" content="ynscan" />
+	<meta property="og:url" content={seoData.ogUrl} />
+	<meta property="og:image" content={seoData.ogImage} />
+	<meta property="og:image:alt" content="Visit ynscan" />
+	
+	<!-- Twitter meta tags -->
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={seoData.twitterTitle} />
+	<meta name="twitter:description" content={seoData.twitterDescription} />
+	<meta name="twitter:site" content="@yellownetwork" />
+	<meta property="twitter:image" content={seoData.ogImage} />
+	<meta name="twitter:image:alt" content="Visit ynscan" />
+	
+	<link rel="canonical" href={seoData.canonical} />
 	<link rel="canonical" href="https://ynscan.xyz/search" />
 </svelte:head>
 

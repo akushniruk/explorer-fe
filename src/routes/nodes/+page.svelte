@@ -3,6 +3,7 @@
 	import type { PageData } from './$types';
 	import NodesMap from '$lib/components/nodes/NodesMap.svelte';
 	import type { TNodeData } from '$lib/components/nodes/types';
+	import { createNodesSEO } from '$lib/utils/seo';
 
 	export let data: PageData & {
 		error?: { status: number; body: string };
@@ -10,6 +11,8 @@
 	};
 
 	const nodes = data.nodes ?? [];
+	const activeNodes = nodes.filter((n: any) => n.available === true || n.status === 'active').length;
+	$: seoData = createNodesSEO(activeNodes, nodes.length);
 
 	function isFiniteNumber(n: any) {
 		return typeof n === 'number' && Number.isFinite(n);
@@ -98,6 +101,33 @@
 
 	// Coordinate extraction & sanitization already handles multiple key variants (lat/lng etc.)
 </script>
+
+<svelte:head>
+	<title>{seoData.title}</title>
+	<meta name="description" content={seoData.description} />
+	<meta name="keywords" content={seoData.keywords} />
+	<meta name="author" content="ynscan" />
+	<meta name="format-detection" content="telephone=no" />
+	
+	<!-- Open Graph meta tags -->
+	<meta property="og:title" content={seoData.ogTitle} />
+	<meta property="og:description" content={seoData.ogDescription} />
+	<meta property="og:type" content="website" />
+	<meta property="og:site_name" content="ynscan" />
+	<meta property="og:url" content={seoData.ogUrl} />
+	<meta property="og:image" content={seoData.ogImage} />
+	<meta property="og:image:alt" content="Visit ynscan" />
+	
+	<!-- Twitter meta tags -->
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={seoData.twitterTitle} />
+	<meta name="twitter:description" content={seoData.twitterDescription} />
+	<meta name="twitter:site" content="@yellownetwork" />
+	<meta property="twitter:image" content={seoData.ogImage} />
+	<meta name="twitter:image:alt" content="Visit ynscan" />
+	
+	<link rel="canonical" href={seoData.canonical} />
+</svelte:head>
 
 <!-- Map replaces table -->
 <div class="">

@@ -5,11 +5,14 @@
 	import LatestSessions from '$lib/components/LatestSessions.svelte';
 	import type { Channel, AppSession, NetworkCounts } from '$lib/types';
 	import HeroSection from '$lib/components/HeroSection.svelte';
+	import { createHomeSEO } from '$lib/utils/seo';
 
 	export let data: {
 		counts: NetworkCounts;
 		latest: { channels: Channel[]; sessions: AppSession[] };
 	};
+
+	$: seoData = createHomeSEO(data.counts);
 
 	let timer: ReturnType<typeof setInterval>;
 	async function refreshLists() {
@@ -32,12 +35,29 @@
 </script>
 
 <svelte:head>
-	<title>ynscan - The Yellow Network Explorer</title>
-	<meta
-		name="description"
-		content="Explore The Yellow Network in real-time. Track channels, app sessions, network nodes, assets."
-	/>
-	<link rel="canonical" href="https://ynscan.xyz" />
+	<title>{seoData.title}</title>
+	<meta name="description" content={seoData.description} />
+	<meta name="keywords" content={seoData.keywords} />
+	<meta name="author" content="ynscan" />
+	
+	<!-- Open Graph meta tags -->
+	<meta property="og:title" content={seoData.ogTitle} />
+	<meta property="og:description" content={seoData.ogDescription} />
+	<meta property="og:type" content="website" />
+	<meta property="og:site_name" content="ynscan" />
+	<meta property="og:url" content={seoData.ogUrl} />
+	<meta property="og:image" content={seoData.ogImage} />
+	<meta property="og:image:alt" content="Visit ynscan" />
+	
+	<!-- Twitter meta tags -->
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={seoData.twitterTitle} />
+	<meta name="twitter:description" content={seoData.twitterDescription} />
+	<meta name="twitter:site" content="@yellownetwork" />
+	<meta property="twitter:image" content={seoData.ogImage} />
+	<meta name="twitter:image:alt" content="Visit ynscan" />
+	
+	<link rel="canonical" href={seoData.canonical} />
 </svelte:head>
 
 <HeroSection />

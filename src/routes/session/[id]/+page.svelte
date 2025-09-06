@@ -4,22 +4,49 @@
 	import { FileText, Users, Clock, ExternalLink, Activity } from 'lucide-svelte';
 	import AddressAvatar from '$lib/components/ui/AddressAvatar.svelte';
 	import CopyButton from '$lib/components/ui/CopyButton.svelte';
+	import { createSessionSEO } from '$lib/utils/seo';
 
 	export let data: {
 		session: AppSession | null;
 		notFound?: boolean;
 	};
+
+	$: seoData = data.session ? createSessionSEO(data.session) : null;
 </script>
 
 <svelte:head>
-	<title
-		>Session {data.session ? shortHex(data.session.session_id, 8, 6) : 'Not Found'} | ynscan</title
-	>
-	<meta
-		name="description"
-		content="View detailed information for this app session on The Yellow Network."
-	/>
-	<link rel="canonical" href="https://ynscan.xyz/session/{data.session?.session_id || ''}" />
+	{#if seoData}
+		<title>{seoData.title}</title>
+		<meta name="description" content={seoData.description} />
+		<meta name="keywords" content={seoData.keywords} />
+		<meta name="author" content="ynscan" />
+		<meta name="format-detection" content="telephone=no" />
+		
+		<!-- Open Graph meta tags -->
+		<meta property="og:title" content={seoData.ogTitle} />
+		<meta property="og:description" content={seoData.ogDescription} />
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="ynscan" />
+		<meta property="og:url" content={seoData.ogUrl} />
+		<meta property="og:image" content={seoData.ogImage} />
+		<meta property="og:image:alt" content="Visit ynscan" />
+		
+		<!-- Twitter meta tags -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={seoData.twitterTitle} />
+		<meta name="twitter:description" content={seoData.twitterDescription} />
+		<meta name="twitter:site" content="@yellownetwork" />
+		<meta property="twitter:image" content={seoData.ogImage} />
+		<meta name="twitter:image:alt" content="Visit ynscan" />
+		
+		<link rel="canonical" href={seoData.canonical} />
+	{:else}
+		<title>Session Not Found | ynscan</title>
+		<meta name="description" content="The requested session could not be found on Yellow Network Explorer." />
+		<meta name="keywords" content="Yellow Network, explorer, session, not found" />
+		<meta name="author" content="ynscan" />
+		<link rel="canonical" href="https://ynscan.xyz/session/" />
+	{/if}
 </svelte:head>
 
 <div class="max-w-7xl mx-auto px-4 py-6">

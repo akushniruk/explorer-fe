@@ -2,6 +2,7 @@
 	import { shortHex, formatAmount, formatSignificantWithSeparators } from '$lib/format';
 	import AssetsTable from '$lib/components/AssetsTable.svelte';
 	import ChannelsPagination from '$lib/components/ChannelsPagination.svelte';
+	import { createAssetsSEO } from '$lib/utils/seo';
 
 	export let data: {
 		assets: Array<{
@@ -21,6 +22,7 @@
 
 	let searchQuery = '';
 	let chainFilter = 'all';
+	$: seoData = createAssetsSEO(data.total);
 
 	// Extract unique chains
 	$: chains = [...new Set(data.assets.map((a) => a.chain_id))];
@@ -53,9 +55,30 @@
 </script>
 
 <svelte:head>
-	<title>Assets | ynscan</title>
-	<meta name="description" content="Explore assets on The Yellow Network." />
-	<link rel="canonical" href="https://ynscan.xyz/assets" />
+	<title>{seoData.title}</title>
+	<meta name="description" content={seoData.description} />
+	<meta name="keywords" content={seoData.keywords} />
+	<meta name="author" content="ynscan" />
+	<meta name="format-detection" content="telephone=no" />
+	
+	<!-- Open Graph meta tags -->
+	<meta property="og:title" content={seoData.ogTitle} />
+	<meta property="og:description" content={seoData.ogDescription} />
+	<meta property="og:type" content="website" />
+	<meta property="og:site_name" content="ynscan" />
+	<meta property="og:url" content={seoData.ogUrl} />
+	<meta property="og:image" content={seoData.ogImage} />
+	<meta property="og:image:alt" content="Visit ynscan" />
+	
+	<!-- Twitter meta tags -->
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={seoData.twitterTitle} />
+	<meta name="twitter:description" content={seoData.twitterDescription} />
+	<meta name="twitter:site" content="@yellownetwork" />
+	<meta property="twitter:image" content={seoData.ogImage} />
+	<meta name="twitter:image:alt" content="Visit ynscan" />
+	
+	<link rel="canonical" href={seoData.canonical} />
 </svelte:head>
 
 <div class="max-w-7xl mx-auto px-4 py-6">

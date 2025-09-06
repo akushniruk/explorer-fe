@@ -1,27 +1,54 @@
 <script lang="ts">
-	import { shortHex, formatAmount, timeAgo, formatSignificantWithSeparators } from '$lib/format';
+	import { shortHex, formatAmount, timeAgo } from '$lib/format';
 	import type { Channel } from '$lib/types';
 	import CopyButton from '$lib/components/ui/CopyButton.svelte';
 	import AddressAvatar from '$lib/components/ui/AddressAvatar.svelte';
 	import { getChainById } from '$lib/ctypto/utils';
 	import Chain from '$lib/components/Chain.svelte';
 	import { CreditCard, Users, Activity, Clock, Coins } from 'lucide-svelte';
+	import { createChannelSEO } from '$lib/utils/seo';
 
 	export let data: {
 		channel: Channel | null;
 		notFound?: boolean;
 	};
+
+	$: seoData = data.channel ? createChannelSEO(data.channel) : null;
 </script>
 
 <svelte:head>
-	<title
-		>Channel {data.channel ? shortHex(data.channel.channel_id, 8, 6) : 'Not Found'} | ynscan</title
-	>
-	<meta
-		name="description"
-		content="View detailed information for this payment channel on The Yellow Network. Channel participants, amounts, status, and transaction history."
-	/>
-	<link rel="canonical" href="https://ynscan.xyz/channel/{data.channel?.channel_id || ''}" />
+	{#if seoData}
+		<title>{seoData.title}</title>
+		<meta name="description" content={seoData.description} />
+		<meta name="keywords" content={seoData.keywords} />
+		<meta name="author" content="ynscan" />
+		<meta name="format-detection" content="telephone=no" />
+		
+		<!-- Open Graph meta tags -->
+		<meta property="og:title" content={seoData.ogTitle} />
+		<meta property="og:description" content={seoData.ogDescription} />
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="ynscan" />
+		<meta property="og:url" content={seoData.ogUrl} />
+		<meta property="og:image" content={seoData.ogImage} />
+		<meta property="og:image:alt" content="Visit ynscan" />
+		
+		<!-- Twitter meta tags -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={seoData.twitterTitle} />
+		<meta name="twitter:description" content={seoData.twitterDescription} />
+		<meta name="twitter:site" content="@yellownetwork" />
+		<meta property="twitter:image" content={seoData.ogImage} />
+		<meta name="twitter:image:alt" content="Visit ynscan" />
+		
+		<link rel="canonical" href={seoData.canonical} />
+	{:else}
+		<title>Channel Not Found | ynscan</title>
+		<meta name="description" content="The requested channel could not be found on Yellow Network Explorer." />
+		<meta name="keywords" content="Yellow Network, explorer, channel, not found" />
+		<meta name="author" content="ynscan" />
+		<link rel="canonical" href="https://ynscan.xyz/channel/" />
+	{/if}
 </svelte:head>
 
 <div class="max-w-7xl mx-auto px-4 py-6">
