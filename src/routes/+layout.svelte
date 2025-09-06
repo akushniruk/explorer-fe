@@ -54,9 +54,9 @@
 	/>
 	<meta property="og:type" content="website" />
 	<meta property="og:url" content="https://ynscan.xyz" />
-	<meta property="og:site_name" content="ynsacn" />
+	<meta property="og:site_name" content="ynscan" />
 	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:title" content="ynsacn - The Yellow Network Explorer" />
+	<meta name="twitter:title" content="ynscan - The Yellow Network Explorer" />
 	<meta
 		name="twitter:description"
 		content="Explore and monitor The Yellow Network's channels, app sessions, and network assets."

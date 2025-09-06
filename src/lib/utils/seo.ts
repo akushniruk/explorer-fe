@@ -1,4 +1,5 @@
 import type { Channel, AppSession, Asset } from '$lib/types';
+import { generateWebsiteStructuredData, generateOrganizationStructuredData, generateChannelStructuredData, generateSessionStructuredData, type StructuredData } from './structured-data';
 
 export interface SEOData {
 	title: string;
@@ -11,6 +12,7 @@ export interface SEOData {
 	twitterTitle: string;
 	twitterDescription: string;
 	canonical?: string;
+	structuredData?: StructuredData[];
 }
 
 const baseTitle = 'ynscan';
@@ -51,7 +53,8 @@ export function createHomeSEO(data: {
 		ogImage: `${baseUrl}/og-preview.jpg`,
 		twitterTitle: `${baseTitle} - The Yellow Network Explorer`,
 		twitterDescription: description,
-		canonical: baseUrl
+		canonical: baseUrl,
+		structuredData: [generateWebsiteStructuredData(), generateOrganizationStructuredData()]
 	};
 }
 
@@ -70,7 +73,8 @@ export function createChannelSEO(channel: Channel): SEOData {
 		ogImage: `${baseUrl}/og-preview.jpg`,
 		twitterTitle: `Channel ${shortId}`,
 		twitterDescription: description,
-		canonical: `${baseUrl}/channel/${channel.channel_id}`
+		canonical: `${baseUrl}/channel/${channel.channel_id}`,
+		structuredData: [generateChannelStructuredData(channel)]
 	};
 }
 
@@ -89,7 +93,8 @@ export function createSessionSEO(session: AppSession): SEOData {
 		ogImage: `${baseUrl}/og-preview.jpg`,
 		twitterTitle: `Session ${shortId}`,
 		twitterDescription: description,
-		canonical: `${baseUrl}/session/${session.session_id}`
+		canonical: `${baseUrl}/session/${session.session_id}`,
+		structuredData: [generateSessionStructuredData(session)]
 	};
 }
 

@@ -60,6 +60,9 @@
 	<meta name="twitter:image:alt" content="Visit ynscan" />
 	
 	<link rel="canonical" href={seoData.canonical} />
+	
+	<!-- JSON-LD Structured Data -->
+	{@html `<script type="application/ld+json">${JSON.stringify(seoData.structuredData)}</script>`}
 </svelte:head>
 
 <HeroSection />
