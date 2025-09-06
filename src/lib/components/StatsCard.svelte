@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { NetworkCounts } from '$lib/types';
-	import { Link2, Workflow, Coins, Network, CheckCircle2, Server, BarChart2 } from 'lucide-svelte';
+	import { Link2, Workflow, Coins, Network, CheckCircle2, Server } from 'lucide-svelte';
 
 	export let counts: NetworkCounts;
 
@@ -18,18 +18,18 @@
 				<!-- Channels -->
 				<div class="flex items-start gap-3">
 					<div
-						class="shrink-0 grid place-items-center h-8 w-8 rounded-md border border-border/60 bg-muted/30"
+						class="shrink-0 grid place-items-center p-4 bg-secondary/10 border-b-2 border-secondary"
 					>
-						<Link2 class="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+						<Link2 class="h-6 w-6 text-text" aria-hidden="true" />
 					</div>
 					<div class="min-w-0">
-						<div class="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">
+						<div class="text-sm uppercase tracking-wider text-muted-foreground mb-1">
 							Channels
 						</div>
-						<a href="/channels" class="text-base font-semibold hover:underline"
+						<a href="/channels" class="text-lg font-semibold hover:underline"
 							>{fmt(counts.channels)}</a
 						>
-						<span class="text-[11px] text-muted-foreground ml-2">active</span>
+						<span class="text-sm text-muted-foreground ml-2">active</span>
 					</div>
 				</div>
 
@@ -38,15 +38,15 @@
 				<!-- App Sessions -->
 				<div class="flex items-start gap-3">
 					<div
-						class="shrink-0 grid place-items-center h-8 w-8 rounded-md border border-border/60 bg-muted/30"
+						class="shrink-0 grid place-items-center p-4 bg-secondary/10 border-b-2 border-secondary"
 					>
-						<Workflow class="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+						<Workflow class="h-6 w-6 text-text" aria-hidden="true" />
 					</div>
 					<div class="min-w-0">
-						<div class="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">
+						<div class="text-sm uppercase tracking-wider text-muted-foreground mb-1">
 							App Sessions
 						</div>
-						<a href="/sessions" class="text-base font-semibold hover:underline"
+						<a href="/sessions" class="text-lg font-semibold hover:underline"
 							>{fmt(counts.sessions)}</a
 						>
 					</div>
@@ -58,18 +58,18 @@
 				<!-- Assets -->
 				<div class="flex items-start gap-3">
 					<div
-						class="shrink-0 grid place-items-center h-8 w-8 rounded-md border border-border/60 bg-muted/30"
+						class="shrink-0 grid place-items-center p-4 bg-secondary/10 border-b-2 border-secondary"
 					>
-						<Coins class="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+						<Coins class="h-6 w-6 text-text" aria-hidden="true" />
 					</div>
 					<div class="min-w-0">
-						<div class="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">
+						<div class="text-sm uppercase tracking-wider text-muted-foreground mb-1">
 							Assets
 						</div>
-						<a href="/assets" class="text-base font-semibold hover:underline"
+						<a href="/assets" class="text-lg font-semibold hover:underline"
 							>{fmt(counts.assets)}</a
 						>
-						<span class="text-[11px] text-muted-foreground ml-2">tracked</span>
+						<span class="text-sm text-muted-foreground ml-2">tracked</span>
 					</div>
 				</div>
 
@@ -78,18 +78,18 @@
 				<!-- Networks -->
 				<div class="flex items-start gap-3">
 					<div
-						class="shrink-0 grid place-items-center h-8 w-8 rounded-md border border-border/60 bg-muted/30"
+						class="shrink-0 grid place-items-center p-4 bg-secondary/10 border-b-2 border-secondary"
 					>
-						<Network class="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+						<Network class="h-6 w-6 text-text" aria-hidden="true" />
 					</div>
 					<div class="min-w-0">
-						<div class="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">
+						<div class="text-sm uppercase tracking-wider text-muted-foreground mb-1">
 							Networks
 						</div>
-						<a href="/assets" class="text-base font-semibold hover:underline"
+						<a href="/assets" class="text-lg font-semibold hover:underline"
 							>{fmt(counts.networks)}</a
 						>
-						<span class="text-[11px] text-muted-foreground ml-2">connected</span>
+						<span class="text-sm text-muted-foreground ml-2">connected</span>
 					</div>
 				</div>
 			</div>
@@ -99,16 +99,16 @@
 				<!-- Network Status -->
 				<div class="flex items-start gap-3">
 					<div
-						class="shrink-0 grid place-items-center h-8 w-8 rounded-md border border-border/60 bg-muted/30"
+						class="shrink-0 grid place-items-center p-4 bg-secondary/10 border-b-2 border-secondary"
 					>
-						<CheckCircle2 class="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+						<CheckCircle2 class="h-6 w-6 text-text" aria-hidden="true" />
 					</div>
 					<div class="min-w-0">
-						<div class="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">
+						<div class="text-sm uppercase tracking-wider text-muted-foreground mb-1">
 							Network Status
 						</div>
 						<span
-							class="inline-flex items-center rounded-md border border-border/60 bg-muted/20 px-2 py-[2px] text-[11px]"
+							class="inline-flex items-center text-sm"
 						>
 							Operational
 						</span>
@@ -120,15 +120,15 @@
 				<!-- Active Nodes -->
 				<div class="flex items-start gap-3">
 					<div
-						class="shrink-0 grid place-items-center h-8 w-8 rounded-md border border-border/60 bg-muted/30"
+						class="shrink-0 grid place-items-center p-4 bg-secondary/10 border-b-2 border-secondary"
 					>
-						<Server class="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+						<Server class="h-6 w-6 text-text" aria-hidden="true" />
 					</div>
 					<div class="min-w-0">
-						<div class="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">
+						<div class="text-sm uppercase tracking-wider text-muted-foreground mb-1">
 							Active Nodes
 						</div>
-						<span class="text-base font-semibold">{fmt(counts.nodes)}</span>
+						<span class="text-lg font-semibold">{fmt(counts.nodes)}</span>
 					</div>
 				</div>
 			</div>

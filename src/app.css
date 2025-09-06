@@ -29,11 +29,11 @@
 	--color-popover-foreground: #001011;
 	--color-primary: #3b82f6;
 	--color-primary-foreground: #fffffc;
-	--color-secondary: #f8f9fa;
+	--color-secondary: #fcd000;
 	--color-secondary-foreground: #001011;
 	--color-muted: #f5f6f7;
 	--color-muted-foreground: #6b7280;
-	--color-accent: #f8f9fa;
+	--color-accent: #fcd000;
 	--color-accent-foreground: #001011;
 	--color-destructive: #ef4444;
 	--color-destructive-foreground: #fffffc;
@@ -41,11 +41,15 @@
 	--color-input: #f0f0f0;
 	--color-ring: #3b82f6;
 	--color-hero-bg: #090909;
+	--color-text: #001011;
 	--color-text-secondary: #fffffc;
 
 	/* Brand - Blue for blockchain explorer */
 	--color-brand: #3b82f6;
 	--color-brand-foreground: #fffffc;
+
+	/* Secondary variations */
+	--color-secondary-10: #fffae3;
 
 	/* Success colors */
 	--color-success: #10b981;
@@ -59,13 +63,13 @@
 	/* Dark theme overrides */
 	--color-background--dark: #001011;
 	--color-foreground--dark: #fffffc;
-	--color-card--dark: #0a1520;
+	--color-card--dark: #001011;
 	--color-card-foreground--dark: #fffffc;
 	--color-popover--dark: #0a1520;
 	--color-popover-foreground--dark: #fffffc;
 	--color-primary--dark: #60a5fa;
 	--color-primary-foreground--dark: #001011;
-	--color-secondary--dark: #1a2332;
+	--color-secondary--dark: #fcd000;
 	--color-secondary-foreground--dark: #fffffc;
 	--color-muted--dark: #1a2332;
 	--color-muted-foreground--dark: #9ca3af;
@@ -77,7 +81,11 @@
 	--color-input--dark: #2d3748;
 	--color-ring--dark: #60a5fa;
 	--color-hero-bg--dark: #090909;
+	--color-text--dark: #fffffc;
 	--color-text-secondary--dark: #fffffc;
+
+	/* Secondary variations - dark */
+	--color-secondary-10--dark: #2a2420;
 
 	/* Success colors - dark */
 	--color-success--dark: #059669;
@@ -107,6 +115,9 @@
 	--color-input: var(--color-input--dark);
 	--color-ring: var(--color-ring--dark);
 	--color-success: var(--color-success--dark);
+	--color-text: var(--color-text--dark);
+	--color-text-secondary: var(--color-text-secondary--dark);
+	--color-secondary-10: var(--color-secondary-10--dark);
 	--color-success-foreground: var(--color-success-foreground--dark);
 }
 
@@ -140,4 +151,10 @@ body,
 		linear-gradient(to bottom, var(--color-border) 1px, transparent 1px);
 	background-size: 24px 24px;
 	opacity: 0.3;
+}
+
+/* Button hover with consistent yellow across themes */
+.button-yellow-hover:hover {
+	background-color: #fcd000 !important;
+	color: #001011 !important;
 }
