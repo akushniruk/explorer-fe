@@ -78,7 +78,7 @@
 					<h1 class="text-3xl font-bold mb-2">Channel Details</h1>
 					<div class="flex items-center gap-2 mb-2">
 						<span class="text-muted-foreground">Channel ID:</span>
-						<code class="font-mono text-lg bg-accent/50 px-3 py-1 rounded text-accent-foreground">
+						<code class="font-sans text-lg bg-accent/50 px-3 py-1 rounded text-accent-foreground">
 							{data.channel.channel_id}
 						</code>
 						<CopyButton value={data.channel.channel_id} />
@@ -168,7 +168,7 @@
 								<div class="flex-1 min-w-0">
 									<a
 										href={`/address/${data.channel.wallet}`}
-										class="font-mono text-brand hover:text-brand/80 block truncate"
+										class="font-sans text-brand hover:text-brand/80 block truncate"
 									>
 										{data.channel.wallet}
 									</a>
@@ -197,7 +197,7 @@
 								<div class="flex-1 min-w-0">
 									<a
 										href={`/address/${data.channel.participant}`}
-										class="font-mono text-brand hover:text-brand/80 block truncate"
+										class="font-sans text-brand hover:text-brand/80 block truncate"
 									>
 										{data.channel.participant}
 									</a>
@@ -232,14 +232,14 @@
 					<div class="p-6 space-y-4">
 						<div>
 							<div class="text-xs text-muted-foreground uppercase tracking-wider">Channel ID</div>
-							<div class="font-mono text-sm mt-1 break-all">{data.channel.channel_id}</div>
+							<div class="font-sans text-sm mt-1 break-all">{data.channel.channel_id}</div>
 						</div>
 
 						<div>
 							<div class="text-xs text-muted-foreground uppercase tracking-wider">
 								Token Contract
 							</div>
-							<div class="font-mono text-sm mt-1">
+							<div class="font-sans text-sm mt-1">
 								<div class="flex items-center gap-2">
 									<a href={`/asset/${data.channel.token}`} class="text-brand hover:text-brand/80">
 										{shortHex(data.channel.token, 12, 8)}
@@ -266,7 +266,7 @@
 
 						<div>
 							<div class="text-xs text-muted-foreground uppercase tracking-wider">Amount (Wei)</div>
-							<div class="font-mono text-sm mt-1">{data.channel.amount}</div>
+							<div class="font-sans text-sm mt-1">{data.channel.amount}</div>
 						</div>
 
 						<div>

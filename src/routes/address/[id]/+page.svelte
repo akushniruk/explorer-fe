@@ -62,7 +62,7 @@
 				<h1 class="text-3xl font-bold mb-2">Address Details</h1>
 				<div class="flex items-center gap-2 mb-2">
 					<span class="text-muted-foreground">Address:</span>
-					<code class="font-mono text-lg bg-accent/50 px-3 py-1 rounded text-accent-foreground">
+					<code class="font-sans text-lg bg-accent/50 px-3 py-1 rounded text-accent-foreground">
 						{data.participantId}
 					</code>
 					<CopyButton value={data.participantId} />
@@ -155,7 +155,7 @@
 							<div>
 								<a
 									href={`/channel/${channel.channel_id}`}
-									class="font-mono text-sm text-brand hover:text-brand/80"
+									class="font-sans text-sm text-brand hover:text-brand/80"
 								>
 									{shortHex(channel.channel_id, 8, 6)}
 								</a>
@@ -202,7 +202,7 @@
 							<div>
 								<a
 									href={`/session/${session.session_id}`}
-									class="font-mono text-sm text-brand hover:text-brand/80"
+									class="font-sans text-sm text-brand hover:text-brand/80"
 								>
 									{shortHex(session.session_id, 8, 6)}
 								</a>
@@ -254,7 +254,7 @@
 							channel.wallet === data.participantId ? channel.participant : channel.wallet}
 						{@const chain = getChainById(Number(channel.chain_id))}
 						<Table.Row class="hover:bg-muted/50">
-							<Table.Cell class="font-mono">
+							<Table.Cell class="font-sans">
 								<div class="flex items-center gap-2">
 									<a
 										href={`/channel/${channel.channel_id}`}
@@ -266,7 +266,7 @@
 									<CopyButton value={channel.channel_id} />
 								</div>
 							</Table.Cell>
-							<Table.Cell class="font-mono">
+							<Table.Cell class="font-sans">
 								<div class="flex items-center gap-2">
 									<AddressAvatar address={counterparty} size={24} />
 									<a
@@ -279,7 +279,7 @@
 									<CopyButton value={counterparty} />
 								</div>
 							</Table.Cell>
-							<Table.Cell class="text-right font-mono text-sm uppercase">
+							<Table.Cell class="text-right font-sans text-sm uppercase">
 								{formatAmount(
 									channel.amount,
 									channel.asset?.decimals ? parseInt(channel.asset.decimals) : 18,
@@ -350,7 +350,7 @@
 							(p) => p !== data.participantId
 						)}
 						<Table.Row class="hover:bg-muted/50">
-							<Table.Cell class="font-mono">
+							<Table.Cell class="font-sans">
 								<div class="flex items-center gap-2">
 									<a
 										href={`/session/${session.session_id}`}
@@ -374,7 +374,7 @@
 											<AddressAvatar address={participant} size={20} />
 											<a
 												href={`/address/${participant}`}
-												class="font-mono underline text-foreground hover:text-foreground cursor-pointer"
+												class="font-sans underline text-foreground hover:text-foreground cursor-pointer"
 												title={participant}
 											>
 												{shortHex(participant, 6, 4)}

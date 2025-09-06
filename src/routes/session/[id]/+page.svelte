@@ -69,7 +69,7 @@
 					<h1 class="text-3xl font-bold mb-2">Session Details</h1>
 					<div class="flex items-center gap-2 mb-2">
 						<span class="text-muted-foreground">Session ID:</span>
-						<code class="font-mono text-lg bg-accent/50 px-3 py-1 rounded text-accent-foreground">
+						<code class="font-sans text-lg bg-accent/50 px-3 py-1 rounded text-accent-foreground">
 							{data.session.session_id}
 						</code>
 						<CopyButton value={data.session.session_id} />
@@ -154,7 +154,7 @@
 									<div class="text-xs text-muted-foreground mb-1">Address {index + 1}</div>
 									<a
 										href={`/address/${participant}`}
-										class="font-mono text-sm text-brand hover:text-brand/80 block truncate"
+										class="font-sans text-sm text-brand hover:text-brand/80 block truncate"
 									>
 										{participant}
 									</a>
@@ -182,12 +182,12 @@
 				<div class="p-6 space-y-4">
 					<div>
 						<div class="text-xs text-muted-foreground uppercase tracking-wider">Session ID</div>
-						<div class="font-mono text-sm mt-1 break-all">{data.session.session_id}</div>
+						<div class="font-sans text-sm mt-1 break-all">{data.session.session_id}</div>
 					</div>
 
 					<div>
 						<div class="text-xs text-muted-foreground uppercase tracking-wider">Channel ID</div>
-						<div class="font-mono text-sm mt-1">
+						<div class="font-sans text-sm mt-1">
 							<a
 								href={`/channel/${data.session.channel_id}`}
 								class="text-brand hover:text-brand/80"

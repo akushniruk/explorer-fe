@@ -44,14 +44,14 @@
 
 	function getStatusColor(status: string) {
 		switch (status.toLowerCase()) {
-			case 'active':
-				return 'bg-secondary text-secondary-foreground hover:bg-secondary';
+			case 'open':
+				return 'bg-system-green/80 text-text';
 			case 'closed':
-				return 'bg-secondary text-secondary-foreground hover:bg-secondary';
+				return 'bg-muted text-text';
 			case 'pending':
-				return 'bg-muted text-muted-foreground hover:bg-muted';
+				return 'bg-system-yellow/80 text-text';
 			default:
-				return 'bg-secondary text-secondary-foreground hover:bg-secondary';
+				return 'bg-muted text-text';
 		}
 	}
 </script>
@@ -86,7 +86,7 @@
 					{#each Array(pageSize) as _}
 						<Table.Row class="hover:bg-muted/50 h-[76px]">
 							<!-- Session ID -->
-							<Table.Cell class="font-mono">
+							<Table.Cell class="font-sans">
 								<div class="h-4 w-40 animate-pulse rounded bg-muted"></div>
 							</Table.Cell>
 
@@ -114,7 +114,7 @@
 							</Table.Cell>
 
 							<!-- Channel
-						<Table.Cell class="font-mono">
+						<Table.Cell class="font-sans">
 							<div class="h-4 w-24 animate-pulse rounded bg-muted"></div>
 						</Table.Cell> -->
 
@@ -139,7 +139,7 @@
 					{#each sessions as session, i}
 						<Table.Row class="hover:bg-muted/50">
 							<!-- Session ID -->
-							<Table.Cell class="font-mono">
+							<Table.Cell class="font-sans">
 								<a
 									href={`/session/${session.session_id}`}
 									class="text-foreground underline hover:text-foreground text-sm cursor-pointer"
@@ -152,7 +152,7 @@
 
 							<!-- Protocol -->
 							<Table.Cell>
-								<Badge class="bg-secondary text-secondary-foreground hover:bg-secondary">
+								<Badge class="bg-secondary text-text-secondary-alt">
 									{session.protocol || 'unknown'}
 								</Badge>
 							</Table.Cell>
@@ -165,7 +165,7 @@
 											<span class="text-muted-foreground text-xs">#{i + 1}:</span>
 											<a
 												href={`/address/${participant}`}
-												class="font-mono underline text-foreground hover:text-foreground cursor-pointer"
+												class="font-sans underline text-foreground hover:text-foreground cursor-pointer"
 												title={participant}
 											>
 												{shortHex(participant, 6, 4)}
@@ -182,7 +182,7 @@
 							</Table.Cell>
 
 							<!-- Channel -->
-							<!-- <Table.Cell class="font-mono">
+							<!-- <Table.Cell class="font-sans">
 							{#if session.channel_id}
 								<a
 									href={`/channel/${session.channel_id}`}

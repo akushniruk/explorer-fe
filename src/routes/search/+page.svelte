@@ -249,7 +249,7 @@
 									<div class="flex-1 min-w-0">
 										<a
 											href={`/address/${participant}`}
-											class="block font-mono text-sm text-foreground hover:text-foreground truncate font-medium"
+											class="block font-sans text-sm text-foreground hover:text-foreground truncate font-medium"
 										>
 											{participant}
 										</a>

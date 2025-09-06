@@ -119,7 +119,7 @@
 							</Table.Cell>
 
 							<!-- Contract Address -->
-							<Table.Cell class="font-mono">
+							<Table.Cell class="font-sans">
 								<div class="flex items-center gap-2">
 									<a
 										href={blockExplorerUrl}
@@ -140,7 +140,7 @@
 
 							<!-- Decimals -->
 							<Table.Cell>
-								<span class="text-sm font-mono">{asset.decimals}</span>
+								<span class="text-sm font-sans">{asset.decimals}</span>
 							</Table.Cell>
 						</Table.Row>
 					{/each}

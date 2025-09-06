@@ -109,7 +109,7 @@
 </svelte:head>
 
 <div class="mx-auto max-w-7xl px-4 py-6">
-	<div class="mb-6">
+	<div class="mb-8">
 		<h1 class="mb-2 text-3xl font-bold">Channels</h1>
 	</div>
 

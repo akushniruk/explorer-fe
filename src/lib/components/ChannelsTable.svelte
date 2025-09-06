@@ -47,13 +47,13 @@
 	function getStatusColor(status: string) {
 		switch (status.toLowerCase()) {
 			case 'open':
-				return 'bg-secondary text-secondary-foreground hover:bg-secondary';
+				return 'bg-system-green/80 text-text';
 			case 'closed':
-				return 'bg-secondary text-secondary-foreground hover:bg-secondary';
+				return 'bg-muted text-text';
 			case 'pending':
-				return 'bg-muted text-foreground hover:bg-muted';
+				return 'bg-system-yellow/80 text-text';
 			default:
-				return 'bg-secondary text-secondary-foreground hover:bg-secondary';
+				return 'bg-muted text-text';
 		}
 	}
 </script>
@@ -88,7 +88,7 @@
 					{#each Array(pageSize) as _}
 						<Table.Row class="hover:bg-muted/50 h-[76px]">
 							<!-- Channel ID -->
-							<Table.Cell class="font-mono">
+							<Table.Cell class="font-sans">
 								<div class="flex items-center gap-2">
 									<div class="h-4 w-40 animate-pulse rounded bg-muted"></div>
 									<div class="h-4 w-4 animate-pulse rounded bg-muted"></div>
@@ -142,7 +142,7 @@
 					{#each channels as channel, i}
 						<Table.Row class="hover:bg-muted/50">
 							<!-- Channel ID -->
-							<Table.Cell class="font-mono">
+							<Table.Cell class="font-sans">
 								<div class="flex items-center gap-2">
 									<a
 										href={`/channel/${channel.channel_id}`}
@@ -162,7 +162,7 @@
 										<span class="text-muted-foreground text-xs">#1</span>
 										<a
 											href={`/address/${channel.wallet}`}
-											class="font-mono underline text-foreground hover:text-foreground cursor-pointer"
+											class="font-sans underline text-foreground hover:text-foreground cursor-pointer"
 											title={channel.wallet}
 										>
 											{shortHex(channel.wallet, 6, 4)}
@@ -173,7 +173,7 @@
 										<span class="text-muted-foreground text-xs">#2</span>
 										<a
 											href={`/address/${channel.participant}`}
-											class="font-mono underline text-foreground hover:text-foreground cursor-pointer"
+											class="font-sans underline text-foreground hover:text-foreground cursor-pointer"
 											title={channel.participant}
 										>
 											{shortHex(channel.participant, 6, 4)}
@@ -185,7 +185,7 @@
 
 							<!-- Amount -->
 							<Table.Cell class="text-right">
-								<span class="font-mono text-sm uppercase">
+								<span class="font-sans text-sm uppercase">
 									{formatAmount(
 										channel.amount,
 										channel.asset?.decimals ? parseInt(channel.asset.decimals) : 18,

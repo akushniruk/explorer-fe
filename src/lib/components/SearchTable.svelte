@@ -21,14 +21,13 @@
 	function getStatusColor(status: string) {
 		switch (status.toLowerCase()) {
 			case 'open':
-			case 'active':
-				return 'bg-secondary text-secondary-foreground hover:bg-secondary';
+				return 'bg-system-green/80 text-text';
 			case 'closed':
-				return 'bg-secondary text-secondary-foreground hover:bg-secondary';
+				return 'bg-muted text-text';
 			case 'pending':
-				return 'bg-muted text-muted-foreground hover:bg-muted';
+				return 'bg-system-yellow/80 text-text';
 			default:
-				return 'bg-secondary text-secondary-foreground hover:bg-secondary';
+				return 'bg-muted text-text';
 		}
 	}
 </script>
@@ -66,7 +65,7 @@
 					<Table.Row class="hover:bg-muted/50">
 						{#if tableType === 'channels'}
 							<!-- Channel ID -->
-							<Table.Cell class="font-mono">
+							<Table.Cell class="font-sans">
 								<a
 									href={`/channel/${row.channel_id}`}
 									class="text-foreground hover:text-foreground text-sm cursor-pointer"
@@ -83,7 +82,7 @@
 										<span class="text-muted-foreground text-xs">From:</span>
 										<a
 											href={`/address/${row.wallet}`}
-											class="font-mono text-foreground hover:text-foreground cursor-pointer"
+											class="font-sans text-foreground hover:text-foreground cursor-pointer"
 											title={row.wallet}
 										>
 											{shortHex(row.wallet, 6, 4)}
@@ -93,7 +92,7 @@
 										<span class="text-muted-foreground text-xs">To:</span>
 										<a
 											href={`/address/${row.participant}`}
-											class="font-mono text-foreground hover:text-foreground cursor-pointer"
+											class="font-sans text-foreground hover:text-foreground cursor-pointer"
 											title={row.participant}
 										>
 											{shortHex(row.participant, 6, 4)}
@@ -104,7 +103,7 @@
 
 							<!-- Amount -->
 							<Table.Cell>
-								<div class="text-sm font-mono">
+								<div class="text-sm font-sans">
 									{formatAmount(
 										row.amount,
 										row.asset?.decimals ? parseInt(row.asset.decimals) : 18,
@@ -129,7 +128,7 @@
 							</Table.Cell>
 						{:else if tableType === 'sessions'}
 							<!-- Session ID -->
-							<Table.Cell class="font-mono">
+							<Table.Cell class="font-sans">
 								<a
 									href={`/session/${row.session_id}`}
 									class="text-foreground hover:text-foreground text-sm cursor-pointer"
@@ -154,7 +153,7 @@
 											<span class="text-muted-foreground text-xs">#{i + 1}:</span>
 											<a
 												href={`/address/${participant}`}
-												class="font-mono text-foreground hover:text-foreground cursor-pointer"
+												class="font-sans text-foreground hover:text-foreground cursor-pointer"
 												title={participant}
 											>
 												{shortHex(participant, 6, 4)}

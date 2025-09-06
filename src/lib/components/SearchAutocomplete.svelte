@@ -174,7 +174,7 @@
 							<div class="flex items-center gap-3">
 								${getIconSvg(suggestion.type)}
 								<div class="flex-1 min-w-0">
-									<div class="font-mono text-sm text-popover-foreground truncate">${suggestion.text}</div>
+									<div class="font-sans text-sm text-popover-foreground truncate">${suggestion.text}</div>
 									${suggestion.description ? `<div class="text-xs text-muted-foreground mt-1">${suggestion.description}</div>` : ''}
 								</div>
 							</div>

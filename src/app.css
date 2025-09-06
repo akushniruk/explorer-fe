@@ -43,6 +43,7 @@
 	--color-hero-bg: #090909;
 	--color-text: #001011;
 	--color-text-secondary: #fffffc;
+	--color-text-secondary-alt: #010101;
 
 	/* Brand - Blue for blockchain explorer */
 	--color-brand: #3b82f6;
@@ -83,13 +84,23 @@
 	--color-hero-bg--dark: #090909;
 	--color-text--dark: #fffffc;
 	--color-text-secondary--dark: #fffffc;
-
+	--color-text-secondary-alt--dark: #010101;
 	/* Secondary variations - dark */
 	--color-secondary-10--dark: #2a2420;
 
 	/* Success colors - dark */
 	--color-success--dark: #059669;
 	--color-success-foreground--dark: #fffffc;
+
+	--color-system-green: #22c55e;
+	--color-system-red: #ef4444;
+	--color-system-yellow: #fcd000;
+	--color-system-blue: #3b82f6;
+
+	--color-system-green--dark: #22c55e;
+	--color-system-red--dark: #ef4444;
+	--color-system-yellow--dark: #fcd000;
+	--color-system-blue--dark: #3b82f6;
 }
 
 /* Dark mode activation */
@@ -119,6 +130,11 @@
 	--color-text-secondary: var(--color-text-secondary--dark);
 	--color-secondary-10: var(--color-secondary-10--dark);
 	--color-success-foreground: var(--color-success-foreground--dark);
+	--color-system-green: var(--color-system-green--dark);
+	--color-system-red: var(--color-system-red--dark);
+	--color-system-yellow: var(--color-system-yellow--dark);
+	--color-system-blue: var(--color-system-blue--dark);
+	--color-text-secondary-alt: var(--color-text-secondary-alt--dark);
 }
 
 /* App shell baseline */
