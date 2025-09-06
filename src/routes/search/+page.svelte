@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { shortHex, formatAmount, timeAgo } from '$lib/format';
+	import { shortHex, formatAmount, timeAgo, formatSignificantWithSeparators } from '$lib/format';
 	import type { Channel, AppSession } from '$lib/types';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { shortHex, formatAmount } from '$lib/format';
+	import { shortHex, formatAmount, formatSignificantWithSeparators } from '$lib/format';
 	import * as Table from '$lib/components/ui/table';
 	import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-svelte';
 	import Chain from './Chain.svelte';

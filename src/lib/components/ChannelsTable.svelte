@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { shortHex, formatAmount, timeAgo } from '$lib/format';
+	import { shortHex, formatAmount, timeAgo, formatSignificantWithSeparators } from '$lib/format';
 	import { Button } from '$lib/components/ui/button';
 	import * as Table from '$lib/components/ui/table';
 	import { Badge } from '$lib/components/ui/badge';

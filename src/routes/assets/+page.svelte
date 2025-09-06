@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { shortHex, formatAmount } from '$lib/format';
+	import { shortHex, formatAmount, formatSignificantWithSeparators } from '$lib/format';
 	import AssetsTable from '$lib/components/AssetsTable.svelte';
 	import ChannelsPagination from '$lib/components/ChannelsPagination.svelte';
 

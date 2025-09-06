@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { shortHex, formatAmount, timeAgo } from '$lib/format';
+	import { shortHex, formatAmount, timeAgo, formatSignificantWithSeparators } from '$lib/format';
 	import type { Channel } from '$lib/types';
 	import CopyButton from '$lib/components/ui/CopyButton.svelte';
 	import AddressAvatar from '$lib/components/ui/AddressAvatar.svelte';
