@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher, onMount, tick } from 'svelte';
 	import { debounce } from 'lodash-es';
+	import { trackSearch } from '$lib/analytics';
 
 	interface SearchSuggestion {
 		id: string;
@@ -56,6 +57,7 @@
 	function handleKeydown(event: KeyboardEvent) {
 		if (!showSuggestions) {
 			if (event.key === 'Enter') {
+				trackSearch(value);
 				dispatch('search', { query: value });
 			}
 			return;
@@ -75,6 +77,7 @@
 				if (selectedIndex >= 0 && suggestions[selectedIndex]) {
 					selectSuggestion(suggestions[selectedIndex]);
 				} else {
+					trackSearch(value);
 					dispatch('search', { query: value });
 				}
 				break;
@@ -89,6 +92,7 @@
 		value = suggestion.text;
 		showSuggestions = false;
 		selectedIndex = -1;
+		trackSearch(suggestion.text);
 		dispatch('select', { suggestion });
 		dispatch('search', { query: suggestion.text });
 	}

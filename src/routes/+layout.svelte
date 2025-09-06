@@ -2,14 +2,37 @@
 	import '../app.css';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
+	import { page } from '$app/stores';
 	import { theme, applyTheme } from '$lib/theme';
+	import { initPostHog, trackPageView, trackThemeToggle } from '$lib/analytics';
 	import AppHeader from '$lib/components/layout/AppHeader.svelte';
 	import AppFooter from '$lib/components/layout/AppFooter.svelte';
 
 	onMount(() => {
+		// Initialize PostHog
+		initPostHog();
+		
+		// Track initial page view
+		trackPageView($page.url.pathname);
+		
+		// Apply theme
 		applyTheme(get(theme));
-		const unsubscribe = theme.subscribe(applyTheme);
-		return unsubscribe;
+		
+		// Subscribe to theme changes and track them
+		const unsubscribeTheme = theme.subscribe((newTheme) => {
+			applyTheme(newTheme);
+			trackThemeToggle(newTheme);
+		});
+
+		// Track page changes
+		const unsubscribePage = page.subscribe((pageData) => {
+			trackPageView(pageData.url.pathname);
+		});
+		
+		return () => {
+			unsubscribeTheme();
+			unsubscribePage();
+		};
 	});
 </script>
 

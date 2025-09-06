@@ -1,10 +1,12 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { shortHex, timeAgo } from '$lib/format';
 	import type { AppSession } from '$lib/types';
 	import { FileText, Users, Clock, ExternalLink, Activity } from 'lucide-svelte';
 	import AddressAvatar from '$lib/components/ui/AddressAvatar.svelte';
 	import CopyButton from '$lib/components/ui/CopyButton.svelte';
 	import { createSessionSEO } from '$lib/utils/seo';
+	import { trackSessionView } from '$lib/analytics';
 
 	export let data: {
 		session: AppSession | null;
@@ -12,6 +14,12 @@
 	};
 
 	$: seoData = data.session ? createSessionSEO(data.session) : null;
+
+	onMount(() => {
+		if (data.session) {
+			trackSessionView(data.session.session_id);
+		}
+	});
 </script>
 
 <svelte:head>

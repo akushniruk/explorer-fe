@@ -6,6 +6,7 @@
 	import type { Channel, AppSession, NetworkCounts } from '$lib/types';
 	import HeroSection from '$lib/components/HeroSection.svelte';
 	import { createHomeSEO } from '$lib/utils/seo';
+	import { trackDataRefresh } from '$lib/analytics';
 
 	export let data: {
 		counts: NetworkCounts;
@@ -24,6 +25,7 @@
 			]);
 			if (ch?.data && Array.isArray(ch.data)) data.latest.channels = ch.data;
 			if (ss?.data && Array.isArray(ss.data)) data.latest.sessions = ss.data;
+			trackDataRefresh('home');
 		} catch (error) {
 			console.error('Failed to refresh lists:', error);
 		}

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { shortHex, formatAmount, timeAgo } from '$lib/format';
 	import type { Channel } from '$lib/types';
 	import CopyButton from '$lib/components/ui/CopyButton.svelte';
@@ -7,6 +8,7 @@
 	import Chain from '$lib/components/Chain.svelte';
 	import { CreditCard, Users, Activity, Clock, Coins } from 'lucide-svelte';
 	import { createChannelSEO } from '$lib/utils/seo';
+	import { trackChannelView } from '$lib/analytics';
 
 	export let data: {
 		channel: Channel | null;
@@ -14,6 +16,12 @@
 	};
 
 	$: seoData = data.channel ? createChannelSEO(data.channel) : null;
+
+	onMount(() => {
+		if (data.channel) {
+			trackChannelView(data.channel.channel_id);
+		}
+	});
 </script>
 
 <svelte:head>

@@ -19,6 +19,9 @@ COPY . .
 ARG PUBLIC_API_BASE=https://explorer-apps.up.railway.app
 ENV PUBLIC_API_BASE=$PUBLIC_API_BASE
 
+ARG PUBLIC_ENABLE_ANALYTICS=true
+ENV PUBLIC_ENABLE_ANALYTICS=$PUBLIC_ENABLE_ANALYTICS
+
 # Build the application
 RUN pnpm build
 
