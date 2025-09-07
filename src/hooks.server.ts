@@ -6,8 +6,8 @@ import { dev } from '$app/environment';
 import { env } from '$env/dynamic/public';
 
 const handleApi: Handle = async ({ event, resolve }) => {
-	// Use localhost in development, Railway in production
-	const apiBase = dev ? 'http://localhost:3000' : 'https://explorer-apps.up.railway.app';
+	// Use environment variable first, fallback to defaults
+	const apiBase = env.PUBLIC_API_BASE || (dev ? 'http://localhost:3000' : 'https://explorer-apps.up.railway.app');
 	console.log('=== API HANDLER DEBUG ===');
 	console.log('Request URL:', event.url.toString());
 	console.log('Request pathname:', event.url.pathname);
