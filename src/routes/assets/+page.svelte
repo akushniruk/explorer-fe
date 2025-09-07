@@ -74,7 +74,7 @@
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={seoData.twitterTitle} />
 	<meta name="twitter:description" content={seoData.twitterDescription} />
-	<meta name="twitter:site" content="@yellownetwork" />
+	<meta name="twitter:site" content="@ynscan" />
 	<meta property="twitter:image" content={seoData.ogImage} />
 	<meta name="twitter:image:alt" content="Visit ynscan" />
 	
