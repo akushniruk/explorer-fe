@@ -23,7 +23,7 @@
 	// Compute participants based on business logic
 	$: participants = data.channel && data.nodeConfig ? {
 		broker: data.nodeConfig.broker_address,
-		counterparty: data.channel.participant
+		counterparty: data.channel.wallet ?? data.channel.participant,
 	} : null;
 
 	onMount(() => {

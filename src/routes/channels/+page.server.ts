@@ -28,7 +28,10 @@ const ChannelSchema = z.object({
 
 const ChannelsResponseSchema = z.object({
 	success: z.boolean(),
-	data: z.array(ChannelSchema),
+	data: z.object({
+		items: z.array(ChannelSchema),
+		hasMore: z.boolean()
+	}),
 	meta: z.object({
 		timestamp: z.string(),
 		requestId: z.string(),
@@ -108,7 +111,7 @@ export const load: PageServerLoad = async (event) => {
 		}
 
 		return {
-			channels: data.data as Channel[],
+			channels: data.data.items as Channel[],
 			total: data.meta.pagination.total,
 			page: data.meta.pagination.page,
 			limit: data.meta.pagination.limit,

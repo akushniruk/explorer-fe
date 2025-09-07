@@ -22,7 +22,10 @@ const AppSessionSchema = z.object({
 
 const SessionsResponseSchema = z.object({
 	success: z.boolean(),
-	data: z.array(AppSessionSchema),
+	data: z.object({
+		items: z.array(AppSessionSchema),
+		hasMore: z.boolean()
+	}),
 	meta: z.object({
 		timestamp: z.string(),
 		requestId: z.string(),
@@ -86,7 +89,7 @@ export const load: PageServerLoad = async (event) => {
 
 		const data = result.data;
 		return {
-			sessions: data.data as AppSession[],
+			sessions: data.data.items as AppSession[],
 			total: data.meta.pagination.total,
 			page: data.meta.pagination.page,
 			limit: data.meta.pagination.limit

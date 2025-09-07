@@ -160,7 +160,7 @@
 							<Table.Cell>
 								{#if nodeConfig}
 									{@const brokerAddress = nodeConfig.broker_address}
-									{@const counterparty = channel.participant}
+									{@const counterparty = channel.wallet ?? channel.participant}
 									<div class="space-y-1 text-sm">
 										<div class="flex items-center gap-2">
 											<span class="text-muted-foreground text-xs">Node</span>

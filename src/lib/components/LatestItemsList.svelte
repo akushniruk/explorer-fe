@@ -65,7 +65,7 @@
 								{@const channel = item as Channel}
 								{#if nodeConfig}
 									{@const brokerAddress = nodeConfig.broker_address}
-									{@const counterparty = channel.participant}
+									{@const counterparty = channel.wallet ?? channel.participant}
 									Node: <a
 										href={`/address/${brokerAddress}`}
 										class="font-sans text-brand hover:text-brand/80 cursor-pointer"

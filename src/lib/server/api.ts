@@ -20,6 +20,40 @@ function joinUrl(base: string | undefined, path: string) {
 	return joined;
 }
 
+// Helper functions for new channel endpoints
+export async function getChannelsByWallet<T>(
+	event: RequestEvent,
+	wallet: string,
+	schema: z.ZodType<T>,
+	queryParams: Record<string, string> = {}
+): Promise<ApiResult<T>> {
+	const query = new URLSearchParams(queryParams).toString();
+	const path = `/api/v1/channel/wallet/${wallet}${query ? `?${query}` : ''}`;
+	return apiGet(event, path, schema);
+}
+
+export async function getChannelsByParticipant<T>(
+	event: RequestEvent,
+	participant: string,
+	schema: z.ZodType<T>,
+	queryParams: Record<string, string> = {}
+): Promise<ApiResult<T>> {
+	const query = new URLSearchParams(queryParams).toString();
+	const path = `/api/v1/channel/participant/${participant}${query ? `?${query}` : ''}`;
+	return apiGet(event, path, schema);
+}
+
+export async function getChannelsByAddress<T>(
+	event: RequestEvent,
+	address: string,
+	schema: z.ZodType<T>,
+	queryParams: Record<string, string> = {}
+): Promise<ApiResult<T>> {
+	const query = new URLSearchParams(queryParams).toString();
+	const path = `/api/v1/channel/address/${address}${query ? `?${query}` : ''}`;
+	return apiGet(event, path, schema);
+}
+
 export async function apiGet<T>(
 	event: RequestEvent,
 	path: string,

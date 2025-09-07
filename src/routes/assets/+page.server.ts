@@ -17,7 +17,10 @@ const AssetSchema = z.object({
 
 const AssetsResponseSchema = z.object({
 	success: z.boolean(),
-	data: z.array(AssetSchema),
+	data: z.object({
+		items: z.array(AssetSchema),
+		hasMore: z.boolean()
+	}),
 	meta: z.object({
 		timestamp: z.string(),
 		requestId: z.string(),
@@ -78,7 +81,7 @@ export const load: PageServerLoad = async (event) => {
 		const data = result.data;
 		// Transform API data to match expected format with Uniswap token enrichment
 		const assets = await Promise.all(
-			data.data.map(async (asset) => {
+			data.data.items.map(async (asset) => {
 				const tokenInfo = await getTokenInfo(parseInt(asset.chain_id), asset.token, asset.symbol);
 
 				return {

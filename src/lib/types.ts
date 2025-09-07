@@ -37,3 +37,35 @@ export type NodeConfig = {
 	broker_address: string;
 	updated_at: string;
 };
+
+export type WalletChannelData = {
+	items: Channel[];
+	participants: string[];
+	page: number;
+	limit: number;
+	total: number;
+	totalPages: number;
+	hasMore: boolean;
+};
+
+export type ParticipantChannelData = {
+	items: Channel[];
+	wallet: string;
+	page: number;
+	limit: number;
+	total: number;
+	totalPages: number;
+	hasMore: boolean;
+};
+
+export type AddressChannelData = {
+	items: Channel[];
+	lookupType: 'wallet' | 'participant';
+	participants?: string[];
+	wallet?: string;
+	page: number;
+	limit: number;
+	total: number;
+	totalPages: number;
+	hasMore: boolean;
+};

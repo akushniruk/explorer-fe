@@ -11,7 +11,10 @@
 	import { createAddressSEO } from '$lib/utils/seo';
 
 	export let data: {
-		participantId: string;
+		address: string;
+		lookupType?: 'wallet' | 'participant';
+		wallet?: string;
+		participants: string[];
 		channels: Channel[];
 		sessions: AppSession[];
 		stats: {
@@ -22,8 +25,11 @@
 		};
 	};
 
+	console.log(data)
+
 	let activeTab = 'overview';
-	$: seoData = createAddressSEO(data.participantId, data.stats);
+	$: seoData = createAddressSEO(data.address, data.stats);
+	$: addressType = data.lookupType === 'wallet' ? 'Wallet' : data.lookupType === 'participant' ? 'Session Key' : 'Address';
 </script>
 
 <svelte:head>
@@ -57,16 +63,49 @@
 	<!-- Header -->
 	<div class="mb-8">
 		<div class="flex items-start gap-4 mb-4">
-			<AddressAvatar address={data.participantId} size={64} />
+			<AddressAvatar address={data.address} size={64} />
 			<div class="flex-1">
-				<h1 class="text-3xl font-bold mb-2">Address Details</h1>
+				<h1 class="text-3xl font-bold mb-2">{addressType} Details</h1>
 				<div class="flex items-center gap-2 mb-2">
-					<span class="text-muted-foreground">Address:</span>
+					<span class="text-muted-foreground">{addressType}:</span>
 					<code class="font-sans text-lg bg-accent/50 px-3 py-1 rounded text-accent-foreground">
-						{data.participantId}
+						{data.address}
 					</code>
-					<CopyButton value={data.participantId} />
+					<CopyButton value={data.address} />
 				</div>
+				
+				<!-- Relationship Information -->
+				{#if data.lookupType === 'wallet' && data.participants.length > 0}
+					<div class="flex items-center gap-2 mb-2">
+						<span class="text-muted-foreground">Session Keys ({data.participants.length}):</span>
+						<div class="flex flex-wrap gap-1">
+							{#each data.participants.slice(0, 3) as participant}
+								<a 
+									href={`/address/${participant}`}
+									class="text-sm bg-secondary px-2 py-1 rounded hover:bg-secondary/80 font-sans"
+									title={participant}
+								>
+									{shortHex(participant, 6, 4)}
+								</a>
+							{/each}
+							{#if data.participants.length > 3}
+								<span class="text-sm text-muted-foreground">+{data.participants.length - 3} more</span>
+							{/if}
+						</div>
+					</div>
+				{:else if data.lookupType === 'participant' && data.wallet}
+					<div class="flex items-center gap-2 mb-2">
+						<span class="text-muted-foreground">Main Wallet:</span>
+						<a 
+							href={`/address/${data.wallet}`}
+							class="text-sm bg-secondary px-2 py-1 rounded hover:bg-secondary/80 font-sans"
+							title={data.wallet}
+						>
+							{shortHex(data.wallet, 8, 6)}
+						</a>
+						<CopyButton value={data.wallet} />
+					</div>
+				{/if}
 			</div>
 		</div>
 	</div>
@@ -116,6 +155,35 @@
 			>
 				Overview
 			</button>
+			
+			<!-- Session Keys Tab (for wallets) -->
+			{#if data.lookupType === 'wallet' && data.participants.length > 0}
+				<button
+					class="py-2 px-1 border-b-2 font-medium text-sm transition-colors"
+					class:border-brand={activeTab === 'sessionkeys'}
+					class:text-brand={activeTab === 'sessionkeys'}
+					class:border-transparent={activeTab !== 'sessionkeys'}
+					class:text-muted-foreground={activeTab !== 'sessionkeys'}
+					on:click={() => (activeTab = 'sessionkeys')}
+				>
+					Session Keys ({data.participants.length})
+				</button>
+			{/if}
+
+			<!-- Wallet Owner Tab (for participants) -->
+			{#if data.lookupType === 'participant' && data.wallet}
+				<button
+					class="py-2 px-1 border-b-2 font-medium text-sm transition-colors"
+					class:border-brand={activeTab === 'owner'}
+					class:text-brand={activeTab === 'owner'}
+					class:border-transparent={activeTab !== 'owner'}
+					class:text-muted-foreground={activeTab !== 'owner'}
+					on:click={() => (activeTab = 'owner')}
+				>
+					Owner Wallet
+				</button>
+			{/if}
+			
 			<button
 				class="py-2 px-1 border-b-2 font-medium text-sm transition-colors"
 				class:border-brand={activeTab === 'channels'}
@@ -231,6 +299,133 @@
 				</div>
 			</div>
 		</div>
+	{:else if activeTab === 'sessionkeys'}
+		<!-- Session Keys Tab Content -->
+		<div class="bg-card border border-border rounded-lg">
+			<div class="p-4 border-b border-border">
+				<h3 class="font-semibold">Session Keys Associated with this Wallet</h3>
+				<p class="text-sm text-muted-foreground mt-1">
+					All session keys (participants) that belong to this main wallet address.
+				</p>
+			</div>
+			<Table.Root>
+				<Table.Header>
+					<Table.Row class="hover:bg-transparent border-b border-border">
+						<Table.Head class="font-medium text-muted-foreground text-sm">Session Key</Table.Head>
+						<Table.Head class="font-medium text-muted-foreground text-sm">Channels</Table.Head>
+						<Table.Head class="font-medium text-muted-foreground text-sm">Status</Table.Head>
+						<Table.Head class="font-medium text-muted-foreground text-sm">Actions</Table.Head>
+					</Table.Row>
+				</Table.Header>
+				<Table.Body>
+					{#each data.participants as participant (participant)}
+						{@const participantChannels = data.channels.filter(c => c.participant === participant)}
+						{@const activeParticipantChannels = participantChannels.filter(c => c.status === 'open')}
+						<Table.Row class="hover:bg-muted/50">
+							<Table.Cell class="font-sans">
+								<div class="flex items-center gap-2">
+									<AddressAvatar address={participant} size={32} />
+									<div>
+										<a
+											href={`/address/${participant}`}
+											class="text-foreground underline hover:text-foreground text-sm cursor-pointer font-semibold"
+											title={participant}
+										>
+											{shortHex(participant, 10, 8)}
+										</a>
+										<div class="text-xs text-muted-foreground">Session Key</div>
+									</div>
+									<CopyButton value={participant} />
+								</div>
+							</Table.Cell>
+							<Table.Cell>
+								<div class="text-sm">
+									<div class="font-medium">{participantChannels.length} total</div>
+									<div class="text-muted-foreground text-xs">
+										{activeParticipantChannels.length} active
+									</div>
+								</div>
+							</Table.Cell>
+							<Table.Cell>
+								<span 
+									class="inline-flex px-2 py-1 rounded text-xs font-medium"
+									class:bg-emerald-100={activeParticipantChannels.length > 0}
+									class:text-emerald-800={activeParticipantChannels.length > 0}
+									class:bg-gray-100={activeParticipantChannels.length === 0}
+									class:text-gray-800={activeParticipantChannels.length === 0}
+								>
+									{activeParticipantChannels.length > 0 ? 'Active' : 'Inactive'}
+								</span>
+							</Table.Cell>
+							<Table.Cell>
+								<a
+									href={`/address/${participant}`}
+									class="text-brand hover:text-brand/80 text-sm underline"
+								>
+									View Details
+								</a>
+							</Table.Cell>
+						</Table.Row>
+					{:else}
+						<Table.Row>
+							<Table.Cell colspan={4} class="h-24 text-center text-muted-foreground">
+								No session keys found for this wallet.
+							</Table.Cell>
+						</Table.Row>
+					{/each}
+				</Table.Body>
+			</Table.Root>
+		</div>
+	{:else if activeTab === 'owner'}
+		<!-- Owner Wallet Tab Content -->
+		<div class="bg-card border border-border rounded-lg">
+			<div class="p-4 border-b border-border">
+				<h3 class="font-semibold">Owner Wallet</h3>
+				<p class="text-sm text-muted-foreground mt-1">
+					The main wallet address that controls this session key.
+				</p>
+			</div>
+			<div class="p-6">
+				{#if data.wallet}
+					<div class="flex items-start gap-4 p-4 bg-muted/30 rounded-lg">
+						<AddressAvatar address={data.wallet} size={48} />
+						<div class="flex-1">
+							<div class="flex items-center gap-2 mb-2">
+								<h4 class="font-semibold text-lg">Main Wallet</h4>
+							</div>
+							<div class="flex items-center gap-2 mb-3">
+								<code class="font-sans text-sm bg-accent/50 px-2 py-1 rounded text-accent-foreground">
+									{data.wallet}
+								</code>
+								<CopyButton value={data.wallet} />
+							</div>
+							<div class="flex items-center gap-4 text-sm text-muted-foreground mb-3">
+								<div class="flex items-center gap-1">
+									<CreditCard class="w-4 h-4" />
+									<span>{data.channels.length} channels</span>
+								</div>
+								<div class="flex items-center gap-1">
+									<Users class="w-4 h-4" />
+									<span>{data.participants.length} session keys</span>
+								</div>
+							</div>
+							<div class="flex gap-2">
+								<a
+									href={`/address/${data.wallet}`}
+									class="inline-flex items-center px-3 py-1.5 bg-brand text-brand-foreground rounded text-sm hover:bg-brand/90"
+								>
+									View Wallet Details
+								</a>
+							</div>
+						</div>
+					</div>
+				{:else}
+					<div class="text-center text-muted-foreground py-8">
+						Owner wallet information not available.
+					</div>
+				{/if}
+			</div>
+		</div>
 	{:else if activeTab === 'channels'}
 		<!-- Channels Tab -->
 		<div class="bg-card border border-border rounded-lg">
@@ -251,7 +446,7 @@
 				<Table.Body>
 					{#each data.channels as channel (channel.channel_id)}
 						{@const counterparty =
-							channel.wallet === data.participantId ? channel.participant : channel.wallet}
+							channel.wallet === data.address ? channel.participant : channel.wallet}
 						{@const chain = getChainById(Number(channel.chain_id))}
 						<Table.Row class="hover:bg-muted/50">
 							<Table.Cell class="font-sans">
@@ -347,7 +542,7 @@
 				<Table.Body>
 					{#each data.sessions as session (session.session_id)}
 						{@const otherParticipants = session.participants.filter(
-							(p) => p !== data.participantId
+							(p) => p !== data.address
 						)}
 						<Table.Row class="hover:bg-muted/50">
 							<Table.Cell class="font-sans">

@@ -22,7 +22,10 @@ const NodeSchema = z.object({
 
 const NodesResponseSchema = z.object({
 	success: z.boolean(),
-	data: z.array(NodeSchema),
+	data: z.object({
+		items: z.array(NodeSchema),
+		hasMore: z.boolean()
+	}),
 	meta: z.object({
 		timestamp: z.string(),
 		requestId: z.string(),
@@ -84,7 +87,7 @@ export const load: PageServerLoad = async (event) => {
 
 		const data = result.data;
 		// Transform API data to match expected frontend format
-		const nodes = data.data.map((node) => ({
+		const nodes = data.data.items.map((node) => ({
 			id: node.slug, // Use slug as id
 			name: node.name,
 			endpoint: node.ws_url,
