@@ -5,10 +5,11 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import CopyButton from '$lib/components/ui/CopyButton.svelte';
 	import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-svelte';
-	import type { Channel } from '$lib/types';
+	import type { Channel, NodeConfig } from '$lib/types';
 	import Chain from './Chain.svelte';
 
 	export let channels: Channel[] = [];
+	export let nodeConfig: NodeConfig | null = null;
 	export let sortKey = '';
 	export let sortDirection: 'asc' | 'desc' = 'desc';
 	export let onSort: ((key: string) => void) | null = null;
@@ -157,30 +158,60 @@
 
 							<!-- Participants -->
 							<Table.Cell>
-								<div class="space-y-1 text-sm">
-									<div class="flex items-center gap-2">
-										<span class="text-muted-foreground text-xs">#1</span>
-										<a
-											href={`/address/${channel.wallet}`}
-											class="font-sans underline text-foreground hover:text-foreground cursor-pointer"
-											title={channel.wallet}
-										>
-											{shortHex(channel.wallet, 6, 4)}
-										</a>
-										<CopyButton value={channel.wallet} />
+								{#if nodeConfig}
+									{@const brokerAddress = nodeConfig.broker_address}
+									{@const counterparty = channel.participant}
+									<div class="space-y-1 text-sm">
+										<div class="flex items-center gap-2">
+											<span class="text-muted-foreground text-xs">Node</span>
+											<a
+												href={`/address/${brokerAddress}`}
+												class="font-sans underline text-foreground hover:text-foreground cursor-pointer"
+												title={brokerAddress}
+											>
+												{shortHex(brokerAddress, 6, 4)}
+											</a>
+											<CopyButton value={brokerAddress} />
+										</div>
+										<div class="flex items-center gap-2">
+											<span class="text-muted-foreground text-xs">Address</span>
+											<a
+												href={`/address/${counterparty}`}
+												class="font-sans underline text-foreground hover:text-foreground cursor-pointer"
+												title={counterparty}
+											>
+												{shortHex(counterparty, 6, 4)}
+											</a>
+											<CopyButton value={counterparty} />
+										</div>
 									</div>
-									<div class="flex items-center gap-2">
-										<span class="text-muted-foreground text-xs">#2</span>
-										<a
-											href={`/address/${channel.participant}`}
-											class="font-sans underline text-foreground hover:text-foreground cursor-pointer"
-											title={channel.participant}
-										>
-											{shortHex(channel.participant, 6, 4)}
-										</a>
-										<CopyButton value={channel.participant} />
+								{:else}
+									<!-- Fallback when NodeConfig is not available -->
+									<div class="space-y-1 text-sm">
+										<div class="flex items-center gap-2">
+											<span class="text-muted-foreground text-xs">Address 1</span>
+											<a
+												href={`/address/${channel.wallet}`}
+												class="font-sans underline text-foreground hover:text-foreground cursor-pointer"
+												title={channel.wallet}
+											>
+												{shortHex(channel.wallet, 6, 4)}
+											</a>
+											<CopyButton value={channel.wallet} />
+										</div>
+										<div class="flex items-center gap-2">
+											<span class="text-muted-foreground text-xs">Address 2</span>
+											<a
+												href={`/address/${channel.participant}`}
+												class="font-sans underline text-foreground hover:text-foreground cursor-pointer"
+												title={channel.participant}
+											>
+												{shortHex(channel.participant, 6, 4)}
+											</a>
+											<CopyButton value={channel.participant} />
+										</div>
 									</div>
-								</div>
+								{/if}
 							</Table.Cell>
 
 							<!-- Amount -->

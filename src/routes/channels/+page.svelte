@@ -116,6 +116,7 @@
 	<!-- Table -->
 	<ChannelsTable
 		{channels}
+		nodeConfig={data.nodeConfig}
 		sortKey={sortBy}
 		sortDirection={sortOrder}
 		{onSort}

@@ -1,21 +1,30 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { shortHex, formatAmount, timeAgo } from '$lib/format';
+	import { shortHex, formatAmount, timeAgo} from '$lib/format';
 	import type { Channel } from '$lib/types';
 	import CopyButton from '$lib/components/ui/CopyButton.svelte';
 	import AddressAvatar from '$lib/components/ui/AddressAvatar.svelte';
 	import { getChainById } from '$lib/ctypto/utils';
 	import Chain from '$lib/components/Chain.svelte';
-	import { CreditCard, Users, Activity, Clock, Coins } from 'lucide-svelte';
+	import { CreditCard, Users, Activity, Clock, Coins, Box } from 'lucide-svelte';
 	import { createChannelSEO } from '$lib/utils/seo';
 	import { trackChannelView } from '$lib/analytics';
 
+	import type { NodeConfig } from '$lib/types';
+
 	export let data: {
 		channel: Channel | null;
+		nodeConfig: NodeConfig | null;
 		notFound?: boolean;
 	};
 
 	$: seoData = data.channel ? createChannelSEO(data.channel) : null;
+
+	// Compute participants based on business logic
+	$: participants = data.channel && data.nodeConfig ? {
+		broker: data.nodeConfig.broker_address,
+		counterparty: data.channel.participant
+	} : null;
 
 	onMount(() => {
 		if (data.channel) {
@@ -62,7 +71,7 @@
 <div class="max-w-7xl mx-auto px-4 py-6">
 	{#if data.notFound || !data.channel}
 		<div class="text-center py-12">
-			<div class="text-muted-foreground mb-4">
+			<div class="text-text mb-4">
 				<svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path
 						stroke-linecap="round"
@@ -73,7 +82,7 @@
 				</svg>
 			</div>
 			<h1 class="text-2xl font-bold mb-2">Channel Not Found</h1>
-			<p class="text-muted-foreground mb-4">
+			<p class="text-text mb-4">
 				The channel you're looking for doesn't exist or has been removed.
 			</p>
 			<a href="/channels" class="text-brand hover:text-brand/80">← Back to Channels</a>
@@ -83,26 +92,14 @@
 		<div class="mb-8">
 			<div class="flex items-start justify-between mb-4">
 				<div>
-					<h1 class="text-3xl font-bold mb-2">Channel Details</h1>
 					<div class="flex items-center gap-2 mb-2">
-						<span class="text-muted-foreground">Channel ID:</span>
-						<code class="font-sans text-lg bg-accent/50 px-3 py-1 rounded text-accent-foreground">
+						<span class="text-text">Channel ID:</span>
+						<code class="font-sans text-lg py-1 rounded text-text">
 							{data.channel.channel_id}
 						</code>
 						<CopyButton value={data.channel.channel_id} />
 					</div>
 				</div>
-				<span
-					class="inline-flex px-3 py-1 rounded text-sm font-medium"
-					class:bg-emerald-100={data.channel.status === 'open'}
-					class:text-emerald-800={data.channel.status === 'open'}
-					class:bg-muted={data.channel.status === 'closed'}
-					class:text-muted-foreground={data.channel.status === 'closed'}
-					class:bg-yellow-100={data.channel.status === 'pending'}
-					class:text-yellow-800={data.channel.status === 'pending'}
-				>
-					{data.channel.status.toUpperCase()}
-				</span>
 			</div>
 		</div>
 
@@ -110,49 +107,49 @@
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 			<div class="bg-card border border-border rounded-lg p-6 text-center">
 				<div class="flex items-center justify-center mb-2">
-					<Coins class="w-6 h-6 text-muted-foreground" />
+					<Coins class="w-6 h-6 text-text" />
 				</div>
-				<div class="text-2xl font-bold text-brand mb-1">
+				<div class="text-2xl font-bold text-text mb-1">
 					{formatAmount(
 						data.channel.amount,
 						data.channel.asset?.decimals ? parseInt(data.channel.asset.decimals) : 18,
 						4
 					)}
 				</div>
-				<div class="text-sm text-muted-foreground">
-					{data.channel.asset?.symbol || 'ETH'} Amount
+				<div class="text-sm text-text">
+					{data.channel.asset?.symbol?.toUpperCase() ?? ''} Amount
 				</div>
 			</div>
 			<div class="bg-card border border-border rounded-lg p-6 text-center">
 				<div class="flex items-center justify-center mb-2">
-					<Users class="w-6 h-6 text-muted-foreground" />
+					<Box class="w-6 h-6 text-text" />
 				</div>
-				<div class="text-lg font-medium text-foreground mb-1">
+				<div class="text-lg font-medium text-text mb-1 flex justify-center">
 					<Chain chainId={Number(data.channel.chain_id)} />
 				</div>
-				<div class="text-sm text-muted-foreground">Network</div>
+				<div class="text-sm text-text">Network</div>
 			</div>
 			<div class="bg-card border border-border rounded-lg p-6 text-center">
 				<div class="flex items-center justify-center mb-2">
-					<Activity class="w-6 h-6 text-muted-foreground" />
+					<Activity class="w-6 h-6 text-text" />
 				</div>
 				<div
 					class="text-lg font-medium {data.channel.status === 'open'
 						? 'text-emerald-600'
-						: 'text-muted-foreground'} mb-1"
+						: 'text-text'} mb-1"
 				>
 					{data.channel.status === 'open' ? 'Active' : 'Inactive'}
 				</div>
-				<div class="text-sm text-muted-foreground">Channel State</div>
+				<div class="text-sm text-text">Channel State</div>
 			</div>
 			<div class="bg-card border border-border rounded-lg p-6 text-center">
 				<div class="flex items-center justify-center mb-2">
-					<Clock class="w-6 h-6 text-muted-foreground" />
+					<Clock class="w-6 h-6 text-text" />
 				</div>
-				<div class="text-lg font-medium text-muted-foreground mb-1">
+				<div class="text-lg font-medium text-text mb-1">
 					{timeAgo(data.channel.updated_at)}
 				</div>
-				<div class="text-sm text-muted-foreground">Last Updated</div>
+				<div class="text-sm text-text">Last Updated</div>
 			</div>
 		</div>
 
@@ -164,68 +161,138 @@
 				<div class="bg-card border border-border rounded-lg">
 					<div class="p-4 border-b border-border">
 						<h2 class="text-lg font-semibold flex items-center gap-2">
-							<Users class="w-5 h-5 text-muted-foreground" />
+							<Users class="w-5 h-5 text-text" />
 							Addresses
 						</h2>
 					</div>
 					<div class="p-6 space-y-6">
-						<div>
-							<h3 class="text-sm font-medium text-muted-foreground mb-2">From (Wallet)</h3>
-							<div class="flex items-center gap-3">
-								<AddressAvatar address={data.channel.wallet} size={40} />
-								<div class="flex-1 min-w-0">
-									<a
-										href={`/address/${data.channel.wallet}`}
-										class="font-sans text-brand hover:text-brand/80 block truncate"
-									>
-										{data.channel.wallet}
-									</a>
-									<div class="flex items-center gap-2 mt-1">
-										<CopyButton value={data.channel.wallet} />
-										{#if chain}
-											<a
-												href={`${chain.blockExplorers?.default.url}/address/${data.channel.wallet}`}
-												target="_blank"
-												rel="noopener noreferrer"
-												class="text-xs text-muted-foreground hover:text-foreground"
-												title={`View ${data.channel.wallet} on ${chain.blockExplorers?.default.name}`}
-											>
-												View on Explorer
-											</a>
-										{/if}
+						{#if participants}
+							<!-- Broker (from NodeConfig) -->
+							<div>
+								<div class="text-xs text-text uppercase tracking-wider mb-3">Broker</div>
+								<div class="flex items-center gap-3">
+									<AddressAvatar address={participants.broker} size={40} />
+									<div class="flex-1 min-w-0">
+										<a
+											href={`/address/${participants.broker}`}
+											class="font-sans text-brand hover:text-brand/80 block truncate"
+										>
+											{shortHex(participants.broker)}
+										</a>
+										<div class="flex items-center gap-2 mt-1">
+											<CopyButton value={participants.broker} />
+											{#if chain}
+												<a
+													href={`${chain.blockExplorers?.default.url}/address/${participants.broker}`}
+													target="_blank"
+													rel="noopener noreferrer"
+													class="text-xs text-text hover:text-foreground"
+													title={`View ${participants.broker} on ${chain.blockExplorers?.default.name}`}
+												>
+													View on Explorer
+												</a>
+											{/if}
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
 
-						<div>
-							<h3 class="text-sm font-medium text-muted-foreground mb-2">To (Participant)</h3>
-							<div class="flex items-center gap-3">
-								<AddressAvatar address={data.channel.participant} size={40} />
-								<div class="flex-1 min-w-0">
-									<a
-										href={`/address/${data.channel.participant}`}
-										class="font-sans text-brand hover:text-brand/80 block truncate"
-									>
-										{data.channel.participant}
-									</a>
-									<div class="flex items-center gap-2 mt-1">
-										<CopyButton value={data.channel.participant} />
-										{#if chain}
-											<a
-												href={`${chain.blockExplorers?.default.url}/address/${data.channel.participant}`}
-												target="_blank"
-												rel="noopener noreferrer"
-												class="text-xs text-muted-foreground hover:text-foreground"
-												title={`View ${data.channel.participant} on ${chain.blockExplorers?.default.name}`}
-											>
-												View on Explorer
-											</a>
-										{/if}
+							<!-- Participant/Wallet -->
+							<div>
+								<div class="text-xs text-text uppercase tracking-wider mb-3">
+									Participant
+								</div>
+								<div class="flex items-center gap-3">
+									<AddressAvatar address={participants.counterparty} size={40} />
+									<div class="flex-1 min-w-0">
+										<a
+											href={`/address/${participants.counterparty}`}
+											class="font-sans text-brand hover:text-brand/80 block truncate"
+										>
+											{shortHex(participants.counterparty)}
+										</a>
+										<div class="text-xs text-text mt-1">
+											Participant address'
+										</div>
+										<div class="flex items-center gap-2 mt-1">
+											<CopyButton value={participants.counterparty} />
+											{#if chain}
+												<a
+													href={`${chain.blockExplorers?.default.url}/address/${participants.counterparty}`}
+													target="_blank"
+													rel="noopener noreferrer"
+													class="text-xs text-text hover:text-foreground"
+													title={`View ${participants.counterparty} on ${chain.blockExplorers?.default.name}`}
+												>
+													View on Explorer
+												</a>
+											{/if}
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
+						{:else}
+							<!-- Fallback when NodeConfig is not available -->
+							<div>
+								<div class="text-xs text-text uppercase tracking-wider mb-3">Wallet</div>
+								<div class="flex items-center gap-3">
+									<AddressAvatar address={data.channel.wallet} size={40} />
+									<div class="flex-1 min-w-0">
+										<a
+											href={`/address/${data.channel.wallet}`}
+											class="font-sans text-brand hover:text-brand/80 block truncate"
+										>
+											{shortHex(data.channel.wallet)}
+										</a>
+										<div class="text-xs text-text mt-1">Wallet address</div>
+										<div class="flex items-center gap-2 mt-1">
+											<CopyButton value={data.channel.wallet} />
+											{#if chain}
+												<a
+													href={`${chain.blockExplorers?.default.url}/address/${data.channel.wallet}`}
+													target="_blank"
+													rel="noopener noreferrer"
+													class="text-xs text-text hover:text-foreground"
+													title={`View ${data.channel.wallet} on ${chain.blockExplorers?.default.name}`}
+												>
+													View on Explorer
+												</a>
+											{/if}
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div>
+								<div class="text-xs text-text uppercase tracking-wider mb-3">Participant</div>
+								<div class="flex items-center gap-3">
+									<AddressAvatar address={data.channel.participant} size={40} />
+									<div class="flex-1 min-w-0">
+										<a
+											href={`/address/${data.channel.participant}`}
+											class="font-sans text-brand hover:text-brand/80 block truncate"
+										>
+											{shortHex(data.channel.participant)}
+										</a>
+										<div class="text-xs text-text mt-1">Participant address</div>
+										<div class="flex items-center gap-2 mt-1">
+											<CopyButton value={data.channel.participant} />
+											{#if chain}
+												<a
+													href={`${chain.blockExplorers?.default.url}/address/${data.channel.participant}`}
+													target="_blank"
+													rel="noopener noreferrer"
+													class="text-xs text-text hover:text-foreground"
+													title={`View ${data.channel.participant} on ${chain.blockExplorers?.default.name}`}
+												>
+													View on Explorer
+												</a>
+											{/if}
+										</div>
+									</div>
+								</div>
+							</div>
+						{/if}
 					</div>
 				</div>
 
@@ -233,18 +300,18 @@
 				<div class="bg-card border border-border rounded-lg">
 					<div class="p-4 border-b border-border">
 						<h2 class="text-lg font-semibold flex items-center gap-2">
-							<CreditCard class="w-5 h-5 text-muted-foreground" />
+							<CreditCard class="w-5 h-5 text-text" />
 							Technical Details
 						</h2>
 					</div>
 					<div class="p-6 space-y-4">
 						<div>
-							<div class="text-xs text-muted-foreground uppercase tracking-wider">Channel ID</div>
+							<div class="text-xs text-text uppercase tracking-wider">Channel ID</div>
 							<div class="font-sans text-sm mt-1 break-all">{data.channel.channel_id}</div>
 						</div>
 
 						<div>
-							<div class="text-xs text-muted-foreground uppercase tracking-wider">
+							<div class="text-xs text-text uppercase tracking-wider">
 								Token Contract
 							</div>
 							<div class="font-sans text-sm mt-1">
@@ -257,7 +324,7 @@
 											href={`${chain.blockExplorers?.default.url}/token/${data.channel.token}`}
 											target="_blank"
 											rel="noopener noreferrer"
-											class="text-xs text-muted-foreground hover:text-foreground"
+											class="text-xs text-text hover:text-foreground"
 											title={`View ${data.channel.token} on ${chain.blockExplorers?.default.name}`}
 										>
 											View Token
@@ -268,22 +335,22 @@
 						</div>
 
 						<div>
-							<div class="text-xs text-muted-foreground uppercase tracking-wider">Chain ID</div>
+							<div class="text-xs text-text uppercase tracking-wider">Chain ID</div>
 							<div class="text-sm font-medium mt-1">{data.channel.chain_id}</div>
 						</div>
 
 						<div>
-							<div class="text-xs text-muted-foreground uppercase tracking-wider">Amount (Wei)</div>
+							<div class="text-xs text-text uppercase tracking-wider">Amount (Wei)</div>
 							<div class="font-sans text-sm mt-1">{data.channel.amount}</div>
 						</div>
 
 						<div>
-							<div class="text-xs text-muted-foreground uppercase tracking-wider">Status</div>
+							<div class="text-xs text-text uppercase tracking-wider">Status</div>
 							<div class="text-sm mt-1 capitalize font-medium">{data.channel.status}</div>
 						</div>
 
 						<div>
-							<div class="text-xs text-muted-foreground uppercase tracking-wider">Last Updated</div>
+							<div class="text-xs text-text uppercase tracking-wider">Last Updated</div>
 							<div class="text-sm mt-1">{new Date(data.channel.updated_at).toLocaleString()}</div>
 						</div>
 					</div>

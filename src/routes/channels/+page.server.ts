@@ -42,6 +42,15 @@ const ChannelsResponseSchema = z.object({
 	})
 });
 
+const NodeConfigResponseSchema = z.object({
+	success: z.boolean(),
+	data: z.object({
+		id: z.string(),
+		broker_address: z.string(),
+		updated_at: z.string()
+	})
+});
+
 export const load: PageServerLoad = async (event) => {
 	try {
 		// Build query parameters
@@ -68,16 +77,20 @@ export const load: PageServerLoad = async (event) => {
 		// Get ETag from request for caching
 		const etag = event.request.headers.get('if-none-match') ?? undefined;
 
-		const result = await apiGet(
-			event,
-			path,
-			ChannelsResponseSchema,
-			etag,
-			['/channels/list'] // fallback path
-		);
+		// Fetch both channels and node config in parallel
+		const [channelsResult, nodeConfigResult] = await Promise.allSettled([
+			apiGet(event, path, ChannelsResponseSchema, etag, ['/channels/list']),
+			apiGet(event, '/api/v1/node-config', NodeConfigResponseSchema)
+		]);
+
+		if (channelsResult.status === 'rejected') {
+			throw channelsResult.reason;
+		}
+
+		const result = channelsResult.value;
 
 		if (result.notModified) {
-			return { channels: [], total: 0, page, limit };
+			return { channels: [], total: 0, page, limit, nodeConfig: null };
 		}
 
 		// Set response headers for caching
@@ -89,11 +102,17 @@ export const load: PageServerLoad = async (event) => {
 		});
 
 		const data = result.data;
+		let nodeConfig = null;
+		if (nodeConfigResult.status === 'fulfilled') {
+			nodeConfig = nodeConfigResult.value.data.data;
+		}
+
 		return {
 			channels: data.data as Channel[],
 			total: data.meta.pagination.total,
 			page: data.meta.pagination.page,
-			limit: data.meta.pagination.limit
+			limit: data.meta.pagination.limit,
+			nodeConfig
 		};
 	} catch (error) {
 		console.error('Failed to fetch channels:', error);
@@ -101,7 +120,8 @@ export const load: PageServerLoad = async (event) => {
 			channels: [],
 			total: 0,
 			page: Number(event.url.searchParams.get('page') ?? '1'),
-			limit: Number(event.url.searchParams.get('limit') ?? '25')
+			limit: Number(event.url.searchParams.get('limit') ?? '25'),
+			nodeConfig: null
 		};
 	}
 };

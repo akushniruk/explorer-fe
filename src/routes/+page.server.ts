@@ -84,6 +84,15 @@ const SessionsResponseSchema = z.object({
 	})
 });
 
+const NodeConfigResponseSchema = z.object({
+	success: z.boolean(),
+	data: z.object({
+		id: z.string(),
+		broker_address: z.string(),
+		updated_at: z.string()
+	})
+});
+
 export const load: PageServerLoad = async (event) => {
 	try {
 		const qs = new URLSearchParams({
@@ -100,7 +109,8 @@ export const load: PageServerLoad = async (event) => {
 			apiGet(event, '/api/v1/asset/count', CountResponseSchema),
 			apiGet(event, '/api/v1/nodes/count-active', CountResponseSchema), // active nodes count
 			apiGet(event, `/api/v1/channel/list?${qs}`, ChannelsResponseSchema),
-			apiGet(event, `/api/v1/app-session/list?${qs}`, SessionsResponseSchema)
+			apiGet(event, `/api/v1/app-session/list?${qs}`, SessionsResponseSchema),
+			apiGet(event, '/api/v1/node-config', NodeConfigResponseSchema)
 		]);
 
 		// Extract results with safe fallbacks
@@ -111,7 +121,8 @@ export const load: PageServerLoad = async (event) => {
 			assetsCount,
 			activeNodesCount,
 			latestChannels,
-			latestSessions
+			latestSessions,
+			nodeConfig
 		] = results.map((result) =>
 			result.status === 'fulfilled' && !result.value.notModified ? result.value.data : null
 		);
@@ -135,7 +146,8 @@ export const load: PageServerLoad = async (event) => {
 			latest: {
 				channels: latestChannels?.data ?? [],
 				sessions: latestSessions?.data ?? []
-			}
+			},
+			nodeConfig: nodeConfig?.data ?? null
 		};
 
 		return dashboardData;
@@ -154,7 +166,8 @@ export const load: PageServerLoad = async (event) => {
 			latest: {
 				channels: [],
 				sessions: []
-			}
+			},
+			nodeConfig: null
 		};
 	}
 };

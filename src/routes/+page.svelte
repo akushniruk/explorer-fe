@@ -3,7 +3,7 @@
 	import StatsCard from '$lib/components/StatsCard.svelte';
 	import LatestChannels from '$lib/components/LatestChannels.svelte';
 	import LatestSessions from '$lib/components/LatestSessions.svelte';
-	import type { Channel, AppSession, NetworkCounts } from '$lib/types';
+	import type { Channel, AppSession, NetworkCounts, NodeConfig } from '$lib/types';
 	import HeroSection from '$lib/components/HeroSection.svelte';
 	import { createHomeSEO } from '$lib/utils/seo';
 	import { trackDataRefresh } from '$lib/analytics';
@@ -11,6 +11,7 @@
 	export let data: {
 		counts: NetworkCounts;
 		latest: { channels: Channel[]; sessions: AppSession[] };
+		nodeConfig: NodeConfig | null;
 	};
 
 	$: seoData = createHomeSEO(data.counts);
@@ -71,7 +72,7 @@
 	<StatsCard counts={data.counts} />
 
 	<section class="grid gap-6 lg:grid-cols-2">
-		<LatestChannels channels={data.latest.channels} />
+		<LatestChannels channels={data.latest.channels} nodeConfig={data.nodeConfig} />
 		<LatestSessions sessions={data.latest.sessions} />
 	</section>
 </div>

@@ -31,3 +31,9 @@ export type NetworkCounts = {
 	assets: number;
 	nodes: number;
 };
+
+export type NodeConfig = {
+	id: string;
+	broker_address: string;
+	updated_at: string;
+};

@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { shortHex, formatAmount, timeAgo } from '$lib/format';
-	import type { Channel, AppSession } from '$lib/types';
+	import type { Channel, AppSession, NodeConfig } from '$lib/types';
 
 	type Item = Channel | AppSession;
 	
 	export let items: Item[] = [];
+	export let nodeConfig: NodeConfig | null = null;
 	export let title: string;
 	export let viewAllHref: string;
 	export let viewAllText: string;
@@ -62,17 +63,31 @@
 						<div class="text-xs text-muted-foreground mt-1">
 							{#if itemType === 'channel'}
 								{@const channel = item as Channel}
-								From <a
-									href={`/address/${channel.wallet}`}
-									class="font-sans text-brand hover:text-brand/80 cursor-pointer"
-									>{shortHex(channel.wallet, 6, 4)}</a
-								>
-								to
-								<a
-									href={`/address/${channel.participant}`}
-									class="font-sans text-brand hover:text-brand/80 cursor-pointer"
-									>{shortHex(channel.participant, 6, 4)}</a
-								>
+								{#if nodeConfig}
+									{@const brokerAddress = nodeConfig.broker_address}
+									{@const counterparty = channel.participant}
+									Node: <a
+										href={`/address/${brokerAddress}`}
+										class="font-sans text-brand hover:text-brand/80 cursor-pointer"
+										>{shortHex(brokerAddress, 6, 4)}</a
+									>
+									• Address: <a
+										href={`/address/${counterparty}`}
+										class="font-sans text-brand hover:text-brand/80 cursor-pointer"
+										>{shortHex(counterparty, 6, 4)}</a
+									>
+								{:else}
+									Address 1: <a
+										href={`/address/${channel.wallet}`}
+										class="font-sans text-brand hover:text-brand/80 cursor-pointer"
+										>{shortHex(channel.wallet, 6, 4)}</a
+									>
+									• Address 2: <a
+										href={`/address/${channel.participant}`}
+										class="font-sans text-brand hover:text-brand/80 cursor-pointer"
+										>{shortHex(channel.participant, 6, 4)}</a
+									>
+								{/if}
 							{:else}
 								{@const session = item as AppSession}
 								{#if session.participants && session.participants.length > 0}
