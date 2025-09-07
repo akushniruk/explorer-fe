@@ -169,7 +169,7 @@
 						{#if participants}
 							<!-- Broker (from NodeConfig) -->
 							<div>
-								<div class="text-xs text-text uppercase tracking-wider mb-3">Broker</div>
+								<div class="text-xs text-text uppercase tracking-wider mb-3">Node</div>
 								<div class="flex items-center gap-3">
 									<AddressAvatar address={participants.broker} size={40} />
 									<div class="flex-1 min-w-0">

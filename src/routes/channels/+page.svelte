@@ -36,7 +36,7 @@
 			if (sortOrder) params.set('order', sortOrder);
 
 			const response = await fetch(
-				`http://localhost:3000/api/v1/channel/list?${params.toString()}`
+				`${env.PUBLIC_API_BASE}/api/v1/channel/list?${params.toString()}`
 			);
 			const result = await response.json();
 
