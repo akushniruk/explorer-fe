@@ -29,7 +29,10 @@ const AppSessionSchema = z.object({
 
 const ChannelsResponseSchema = z.object({
 	success: z.boolean(),
-	data: z.array(ChannelSchema),
+	data: z.object({
+		items: z.array(ChannelSchema),
+		hasMore: z.boolean()
+	}),
 	meta: z.object({
 		timestamp: z.string(),
 		requestId: z.string(),
@@ -45,7 +48,10 @@ const ChannelsResponseSchema = z.object({
 
 const SessionsResponseSchema = z.object({
 	success: z.boolean(),
-	data: z.array(AppSessionSchema),
+	data: z.object({
+		items: z.array(AppSessionSchema),
+		hasMore: z.boolean()
+	}),
 	meta: z.object({
 		timestamp: z.string(),
 		requestId: z.string(),
@@ -92,7 +98,7 @@ export const GET: RequestHandler = async (event) => {
 
 		// Process channel suggestions
 		if (channelsResult.status === 'fulfilled' && !channelsResult.value.notModified) {
-			const channels = channelsResult.value.data.data;
+			const channels = channelsResult.value.data.data.items;
 			channels.forEach((channel) => {
 				// Add channel suggestion
 				suggestions.push({
@@ -119,7 +125,7 @@ export const GET: RequestHandler = async (event) => {
 
 		// Process session suggestions
 		if (sessionsResult.status === 'fulfilled' && !sessionsResult.value.notModified) {
-			const sessions = sessionsResult.value.data.data;
+			const sessions = sessionsResult.value.data.data.items;
 			sessions.forEach((session) => {
 				// Add session suggestion
 				suggestions.push({

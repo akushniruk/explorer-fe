@@ -39,7 +39,10 @@ const AppSessionSchema = z.object({
 
 const ChannelsResponseSchema = z.object({
 	success: z.boolean(),
-	data: z.array(ChannelSchema),
+	data: z.object({
+		items: z.array(ChannelSchema),
+		hasMore: z.boolean()
+	}),
 	meta: z.object({
 		timestamp: z.string(),
 		requestId: z.string(),
@@ -55,7 +58,10 @@ const ChannelsResponseSchema = z.object({
 
 const SessionsResponseSchema = z.object({
 	success: z.boolean(),
-	data: z.array(AppSessionSchema),
+	data: z.object({
+		items: z.array(AppSessionSchema),
+		hasMore: z.boolean()
+	}),
 	meta: z.object({
 		timestamp: z.string(),
 		requestId: z.string(),
@@ -106,7 +112,7 @@ export const load: PageServerLoad = async (event) => {
 				);
 
 				if (!channelsResult.notModified) {
-					results.channels = channelsResult.data.data.filter(
+					results.channels = channelsResult.data.data.items.filter(
 						(channel: any) =>
 							channel.channel_id.toLowerCase().includes(query.toLowerCase()) ||
 							channel.wallet.toLowerCase().includes(query.toLowerCase()) ||
@@ -131,7 +137,7 @@ export const load: PageServerLoad = async (event) => {
 				);
 
 				if (!sessionsResult.notModified) {
-					results.sessions = sessionsResult.data.data.filter(
+					results.sessions = sessionsResult.data.data.items.filter(
 						(session: any) =>
 							session.session_id.toLowerCase().includes(query.toLowerCase()) ||
 							session.channel_id?.toLowerCase().includes(query.toLowerCase()) ||

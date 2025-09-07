@@ -42,7 +42,7 @@
 			const result = await response.json();
 
 			if (result.success) {
-				channels = result.data;
+				channels = result.data.items;
 				total = result.meta.pagination.total;
 			}
 		} catch (error) {

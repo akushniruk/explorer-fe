@@ -5,8 +5,19 @@ import { z } from 'zod';
 const CountResponseSchema = z.object({
 	success: z.boolean(),
 	data: z.object({
-		total: z.number().optional(),
-		count: z.number().optional()
+		total: z.number()
+	}),
+	meta: z.object({
+		timestamp: z.string(),
+		requestId: z.string(),
+		version: z.string()
+	})
+});
+
+const ActiveNodesResponseSchema = z.object({
+	success: z.boolean(),
+	data: z.object({
+		total: z.number()
 	}),
 	meta: z.object({
 		timestamp: z.string(),
@@ -113,7 +124,7 @@ export const load: PageServerLoad = async (event) => {
 			apiGet(event, '/api/v1/app-session/count', CountResponseSchema),
 			apiGet(event, '/api/v1/network/count', CountResponseSchema),
 			apiGet(event, '/api/v1/asset/count', CountResponseSchema),
-			apiGet(event, '/api/v1/nodes/count-active', CountResponseSchema), // active nodes count
+			apiGet(event, '/api/v1/nodes/count-active', ActiveNodesResponseSchema), // active nodes count
 			apiGet(event, `/api/v1/channel/list?${qs}`, ChannelsResponseSchema),
 			apiGet(event, `/api/v1/app-session/list?${qs}`, SessionsResponseSchema),
 			apiGet(event, '/api/v1/node-config', NodeConfigResponseSchema)
@@ -121,40 +132,49 @@ export const load: PageServerLoad = async (event) => {
 
 		// Extract results with safe fallbacks
 		const [
-			channelsCount,
-			sessionsCount,
-			networksCount,
-			assetsCount,
-			activeNodesCount,
-			latestChannels,
-			latestSessions,
-			nodeConfig
-		] = results.map((result) =>
-			result.status === 'fulfilled' && !result.value.notModified ? result.value.data : null
-		);
+			channelsCountResult,
+			sessionsCountResult,
+			networksCountResult,
+			assetsCountResult,
+			activeNodesCountResult,
+			latestChannelsResult,
+			latestSessionsResult,
+			nodeConfigResult
+		] = results;
 
-		// Cache the whole dashboard for a short time
-		event.setHeaders({
-			'Cache-Control': 'public, max-age=15, s-maxage=15, stale-while-revalidate=60'
-		});
+		// Type-safe data extraction
+		const channelsCount = channelsCountResult.status === 'fulfilled' ? channelsCountResult.value : null;
+		const sessionsCount = sessionsCountResult.status === 'fulfilled' ? sessionsCountResult.value : null;
+		const networksCount = networksCountResult.status === 'fulfilled' ? networksCountResult.value : null;
+		const assetsCount = assetsCountResult.status === 'fulfilled' ? assetsCountResult.value : null;
+		const activeNodesCount = activeNodesCountResult.status === 'fulfilled' ? activeNodesCountResult.value : null;
+		const latestChannels = latestChannelsResult.status === 'fulfilled' ? latestChannelsResult.value : null;
+		const latestSessions = latestSessionsResult.status === 'fulfilled' ? latestSessionsResult.value : null;
+
+		// Extract actual data, handling cache state properly  
+		const getApiData = (result: any) => {
+			if (!result) return null;
+			console.log('getApiData result keys:', Object.keys(result));
+			console.log('getApiData result.data:', result.data);
+			// Don't filter based on notModified - we want the actual data
+			return result.data;
+		};
 
 		const dashboardData = {
 			counts: {
-				channels: channelsCount?.data?.total ?? channelsCount?.data?.count ?? 0,
-				sessions: sessionsCount?.data?.total ?? sessionsCount?.data?.count ?? 0,
-				networks: networksCount?.data?.total ?? networksCount?.data?.count ?? 0,
-				assets: assetsCount?.data?.total ?? assetsCount?.data?.count ?? 0,
-				nodes:
-					(activeNodesCount?.data as { total?: number; count?: number })?.total ??
-					(activeNodesCount?.data as { total?: number; count?: number })?.count ??
-					0
+				channels: getApiData(channelsCount)?.data?.total ?? 0,
+				sessions: getApiData(sessionsCount)?.data?.total ?? 0,
+				networks: getApiData(networksCount)?.data?.total ?? 0,
+				assets: getApiData(assetsCount)?.data?.total ?? 0,
+				nodes: getApiData(activeNodesCount)?.data?.total ?? 0
 			},
 			latest: {
-				channels: latestChannels?.data?.items ?? [],
-				sessions: latestSessions?.data?.items ?? []
+				channels: getApiData(latestChannels)?.data?.items ?? [],
+				sessions: getApiData(latestSessions)?.data?.items ?? []
 			},
-			nodeConfig: nodeConfig?.data ?? null
+			nodeConfig: nodeConfigResult?.value?.data?.data ?? null
 		};
+
 
 		return dashboardData;
 	} catch (error) {
