@@ -5,6 +5,7 @@
 	import ChannelsPagination from '$lib/components/ChannelsPagination.svelte';
 	import type { AppSession } from '$lib/types';
 	import { createSessionsListSEO } from '$lib/utils/seo';
+	import { PUBLIC_API_BASE } from '$env/static/public';
 
 	export let data: {
 		sessions: AppSession[];
@@ -41,7 +42,7 @@
 			if (sortOrder) params.set('order', sortOrder);
 
 			const response = await fetch(
-				`${env.PUBLIC_API_BASE}/api/v1/app-session/list?${params.toString()}`
+				`${PUBLIC_API_BASE}/api/v1/app-session/list?${params.toString()}`
 			);
 			const result = await response.json();
 

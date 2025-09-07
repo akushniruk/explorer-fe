@@ -67,7 +67,7 @@
 									{@const brokerAddress = nodeConfig.broker_address}
 									{@const counterparty = channel.wallet ?? channel.participant}
 									Node: <a
-										href={`/address/${brokerAddress}`}
+										href={`/address/${brokerAddress}?type=node`}
 										class="font-sans text-brand hover:text-brand/80 cursor-pointer"
 										>{shortHex(brokerAddress, 6, 4)}</a
 									>

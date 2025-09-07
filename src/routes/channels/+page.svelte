@@ -6,6 +6,7 @@
 	import type { PageData } from './$types';
 	import type { Channel } from '$lib/types';
 	import { createChannelsListSEO } from '$lib/utils/seo';
+	import { PUBLIC_API_BASE } from '$env/static/public';
 
 	export let data: PageData;
 
@@ -36,7 +37,7 @@
 			if (sortOrder) params.set('order', sortOrder);
 
 			const response = await fetch(
-				`${env.PUBLIC_API_BASE}/api/v1/channel/list?${params.toString()}`
+				`${PUBLIC_API_BASE}/api/v1/channel/list?${params.toString()}`
 			);
 			const result = await response.json();
 

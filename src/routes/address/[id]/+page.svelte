@@ -13,6 +13,7 @@
 	export let data: {
 		address: string;
 		lookupType?: 'wallet' | 'participant';
+		addressType?: string;
 		wallet?: string;
 		participants: string[];
 		channels: Channel[];
@@ -29,7 +30,7 @@
 
 	let activeTab = 'overview';
 	$: seoData = createAddressSEO(data.address, data.stats);
-	$: addressType = data.lookupType === 'wallet' ? 'Wallet' : data.lookupType === 'participant' ? 'Session Key' : 'Address';
+	$: addressType = data.addressType === 'node' ? 'Node' : data.lookupType === 'wallet' ? 'Wallet' : data.lookupType === 'participant' ? 'Session Key' : 'Address';
 </script>
 
 <svelte:head>

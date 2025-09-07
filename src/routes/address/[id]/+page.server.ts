@@ -1,9 +1,10 @@
 import type { PageServerLoad } from './$types';
 import type { AddressChannelData } from '$lib/types';
 
-export const load: PageServerLoad = async ({ params, fetch, locals }) => {
+export const load: PageServerLoad = async ({ params, fetch, locals, url }) => {
 	const base = locals.apiBase ?? '';
 	const address = params.id;
+	const addressType = url.searchParams.get('type');
 
 	try {
 		// Use the new universal address endpoint
@@ -17,9 +18,14 @@ export const load: PageServerLoad = async ({ params, fetch, locals }) => {
 
 		const channels = channelsData?.data?.items ?? [];
 		const sessions = sessionsData?.data?.items ?? [];
-		const lookupType = channelsData?.data?.lookupType;
+		let lookupType = channelsData?.data?.lookupType;
 		const relatedWallet = channelsData?.data?.wallet;
 		const relatedParticipants = channelsData?.data?.participants ?? [];
+
+		// Override lookup type if this is a node address
+		if (addressType === 'node') {
+			lookupType = 'wallet';
+		}
 
 		// Calculate stats
 		const activeChannels = channels.filter((c: any) => c.status === 'open').length;
@@ -28,6 +34,7 @@ export const load: PageServerLoad = async ({ params, fetch, locals }) => {
 		return {
 			address,
 			lookupType,
+			addressType,
 			wallet: relatedWallet,
 			participants: relatedParticipants,
 			channels,
@@ -43,7 +50,8 @@ export const load: PageServerLoad = async ({ params, fetch, locals }) => {
 		console.error('Failed to load address data:', error);
 		return {
 			address,
-			lookupType: undefined,
+			lookupType: addressType === 'node' ? 'wallet' : undefined,
+			addressType,
 			wallet: undefined,
 			participants: [],
 			channels: [],

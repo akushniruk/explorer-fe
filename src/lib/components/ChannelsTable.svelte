@@ -165,7 +165,7 @@
 										<div class="flex items-center gap-2">
 											<span class="text-muted-foreground text-xs">Node</span>
 											<a
-												href={`/address/${brokerAddress}`}
+												href={`/address/${brokerAddress}?type=node`}
 												class="font-sans underline text-foreground hover:text-foreground cursor-pointer"
 												title={brokerAddress}
 											>

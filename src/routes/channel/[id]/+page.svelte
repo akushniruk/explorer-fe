@@ -174,7 +174,7 @@
 									<AddressAvatar address={participants.broker} size={40} />
 									<div class="flex-1 min-w-0">
 										<a
-											href={`/address/${participants.broker}`}
+											href={`/address/${participants.broker}?type=node`}
 											class="font-sans text-brand hover:text-brand/80 block truncate"
 										>
 											{shortHex(participants.broker)}
