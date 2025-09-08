@@ -19,9 +19,7 @@ export function generateWebsiteStructuredData(): StructuredData {
 			},
 			'query-input': 'required name=search_term_string'
 		},
-		sameAs: [
-			'https://twitter.com/ynscan'
-		]
+		sameAs: []
 	};
 }
 
@@ -33,9 +31,7 @@ export function generateOrganizationStructuredData(): StructuredData {
 		description: 'Decentralized network for financial applications',
 		url: 'https://ynscan.xyz',
 		logo: 'https://ynscan.xyz/og-preview.jpg',
-		sameAs: [
-			'https://twitter.com/ynscan'
-		]
+		sameAs: []
 	};
 }
 
@@ -56,8 +52,8 @@ export function generateChannelStructuredData(channel: any): StructuredData {
 	return {
 		'@context': 'https://schema.org',
 		'@type': 'FinancialProduct',
-		name: `Payment Channel ${channel.channel_id}`,
-		description: `Yellow Network payment channel with ${channel.balance_a_formatted} ${channel.asset_a_symbol} and ${channel.balance_b_formatted} ${channel.asset_b_symbol}`,
+		name: `Channel ${channel.channel_id}`,
+		description: `Yellow Network channel with ${channel.balance_a_formatted} ${channel.asset_a_symbol} and ${channel.balance_b_formatted} ${channel.asset_b_symbol}`,
 		url: `https://ynscan.xyz/channel/${channel.channel_id}`,
 		provider: {
 			'@type': 'Organization',

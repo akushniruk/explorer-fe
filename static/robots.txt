@@ -1,12 +1,15 @@
 User-agent: *
 Allow: /
 
-# Sitemap
-Sitemap: https://ynscan.xyz/sitemap.xml
+# Primary sitemap index (Google only needs this one)
+Sitemap: https://ynscan.xyz/sitemap_index.xml
 
-# Crawl-delay for polite crawling
+# (Optional) If you want to cover both www and non-www:
+# Sitemap: https://www.ynscan.xyz/sitemap_index.xml
+
+# Crawl-delay (mainly for Bing/Yandex, ignored by Google)
 Crawl-delay: 1
 
-# Disallow admin or private paths if any exist
+# Optional: block sensitive paths if they exist
 # Disallow: /admin/
 # Disallow: /api/

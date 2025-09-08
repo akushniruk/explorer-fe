@@ -9,8 +9,6 @@ export interface SEOData {
 	ogDescription: string;
 	ogUrl?: string;
 	ogImage?: string;
-	twitterTitle: string;
-	twitterDescription: string;
 	canonical?: string;
 	structuredData?: StructuredData[];
 }
@@ -29,8 +27,6 @@ export function createBaseSEO(): SEOData {
 		ogDescription: baseDescription,
 		ogUrl: baseUrl,
 		ogImage: `${baseUrl}/og-preview.jpg`,
-		twitterTitle: `${baseTitle} - Yellow Network Channels & Sessions`,
-		twitterDescription: baseDescription
 	};
 }
 
@@ -51,8 +47,6 @@ export function createHomeSEO(data: {
 		ogDescription: description,
 		ogUrl: baseUrl,
 		ogImage: `${baseUrl}/og-preview.jpg`,
-		twitterTitle: `${baseTitle} - The Yellow Network Explorer`,
-		twitterDescription: description,
 		canonical: baseUrl,
 		structuredData: [generateWebsiteStructuredData(), generateOrganizationStructuredData()]
 	};
@@ -61,7 +55,7 @@ export function createHomeSEO(data: {
 export function createChannelSEO(channel: Channel): SEOData {
 	const shortId = channel.channel_id.slice(0, 10) + '...';
 	const amount = channel.asset?.symbol ? `${parseFloat(channel.amount)} ${channel.asset.symbol}` : channel.amount;
-	const description = `Channel ${shortId} - ${amount} ${channel.status} channel between ${channel.wallet.slice(0, 10)}... and ${channel.participant.slice(0, 10)}... on Yellow Network`;
+	const description = `Channel ${shortId} - ${amount} ${channel.status} connection between ${channel.wallet.slice(0, 10)}... and ${channel.participant.slice(0, 10)}... on Yellow Network`;
 	
 	return {
 		title: `Channel ${shortId} | ${baseTitle}`,
@@ -71,8 +65,6 @@ export function createChannelSEO(channel: Channel): SEOData {
 		ogDescription: description,
 		ogUrl: `${baseUrl}/channel/${channel.channel_id}`,
 		ogImage: `${baseUrl}/og-preview.jpg`,
-		twitterTitle: `Channel ${shortId}`,
-		twitterDescription: description,
 		canonical: `${baseUrl}/channel/${channel.channel_id}`,
 		structuredData: [generateChannelStructuredData(channel)]
 	};
@@ -91,8 +83,6 @@ export function createSessionSEO(session: AppSession): SEOData {
 		ogDescription: description,
 		ogUrl: `${baseUrl}/session/${session.session_id}`,
 		ogImage: `${baseUrl}/og-preview.jpg`,
-		twitterTitle: `Session ${shortId}`,
-		twitterDescription: description,
 		canonical: `${baseUrl}/session/${session.session_id}`,
 		structuredData: [generateSessionStructuredData(session)]
 	};
@@ -109,8 +99,6 @@ export function createChannelsListSEO(total: number, page: number = 1): SEOData 
 		ogDescription: description,
 		ogUrl: `${baseUrl}/channels${page > 1 ? `?page=${page}` : ''}`,
 		ogImage: `${baseUrl}/og-preview.jpg`,
-		twitterTitle: `Channels | ${baseTitle}`,
-		twitterDescription: description,
 		canonical: `${baseUrl}/channels${page > 1 ? `?page=${page}` : ''}`
 	};
 }
@@ -126,8 +114,6 @@ export function createSessionsListSEO(total: number, page: number = 1): SEOData 
 		ogDescription: description,
 		ogUrl: `${baseUrl}/sessions${page > 1 ? `?page=${page}` : ''}`,
 		ogImage: `${baseUrl}/og-preview.jpg`,
-		twitterTitle: `Sessions | ${baseTitle}`,
-		twitterDescription: description,
 		canonical: `${baseUrl}/sessions${page > 1 ? `?page=${page}` : ''}`
 	};
 }
@@ -143,8 +129,6 @@ export function createSearchSEO(query: string, results?: number): SEOData {
 		ogDescription: description,
 		ogUrl: `${baseUrl}/search?q=${encodeURIComponent(query)}`,
 		ogImage: `${baseUrl}/og-preview.jpg`,
-		twitterTitle: `Search: ${query}`,
-		twitterDescription: description,
 		canonical: `${baseUrl}/search?q=${encodeURIComponent(query)}`
 	};
 }
@@ -160,8 +144,6 @@ export function createAssetsSEO(total: number): SEOData {
 		ogDescription: description,
 		ogUrl: `${baseUrl}/assets`,
 		ogImage: `${baseUrl}/og-preview.jpg`,
-		twitterTitle: `Assets | ${baseTitle}`,
-		twitterDescription: description,
 		canonical: `${baseUrl}/assets`
 	};
 }
@@ -177,8 +159,6 @@ export function createNodesSEO(active: number, total: number): SEOData {
 		ogDescription: description,
 		ogUrl: `${baseUrl}/nodes`,
 		ogImage: `${baseUrl}/og-preview.jpg`,
-		twitterTitle: `Network Nodes | ${baseTitle}`,
-		twitterDescription: description,
 		canonical: `${baseUrl}/nodes`
 	};
 }
@@ -195,8 +175,6 @@ export function createAddressSEO(address: string, stats: { totalChannels: number
 		ogDescription: description,
 		ogUrl: `${baseUrl}/address/${address}`,
 		ogImage: `${baseUrl}/og-preview.jpg`,
-		twitterTitle: `Address ${shortAddr}`,
-		twitterDescription: description,
 		canonical: `${baseUrl}/address/${address}`
 	};
 }

@@ -6,9 +6,14 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 		<meta name="author" content="ynscan" />
 		<meta name="description" content="Explore and monitor The Yellow Network's channels, app sessions, and assets. Real-time network statistics and comprehensive data analysis." />
-		<meta name="keywords" content="Yellow Network, explorer, channels, app sessions, cryptocurrency, DeFi, network scanner" />
+		<meta name="keywords" content="Yellow Network, explorer, channels, app sessions, cryptocurrency, DeFi, network scanner, assets, analytics" />
 		<meta name="format-detection" content="telephone=no" />
 		<meta name="theme-color" content="#000000" />
+		<meta name="robots" content="index, follow" />
+		<meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+		<meta name="application-name" content="ynscan" />
+		<meta name="rating" content="general" />
+		<meta name="referrer" content="origin-when-cross-origin" />
 		
 		<!-- Preconnect for performance -->
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -28,16 +33,37 @@
 		<meta property="og:url" content="https://ynscan.xyz" />
 		<meta property="og:image" content="https://ynscan.xyz/og-preview.jpg" />
 		<meta property="og:image:alt" content="Visit ynscan" />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:locale" content="en_US" />
 		
-		<!-- Twitter meta tags -->
-		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:title" content="ynscan - The Yellow Network Explorer" />
-		<meta name="twitter:description" content="Explore and monitor The Yellow Network's channels, app sessions, and network assets." />
-		<meta name="twitter:site" content="@ynscan" />
-		<meta property="twitter:image" content="https://ynscan.xyz/og-preview.jpg" />
-		<meta name="twitter:image:alt" content="Visit ynscan" />
 		
 		<link rel="canonical" href="https://ynscan.xyz" />
+		
+		<!-- Structured Data -->
+		<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@type": "WebSite",
+			"name": "ynscan - The Yellow Network Explorer",
+			"description": "Explore and monitor The Yellow Network's channels, app sessions, and assets. Real-time network statistics and comprehensive data analysis.",
+			"url": "https://ynscan.xyz",
+			"sameAs": [],
+			"potentialAction": {
+				"@type": "SearchAction",
+				"target": "https://ynscan.xyz/search?q={search_term_string}",
+				"query-input": "required name=search_term_string"
+			},
+			"author": {
+				"@type": "Organization",
+				"name": "ynscan"
+			},
+			"publisher": {
+				"@type": "Organization",
+				"name": "ynscan"
+			}
+		}
+		</script>
 		
 		<link rel="shortcut icon" href="%sveltekit.assets%/favicon.ico" />
 		

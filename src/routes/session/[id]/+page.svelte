@@ -39,14 +39,6 @@
 		<meta property="og:image" content={seoData.ogImage} />
 		<meta property="og:image:alt" content="Visit ynscan" />
 		
-		<!-- Twitter meta tags -->
-		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:title" content={seoData.twitterTitle} />
-		<meta name="twitter:description" content={seoData.twitterDescription} />
-		<meta name="twitter:site" content="@ynscan" />
-		<meta property="twitter:image" content={seoData.ogImage} />
-		<meta name="twitter:image:alt" content="Visit ynscan" />
-		
 		<link rel="canonical" href={seoData.canonical} />
 	{:else}
 		<title>Session Not Found | ynscan</title>

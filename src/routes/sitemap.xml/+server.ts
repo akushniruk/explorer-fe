@@ -12,6 +12,12 @@ function isValidAddress(address: string): boolean {
 }
 
 export const GET: RequestHandler = async ({ locals }) => {
+	// Set a timeout for the entire sitemap generation
+	const timeoutPromise = new Promise<Response>((_, reject) => {
+		setTimeout(() => reject(new Error('Sitemap generation timeout')), 8000);
+	});
+
+	const sitemapPromise = (async (): Promise<Response> => {
 	try {
 		const apiBase = locals.apiBase;
 		
@@ -25,12 +31,21 @@ export const GET: RequestHandler = async ({ locals }) => {
 			'/search'
 		];
 
-		// Fetch dynamic routes - get more comprehensive data
+		// Fetch dynamic routes with timeout - get more comprehensive data
+		const fetchWithTimeout = (url: string, timeout = 3000) => {
+			return Promise.race([
+				fetch(url),
+				new Promise<Response>((_, reject) => 
+					setTimeout(() => reject(new Error('Fetch timeout')), timeout)
+				)
+			]);
+		};
+
 		const [channelsRes, sessionsRes, assetsRes, nodesRes] = await Promise.allSettled([
-			fetch(`${apiBase}/api/v1/channel/list?limit=1000`),
-			fetch(`${apiBase}/api/v1/app-session/list?limit=1000`),
-			fetch(`${apiBase}/api/v1/asset/list?limit=1000`),
-			fetch(`${apiBase}/api/v1/nodes/list?limit=1000`)
+			fetchWithTimeout(`${apiBase}/api/v1/channel/list?limit=500`),
+			fetchWithTimeout(`${apiBase}/api/v1/app-session/list?limit=500`), 
+			fetchWithTimeout(`${apiBase}/api/v1/asset/list?limit=500`),
+			fetchWithTimeout(`${apiBase}/api/v1/nodes/list?limit=500`)
 		]);
 
 		const dynamicUrls: string[] = [];
@@ -91,14 +106,24 @@ export const GET: RequestHandler = async ({ locals }) => {
 
 		// Note: Node URLs don't seem to have individual detail pages, so we skip those
 
-		// Remove duplicates and sort URLs, limit to prevent oversized sitemaps
-		const uniqueDynamicUrls = [...new Set(dynamicUrls)].sort().slice(0, 45000); // Reserve 5000 for static routes
-		const currentDate = new Date().toISOString();
+		// Remove duplicates (case-insensitive) and sort URLs, limit to prevent oversized sitemaps
+		const seenUrls = new Set();
+		const uniqueDynamicUrls = dynamicUrls
+			.filter(url => {
+				const normalizedUrl = url.toLowerCase();
+				if (seenUrls.has(normalizedUrl)) {
+					return false;
+				}
+				seenUrls.add(normalizedUrl);
+				return true;
+			})
+			.sort()
+			.slice(0, 5000); // Further reduce to 5k URLs for faster GSC processing
+		const currentDate = new Date().toISOString().split('T')[0]; // Use YYYY-MM-DD format only
 
 		// Generate XML sitemap with better prioritization
 		const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${staticRoutes.map(route => {
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${staticRoutes.map(route => {
 	const priority = route === '' ? '1.0' : 
 					route === '/search' ? '0.9' : 
 					route === '/channels' || route === '/sessions' ? '0.8' : '0.7';
@@ -106,13 +131,12 @@ ${staticRoutes.map(route => {
 	
 	return `
 	<url>
-		<loc>${siteUrl}${route}</loc>
+		<loc>${siteUrl}${route === '' ? '/' : route}</loc>
 		<lastmod>${currentDate}</lastmod>
 		<changefreq>${changefreq}</changefreq>
 		<priority>${priority}</priority>
 	</url>`;
-}).join('')}
-${uniqueDynamicUrls.map(url => {
+}).join('')}${uniqueDynamicUrls.map(url => {
 	// Set priority based on URL type
 	const priority = url.startsWith('/channel/') || url.startsWith('/session/') ? '0.6' : '0.5';
 	const changefreq = url.startsWith('/address/') ? 'weekly' : 'daily';
@@ -137,7 +161,7 @@ ${uniqueDynamicUrls.map(url => {
 		console.error('Error generating sitemap:', error);
 		
 		// Fallback static sitemap with all static routes
-		const fallbackDate = new Date().toISOString();
+		const fallbackDate = new Date().toISOString().split('T')[0]; // Use YYYY-MM-DD format only
 		const staticSitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${staticRoutes.map(route => {
@@ -147,7 +171,7 @@ ${staticRoutes.map(route => {
 	const changefreq = route === '' ? 'hourly' : 'daily';
 	
 	return `	<url>
-		<loc>${siteUrl}${route}</loc>
+		<loc>${siteUrl}${route === '' ? '/' : route}</loc>
 		<lastmod>${fallbackDate}</lastmod>
 		<changefreq>${changefreq}</changefreq>
 		<priority>${priority}</priority>
@@ -158,6 +182,36 @@ ${staticRoutes.map(route => {
 		return new Response(staticSitemap, {
 			headers: {
 				'Content-Type': 'application/xml'
+			}
+		});
+	}
+	})();
+
+	try {
+		return await Promise.race([sitemapPromise, timeoutPromise]);
+	} catch (error) {
+		console.error('Sitemap generation failed:', error);
+		
+		// Emergency fallback with minimal static sitemap
+		const staticRoutes = ['', '/channels', '/sessions', '/assets', '/nodes', '/search'];
+		const fallbackDate = new Date().toISOString().split('T')[0]; // Use YYYY-MM-DD format only
+		const emergencyFallback = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${staticRoutes.map(route => {
+	const priority = route === '' ? '1.0' : route === '/search' ? '0.9' : '0.8';
+	return `	<url>
+		<loc>https://ynscan.xyz${route}</loc>
+		<lastmod>${fallbackDate}</lastmod>
+		<changefreq>daily</changefreq>
+		<priority>${priority}</priority>
+	</url>`;
+}).join('\n')}
+</urlset>`;
+
+		return new Response(emergencyFallback, {
+			headers: {
+				'Content-Type': 'application/xml',
+				'Cache-Control': 'public, max-age=300' // Cache for 5 minutes only
 			}
 		});
 	}
