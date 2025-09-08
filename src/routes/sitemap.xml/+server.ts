@@ -2,6 +2,15 @@ import type { RequestHandler } from './$types';
 
 const siteUrl = 'https://ynscan.xyz';
 
+// Helper function to validate blockchain addresses (Ethereum format)
+function isValidAddress(address: string): boolean {
+	// Check if it's a valid Ethereum address (42 chars starting with 0x)
+	if (address && typeof address === 'string') {
+		return /^0x[a-fA-F0-9]{40}$/.test(address);
+	}
+	return false;
+}
+
 export const GET: RequestHandler = async ({ locals }) => {
 	try {
 		const apiBase = locals.apiBase;
@@ -32,12 +41,14 @@ export const GET: RequestHandler = async ({ locals }) => {
 			if (channelsData.success && channelsData.data) {
 				const items = Array.isArray(channelsData.data) ? channelsData.data : channelsData.data.items || [];
 				items.forEach((channel: any) => {
-					dynamicUrls.push(`/channel/${channel.channel_id}`);
-					// Add participant addresses based on actual schema
-					if (channel.wallet) {
+					if (channel.channel_id) {
+						dynamicUrls.push(`/channel/${channel.channel_id}`);
+					}
+					// Add participant addresses based on actual schema - validate hex format
+					if (channel.wallet && isValidAddress(channel.wallet)) {
 						dynamicUrls.push(`/address/${channel.wallet}`);
 					}
-					if (channel.participant) {
+					if (channel.participant && isValidAddress(channel.participant)) {
 						dynamicUrls.push(`/address/${channel.participant}`);
 					}
 				});
@@ -50,11 +61,15 @@ export const GET: RequestHandler = async ({ locals }) => {
 			if (sessionsData.success && sessionsData.data) {
 				const items = Array.isArray(sessionsData.data) ? sessionsData.data : sessionsData.data.items || [];
 				items.forEach((session: any) => {
-					dynamicUrls.push(`/session/${session.session_id}`);
-					// Add participant addresses from sessions
+					if (session.session_id) {
+						dynamicUrls.push(`/session/${session.session_id}`);
+					}
+					// Add participant addresses from sessions - validate hex format
 					if (session.participants && Array.isArray(session.participants)) {
 						session.participants.forEach((participant: string) => {
-							dynamicUrls.push(`/address/${participant}`);
+							if (isValidAddress(participant)) {
+								dynamicUrls.push(`/address/${participant}`);
+							}
 						});
 					}
 				});
@@ -67,7 +82,7 @@ export const GET: RequestHandler = async ({ locals }) => {
 			if (assetsData.success && assetsData.data) {
 				const items = Array.isArray(assetsData.data) ? assetsData.data : assetsData.data.items || [];
 				items.forEach((asset: any) => {
-					if (asset.token) {
+					if (asset.token && isValidAddress(asset.token)) {
 						dynamicUrls.push(`/address/${asset.token}`);
 					}
 				});
@@ -76,8 +91,8 @@ export const GET: RequestHandler = async ({ locals }) => {
 
 		// Note: Node URLs don't seem to have individual detail pages, so we skip those
 
-		// Remove duplicates and sort URLs
-		const uniqueDynamicUrls = [...new Set(dynamicUrls)].sort();
+		// Remove duplicates and sort URLs, limit to prevent oversized sitemaps
+		const uniqueDynamicUrls = [...new Set(dynamicUrls)].sort().slice(0, 45000); // Reserve 5000 for static routes
 		const currentDate = new Date().toISOString();
 
 		// Generate XML sitemap with better prioritization
