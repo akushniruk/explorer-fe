@@ -1,4 +1,4 @@
-import { base, flowMainnet, mainnet, polygon, rootstock, worldchain } from 'viem/chains';
+import { base, flowMainnet, linea, mainnet, polygon, rootstock, worldchain } from 'viem/chains';
 
 export const chains = {
 	mainnet,
@@ -6,5 +6,6 @@ export const chains = {
 	worldchain,
 	flowMainnet,
 	base,
-	rootstock
+	rootstock,
+	linea
 };

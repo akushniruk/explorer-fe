@@ -4,13 +4,14 @@
 	export let chainId: number;
 
 	const chain = getChainById(chainId);
-	console.log(chain);
+
 	const chainIconMap: Record<number, string> = {
 		1: 'ethereum',
 		137: 'polygon',
 		30: 'rootstock', // Rootstock Mainnet
 		747: 'flow', // Flow EVM Mainnet
-		480: 'World Chain'
+		480: 'World Chain',
+		59144: 'linea', // Linea Mainnet
 	};
 
 	const iconSlug = chain
