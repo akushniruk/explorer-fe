@@ -47,7 +47,7 @@
 			const result = await response.json();
 
 			if (result.success) {
-				sessions = result.data;
+				sessions = result.data.items;
 				total = result.meta.pagination.total;
 			}
 		} catch (error) {
