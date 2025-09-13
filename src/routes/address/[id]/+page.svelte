@@ -28,9 +28,17 @@
 
 	console.log(data)
 
-	let activeTab = 'overview';
+	let activeTab = data.lookupType === 'wallet' && data.participants.length > 0 ? 'sessionkeys' : 'channels';
 	$: seoData = createAddressSEO(data.address, data.stats);
 	$: addressType = data.addressType === 'node' ? 'Node' : data.lookupType === 'wallet' ? 'Wallet' : data.lookupType === 'participant' ? 'Session Key' : 'Address';
+
+	function getStatusVariant(status: string): 'default' | 'destructive' {
+		return status.toLowerCase() === 'open' || status.toLowerCase() === 'active' ? 'default' : 'destructive';
+	}
+
+	function getStatusClass(status: string) {
+		return status.toLowerCase() === 'open' || status.toLowerCase() === 'active' ? 'bg-emerald-600 hover:bg-emerald-600/90 capitalize' : 'capitalize';
+	}
 </script>
 
 <svelte:head>
@@ -63,100 +71,92 @@
 <div class="max-w-7xl mx-auto px-4 py-6">
 	<!-- Header -->
 	<div class="mb-8">
-		<div class="flex items-start gap-4 mb-4">
-			<AddressAvatar address={data.address} size={64} />
-			<div class="flex-1">
-				<h1 class="text-3xl font-bold mb-2">{addressType} Details</h1>
-				<div class="flex items-center gap-2 mb-2">
-					<span class="text-muted-foreground">{addressType}:</span>
-					<code class="font-sans text-lg bg-accent/50 px-3 py-1 rounded text-accent-foreground">
-						{data.address}
-					</code>
-					<CopyButton value={data.address} />
-				</div>
-				
-				<!-- Relationship Information -->
-				{#if data.lookupType === 'wallet' && data.participants.length > 0}
+		<div class="flex items-start justify-between mb-4">
+			<div class="flex items-start gap-4">
+				<AddressAvatar address={data.address} size={64} />
+				<div class="flex-1">
+					<h1 class="text-3xl font-bold mb-2">{addressType} Details</h1>
 					<div class="flex items-center gap-2 mb-2">
-						<span class="text-muted-foreground">Session Keys ({data.participants.length}):</span>
-						<div class="flex flex-wrap gap-1">
-							{#each data.participants.slice(0, 3) as participant}
-								<a 
-									href={`/address/${participant}`}
-									class="text-sm bg-secondary px-2 py-1 rounded hover:bg-secondary/80 font-sans"
-									title={participant}
-								>
-									{shortHex(participant, 6, 4)}
-								</a>
-							{/each}
-							{#if data.participants.length > 3}
-								<span class="text-sm text-muted-foreground">+{data.participants.length - 3} more</span>
-							{/if}
+						<span class="text-text">{addressType}:</span>
+						<code class="font-sans text-lg py-1 rounded text-text" title={data.address}>
+							{shortHex(data.address, 8, 8)}
+						</code>
+						<CopyButton value={data.address} />
+					</div>
+
+					<!-- Relationship Information -->
+					{#if data.lookupType === 'wallet' && data.participants.length > 0}
+						<div class="flex items-center gap-2 mb-2">
+							<span class="text-text">Session Keys ({data.participants.length}):</span>
+							<div class="flex flex-wrap gap-1">
+								{#each data.participants.slice(0, 3) as participant}
+									<a
+										href={`/address/${participant}`}
+										class="text-sm bg-secondary px-2 py-1 rounded hover:bg-secondary/80 font-sans"
+										title={participant}
+									>
+										{shortHex(participant, 6, 4)}
+									</a>
+								{/each}
+								{#if data.participants.length > 3}
+									<span class="text-sm text-text">+{data.participants.length - 3} more</span>
+								{/if}
+							</div>
 						</div>
-					</div>
-				{:else if data.lookupType === 'participant' && data.wallet}
-					<div class="flex items-center gap-2 mb-2">
-						<span class="text-muted-foreground">Main Wallet:</span>
-						<a 
-							href={`/address/${data.wallet}`}
-							class="text-sm bg-secondary px-2 py-1 rounded hover:bg-secondary/80 font-sans"
-							title={data.wallet}
-						>
-							{shortHex(data.wallet, 8, 6)}
-						</a>
-						<CopyButton value={data.wallet} />
-					</div>
-				{/if}
+					{:else if data.lookupType === 'participant' && data.wallet}
+						<div class="flex items-center gap-2 mb-2">
+							<span class="text-text">Main Wallet:</span>
+							<a
+								href={`/address/${data.wallet}`}
+								class="font-sans text-brand hover:text-brand/80"
+								title={data.wallet}
+							>
+								{shortHex(data.wallet, 8, 8)}
+							</a>
+							<CopyButton value={data.wallet} />
+						</div>
+					{/if}
+				</div>
 			</div>
 		</div>
 	</div>
 
 	<!-- Stats Cards -->
 	<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-		<div class="bg-card border border-border rounded-lg p-6 text-center">
-			<div class="flex items-center justify-center mb-2">
-				<CreditCard class="w-6 h-6 text-muted-foreground" />
+		<div class="bg-card border border-border rounded-lg p-4 text-center">
+			<div class="flex items-center justify-center mb-1.5">
+				<CreditCard class="w-5 h-5 text-text" />
 			</div>
-			<div class="text-2xl font-bold text-brand mb-1">{data.stats.totalChannels}</div>
-			<div class="text-sm text-muted-foreground">Total Channels</div>
+			<div class="text-xl font-bold text-text mb-0.5">{data.stats.totalChannels}</div>
+			<div class="text-xs text-text">Total Channels</div>
 		</div>
-		<div class="bg-card border border-border rounded-lg p-6 text-center">
-			<div class="flex items-center justify-center mb-2">
-				<Activity class="w-6 h-6 text-muted-foreground" />
+		<div class="bg-card border border-border rounded-lg p-4 text-center">
+			<div class="flex items-center justify-center mb-1.5">
+				<Activity class="w-5 h-5 text-text" />
 			</div>
-			<div class="text-2xl font-bold text-emerald-600 mb-1">{data.stats.activeChannels}</div>
-			<div class="text-sm text-muted-foreground">Active Channels</div>
+			<div class="text-xl font-bold text-emerald-600 mb-0.5">{data.stats.activeChannels}</div>
+			<div class="text-xs text-text">Active Channels</div>
 		</div>
-		<div class="bg-card border border-border rounded-lg p-6 text-center">
-			<div class="flex items-center justify-center mb-2">
-				<Users class="w-6 h-6 text-muted-foreground" />
+		<div class="bg-card border border-border rounded-lg p-4 text-center">
+			<div class="flex items-center justify-center mb-1.5">
+				<Users class="w-5 h-5 text-text" />
 			</div>
-			<div class="text-2xl font-bold text-brand mb-1">{data.stats.totalSessions}</div>
-			<div class="text-sm text-muted-foreground">Total Sessions</div>
+			<div class="text-xl font-bold text-text mb-0.5">{data.stats.totalSessions}</div>
+			<div class="text-xs text-text">Total Sessions</div>
 		</div>
-		<div class="bg-card border border-border rounded-lg p-6 text-center">
-			<div class="flex items-center justify-center mb-2">
-				<Clock class="w-6 h-6 text-muted-foreground" />
+		<div class="bg-card border border-border rounded-lg p-4 text-center">
+			<div class="flex items-center justify-center mb-1.5">
+				<Clock class="w-5 h-5 text-text" />
 			</div>
-			<div class="text-2xl font-bold text-muted-foreground mb-1">{data.stats.activeSessions}</div>
-			<div class="text-sm text-muted-foreground">Active Sessions</div>
+			<div class="text-xl font-bold text-emerald-600 mb-0.5">{data.stats.activeSessions}</div>
+			<div class="text-xs text-text">Active Sessions</div>
 		</div>
 	</div>
+
 
 	<!-- Tabs -->
 	<div class="border-b border-border mb-6">
 		<nav class="flex space-x-8">
-			<button
-				class="py-2 px-1 border-b-2 font-medium text-sm transition-colors"
-				class:border-brand={activeTab === 'overview'}
-				class:text-brand={activeTab === 'overview'}
-				class:border-transparent={activeTab !== 'overview'}
-				class:text-muted-foreground={activeTab !== 'overview'}
-				on:click={() => (activeTab = 'overview')}
-			>
-				Overview
-			</button>
-			
 			<!-- Session Keys Tab (for wallets) -->
 			{#if data.lookupType === 'wallet' && data.participants.length > 0}
 				<button
@@ -171,20 +171,7 @@
 				</button>
 			{/if}
 
-			<!-- Wallet Owner Tab (for participants) -->
-			{#if data.lookupType === 'participant' && data.wallet}
-				<button
-					class="py-2 px-1 border-b-2 font-medium text-sm transition-colors"
-					class:border-brand={activeTab === 'owner'}
-					class:text-brand={activeTab === 'owner'}
-					class:border-transparent={activeTab !== 'owner'}
-					class:text-muted-foreground={activeTab !== 'owner'}
-					on:click={() => (activeTab = 'owner')}
-				>
-					Owner Wallet
-				</button>
-			{/if}
-			
+
 			<button
 				class="py-2 px-1 border-b-2 font-medium text-sm transition-colors"
 				class:border-brand={activeTab === 'channels'}
@@ -209,98 +196,7 @@
 	</div>
 
 	<!-- Tab Content -->
-	{#if activeTab === 'overview'}
-		<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-			<!-- Recent Channels -->
-			<div class="bg-card border border-border rounded-lg">
-				<div class="p-4 border-b border-border">
-					<h3 class="font-semibold">Recent Channels</h3>
-				</div>
-				<div class="p-0">
-					{#each data.channels.slice(0, 5) as channel (channel.channel_id)}
-						<div
-							class="flex items-center justify-between p-4 border-b border-border/50 last:border-b-0"
-						>
-							<div>
-								<a
-									href={`/channel/${channel.channel_id}`}
-									class="font-sans text-sm text-brand hover:text-brand/80"
-								>
-									{shortHex(channel.channel_id, 8, 6)}
-								</a>
-								<div class="text-xs text-muted-foreground mt-1">
-									{formatAmount(
-										channel.amount,
-										channel.asset?.decimals ? parseInt(channel.asset.decimals) : 18,
-										4
-									)}
-									{channel.asset?.symbol || 'ETH'}
-								</div>
-							</div>
-							<div class="text-right">
-								<span
-									class="inline-flex px-2 py-1 rounded text-xs font-medium"
-									class:bg-gray-100={channel.status === 'open'}
-									class:text-foreground={channel.status === 'open'}
-									class:bg-gray-200={channel.status === 'closed'}
-									class:text-muted-foreground={channel.status === 'closed'}
-								>
-									{channel.status}
-								</span>
-								<div class="text-xs text-muted-foreground mt-1">
-									{timeAgo(channel.updated_at)}
-								</div>
-							</div>
-						</div>
-					{:else}
-						<div class="p-8 text-center text-muted-foreground">No channels found</div>
-					{/each}
-				</div>
-			</div>
-
-			<!-- Recent Sessions -->
-			<div class="bg-card border border-border rounded-lg">
-				<div class="p-4 border-b border-border">
-					<h3 class="font-semibold">Recent Sessions</h3>
-				</div>
-				<div class="p-0">
-					{#each data.sessions.slice(0, 5) as session (session.session_id)}
-						<div
-							class="flex items-center justify-between p-4 border-b border-border/50 last:border-b-0"
-						>
-							<div>
-								<a
-									href={`/session/${session.session_id}`}
-									class="font-sans text-sm text-brand hover:text-brand/80"
-								>
-									{shortHex(session.session_id, 8, 6)}
-								</a>
-								<div class="text-xs text-muted-foreground mt-1">
-									{session.participants.length} addresses
-								</div>
-							</div>
-							<div class="text-right">
-								<span
-									class="inline-flex px-2 py-1 rounded text-xs font-medium"
-									class:bg-gray-100={session.status === 'active'}
-									class:text-foreground={session.status === 'active'}
-									class:bg-gray-200={session.status === 'closed'}
-									class:text-muted-foreground={session.status === 'closed'}
-								>
-									{session.status}
-								</span>
-								<div class="text-xs text-muted-foreground mt-1">
-									{timeAgo(session.updated_at)}
-								</div>
-							</div>
-						</div>
-					{:else}
-						<div class="p-8 text-center text-muted-foreground">No sessions found</div>
-					{/each}
-				</div>
-			</div>
-		</div>
-	{:else if activeTab === 'sessionkeys'}
+	{#if activeTab === 'sessionkeys'}
 		<!-- Session Keys Tab Content -->
 		<div class="bg-card border border-border rounded-lg">
 			<div class="p-4 border-b border-border">
@@ -314,6 +210,7 @@
 					<Table.Row class="hover:bg-transparent border-b border-border">
 						<Table.Head class="font-medium text-muted-foreground text-sm">Session Key</Table.Head>
 						<Table.Head class="font-medium text-muted-foreground text-sm">Channels</Table.Head>
+						<Table.Head class="font-medium text-muted-foreground text-sm">Chains</Table.Head>
 						<Table.Head class="font-medium text-muted-foreground text-sm">Status</Table.Head>
 						<Table.Head class="font-medium text-muted-foreground text-sm">Actions</Table.Head>
 					</Table.Row>
@@ -322,6 +219,7 @@
 					{#each data.participants as participant (participant)}
 						{@const participantChannels = data.channels.filter(c => c.participant === participant)}
 						{@const activeParticipantChannels = participantChannels.filter(c => c.status === 'open')}
+						{@const uniqueChains = [...new Set(participantChannels.map(c => c.chain_id))]}
 						<Table.Row class="hover:bg-muted/50">
 							<Table.Cell class="font-sans">
 								<div class="flex items-center gap-2">
@@ -340,23 +238,47 @@
 								</div>
 							</Table.Cell>
 							<Table.Cell>
-								<div class="text-sm">
-									<div class="font-medium">{participantChannels.length} total</div>
-									<div class="text-muted-foreground text-xs">
-										{activeParticipantChannels.length} active
-									</div>
+								<div class="text-sm space-y-1">
+									{#if participantChannels.length > 0}
+										<div class="flex flex-wrap gap-1">
+											{#each participantChannels.slice(0, 3) as channel}
+												<a
+													href={`/channel/${channel.channel_id}`}
+													class="text-xs bg-secondary px-2 py-1 rounded hover:bg-secondary/80 font-sans"
+													title={channel.channel_id}
+												>
+													{shortHex(channel.channel_id, 4, 4)}
+												</a>
+											{/each}
+											{#if participantChannels.length > 3}
+												<span class="text-xs text-muted-foreground">+{participantChannels.length - 3}</span>
+											{/if}
+										</div>
+										<div class="text-muted-foreground text-xs">
+											{activeParticipantChannels.length} active of {participantChannels.length} total
+										</div>
+									{:else}
+										<div class="text-muted-foreground text-xs">No channels</div>
+									{/if}
 								</div>
 							</Table.Cell>
 							<Table.Cell>
-								<span 
-									class="inline-flex px-2 py-1 rounded text-xs font-medium"
-									class:bg-emerald-100={activeParticipantChannels.length > 0}
-									class:text-emerald-800={activeParticipantChannels.length > 0}
-									class:bg-gray-100={activeParticipantChannels.length === 0}
-									class:text-gray-800={activeParticipantChannels.length === 0}
+								<div class="flex flex-wrap gap-1">
+									{#each uniqueChains.slice(0, 3) as chainId}
+										<Chain chainId={Number(chainId)} />
+									{/each}
+									{#if uniqueChains.length > 3}
+										<span class="text-xs text-muted-foreground">+{uniqueChains.length - 3}</span>
+									{/if}
+								</div>
+							</Table.Cell>
+							<Table.Cell>
+								<Badge
+									variant={activeParticipantChannels.length > 0 ? 'default' : 'destructive'}
+									class={activeParticipantChannels.length > 0 ? 'bg-emerald-600 hover:bg-emerald-600/90 capitalize' : 'capitalize'}
 								>
 									{activeParticipantChannels.length > 0 ? 'Active' : 'Inactive'}
-								</span>
+								</Badge>
 							</Table.Cell>
 							<Table.Cell>
 								<a
@@ -369,63 +291,13 @@
 						</Table.Row>
 					{:else}
 						<Table.Row>
-							<Table.Cell colspan={4} class="h-24 text-center text-muted-foreground">
+							<Table.Cell colspan={5} class="h-24 text-center text-muted-foreground">
 								No session keys found for this wallet.
 							</Table.Cell>
 						</Table.Row>
 					{/each}
 				</Table.Body>
 			</Table.Root>
-		</div>
-	{:else if activeTab === 'owner'}
-		<!-- Owner Wallet Tab Content -->
-		<div class="bg-card border border-border rounded-lg">
-			<div class="p-4 border-b border-border">
-				<h3 class="font-semibold">Owner Wallet</h3>
-				<p class="text-sm text-muted-foreground mt-1">
-					The main wallet address that controls this session key.
-				</p>
-			</div>
-			<div class="p-6">
-				{#if data.wallet}
-					<div class="flex items-start gap-4 p-4 bg-muted/30 rounded-lg">
-						<AddressAvatar address={data.wallet} size={48} />
-						<div class="flex-1">
-							<div class="flex items-center gap-2 mb-2">
-								<h4 class="font-semibold text-lg">Main Wallet</h4>
-							</div>
-							<div class="flex items-center gap-2 mb-3">
-								<code class="font-sans text-sm bg-accent/50 px-2 py-1 rounded text-accent-foreground">
-									{data.wallet}
-								</code>
-								<CopyButton value={data.wallet} />
-							</div>
-							<div class="flex items-center gap-4 text-sm text-muted-foreground mb-3">
-								<div class="flex items-center gap-1">
-									<CreditCard class="w-4 h-4" />
-									<span>{data.channels.length} channels</span>
-								</div>
-								<div class="flex items-center gap-1">
-									<Users class="w-4 h-4" />
-									<span>{data.participants.length} session keys</span>
-								</div>
-							</div>
-							<div class="flex gap-2">
-								<a
-									href={`/address/${data.wallet}`}
-									class="inline-flex items-center px-3 py-1.5 bg-brand text-brand-foreground rounded text-sm hover:bg-brand/90"
-								>
-									View Wallet Details
-								</a>
-							</div>
-						</div>
-					</div>
-				{:else}
-					<div class="text-center text-muted-foreground py-8">
-						Owner wallet information not available.
-					</div>
-				{/if}
-			</div>
 		</div>
 	{:else if activeTab === 'channels'}
 		<!-- Channels Tab -->
@@ -484,11 +356,7 @@
 								{channel.asset?.symbol || 'ETH'}
 							</Table.Cell>
 							<Table.Cell>
-								<Badge
-									class={channel.status === 'open'
-										? 'bg-emerald-100 text-emerald-800'
-										: 'bg-gray-100 text-gray-800'}
-								>
+								<Badge variant={getStatusVariant(channel.status)} class={getStatusClass(channel.status)}>
 									{channel.status}
 								</Badge>
 							</Table.Cell>
@@ -586,11 +454,7 @@
 								</div>
 							</Table.Cell>
 							<Table.Cell>
-								<Badge
-									class={session.status === 'active'
-										? 'bg-emerald-100 text-emerald-800'
-										: 'bg-gray-100 text-gray-800'}
-								>
+								<Badge variant={getStatusVariant(session.status)} class={getStatusClass(session.status)}>
 									{session.status}
 								</Badge>
 							</Table.Cell>
