@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { shortHex, timeAgo } from '$lib/format';
 	import type { AppSession } from '$lib/types';
-	import { FileText, Users, Clock, ExternalLink, Activity } from 'lucide-svelte';
+	import { FileText, Users, Clock, ExternalLink, Activity, Coins, Box } from 'lucide-svelte';
 	import AddressAvatar from '$lib/components/ui/AddressAvatar.svelte';
 	import CopyButton from '$lib/components/ui/CopyButton.svelte';
 	import { Badge } from '$lib/components/ui/badge';
@@ -23,7 +23,7 @@
 	};
 
 	$: seoData = data.session ? createSessionSEO(data.session) : null;
-
+	console.log(data.session)
 	onMount(() => {
 		if (data.session) {
 			trackSessionView(data.session.session_id);
@@ -77,12 +77,25 @@
 				<div>
 					<h1 class="text-3xl font-bold mb-2">Session Details</h1>
 					<div class="flex items-center gap-2 mb-2">
-						<span class="text-muted-foreground">Session ID:</span>
-						<code class="font-sans text-lg bg-accent/50 px-3 py-1 rounded text-accent-foreground">
-							{data.session.session_id}
+						<span class="text-text">Session ID:</span>
+						<code class="font-sans text-lg py-1 rounded text-text" title={data.session.session_id}>
+							{shortHex(data.session.session_id, 8, 8)}
 						</code>
 						<CopyButton value={data.session.session_id} />
 					</div>
+					{#if data.session.channel_id}
+						<div class="flex items-center gap-2 mb-2">
+							<span class="text-text">Channel:</span>
+							<a
+								href={`/channel/${data.session.channel_id}`}
+								class="font-sans text-brand hover:text-brand/80"
+								title={data.session.channel_id}
+							>
+								{shortHex(data.session.channel_id, 8, 8)}
+							</a>
+							<CopyButton value={data.session.channel_id} />
+						</div>
+					{/if}
 				</div>
 				<Badge variant={getStatusVariant(data.session.status)} class={getStatusClass(data.session.status)}>
 					{data.session.status}
@@ -91,71 +104,78 @@
 		</div>
 
 		<!-- Session Overview Cards -->
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-			<div class="bg-card border border-border rounded-lg p-6 text-center">
-				<div class="flex items-center justify-center mb-2">
-					<Users class="w-6 h-6 text-muted-foreground" />
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+			<div class="bg-card border border-border rounded-lg p-4 text-center">
+				<div class="flex items-center justify-center mb-1.5">
+					<Users class="w-5 h-5 text-text" />
 				</div>
-				<div class="text-2xl font-bold text-brand mb-1">
+				<div class="text-xl font-bold text-text mb-0.5">
 					{data.session.participants?.length || 0}
 				</div>
-				<div class="text-sm text-muted-foreground">Addresses</div>
+				<div class="text-xs text-text">Participants</div>
 			</div>
-			<div class="bg-card border border-border rounded-lg p-6 text-center">
-				<div class="flex items-center justify-center mb-2">
-					<FileText class="w-6 h-6 text-muted-foreground" />
+			<div class="bg-card border border-border rounded-lg p-4 text-center">
+				<div class="flex items-center justify-center mb-1.5">
+					<Box class="w-5 h-5 text-text" />
 				</div>
-				<div class="text-lg font-medium text-foreground mb-1">
+				<div class="text-lg font-medium text-text mb-0.5">
 					{data.session.protocol || 'Unknown'}
 				</div>
-				<div class="text-sm text-muted-foreground">Protocol</div>
+				<div class="text-xs text-text">Protocol</div>
 			</div>
-			<div class="bg-card border border-border rounded-lg p-6 text-center">
-				<div class="flex items-center justify-center mb-2">
-					<Activity class="w-6 h-6 text-muted-foreground" />
+			<div class="bg-card border border-border rounded-lg p-4 text-center">
+				<div class="flex items-center justify-center mb-1.5">
+					<Activity class="w-5 h-5 text-text" />
 				</div>
-				<div class="mb-1 flex justify-center">
-					<Badge variant={getStatusVariant(data.session.status)} class="{getStatusClass(data.session.status)} text-sm">
+				<div class="flex justify-center mb-0.5">
+					<Badge variant={getStatusVariant(data.session.status)} class="{getStatusClass(data.session.status)} text-xs">
 						{data.session.status}
 					</Badge>
 				</div>
-				<div class="text-sm text-muted-foreground">Status</div>
+				<div class="text-xs text-text">Session State</div>
 			</div>
-			<div class="bg-card border border-border rounded-lg p-6 text-center">
-				<div class="flex items-center justify-center mb-2">
-					<Clock class="w-6 h-6 text-muted-foreground" />
+			<div class="bg-card border border-border rounded-lg p-4 text-center">
+				<div class="flex items-center justify-center mb-1.5">
+					<Clock class="w-5 h-5 text-text" />
 				</div>
-				<div class="text-lg font-medium text-muted-foreground mb-1">
+				<div class="text-lg font-medium text-text mb-0.5">
 					{timeAgo(data.session.updated_at)}
 				</div>
-				<div class="text-sm text-muted-foreground">Last Activity</div>
+				<div class="text-xs text-text">Last Updated</div>
 			</div>
 		</div>
 
 		<!-- Session Details -->
 		<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 			<!-- Participants -->
-			<div class="bg-card border border-border rounded-lg">
-				<div class="p-4 border-b border-border">
+			<div class="bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow">
+				<div class="p-4 border-b border-border bg-muted/20 rounded-t-lg">
 					<h2 class="text-lg font-semibold flex items-center gap-2">
-						<Users class="w-5 h-5" />
+						<Users class="w-5 h-5 text-text" />
 						Addresses
 					</h2>
 				</div>
-				<div class="p-6 space-y-4">
+				<div class="p-4 space-y-4">
 					{#if data.session.participants && data.session.participants.length > 0}
 						{#each data.session.participants as participant, index}
-							<div class="flex items-center gap-3">
-								<AddressAvatar address={participant} size={40} />
-								<div class="flex-1 min-w-0">
-									<div class="text-xs text-muted-foreground mb-1">Address {index + 1}</div>
-									<a
-										href={`/address/${participant}`}
-										class="font-sans text-sm text-brand hover:text-brand/80 block truncate"
-									>
-										{participant}
-									</a>
-									<CopyButton value={participant} />
+							<div>
+								<div class="text-xs text-text uppercase tracking-wider mb-3">
+									Address #{index + 1}
+								</div>
+								<div class="flex items-center gap-3">
+									<AddressAvatar address={participant} size={40} />
+									<div class="flex-1 min-w-0">
+										<div class="flex gap-2 items-center">
+											<a
+												href={`/address/${participant}`}
+												class="font-sans text-brand hover:text-brand/80 block truncate"
+												title={participant}
+											>
+												{shortHex(participant)}
+											</a>
+											<CopyButton value={participant} />
+										</div>
+									</div>
 								</div>
 							</div>
 						{/each}
@@ -169,47 +189,72 @@
 			</div>
 
 			<!-- Technical Details -->
-			<div class="bg-card border border-border rounded-lg">
-				<div class="p-4 border-b border-border">
+			<div class="bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow">
+				<div class="p-4 border-b border-border bg-muted/10 rounded-t-lg">
 					<h2 class="text-lg font-semibold flex items-center gap-2">
-						<FileText class="w-5 h-5" />
+						<FileText class="w-5 h-5 text-text" />
 						Technical Details
 					</h2>
 				</div>
-				<div class="p-6 space-y-4">
+				<div class="p-4 space-y-4">
 					<div>
-						<div class="text-xs text-muted-foreground uppercase tracking-wider">Session ID</div>
+						<div class="text-xs text-text uppercase tracking-wider">Session ID</div>
 						<div class="font-sans text-sm mt-1 break-all">{data.session.session_id}</div>
 					</div>
 
 					<div>
-						<div class="text-xs text-muted-foreground uppercase tracking-wider">Channel ID</div>
+						<div class="text-xs text-text uppercase tracking-wider">Channel ID</div>
 						<div class="font-sans text-sm mt-1">
-							<a
-								href={`/channel/${data.session.channel_id}`}
-								class="text-brand hover:text-brand/80"
-							>
-								{shortHex(data.session.channel_id, 12, 8)}
-							</a>
+							{#if data.session.channel_id}
+								<a
+									href={`/channel/${data.session.channel_id}`}
+									class="text-brand hover:text-brand/80"
+								>
+									{shortHex(data.session.channel_id, 12, 8)}
+								</a>
+							{:else}
+								<span class="text-text">—</span>
+							{/if}
 						</div>
 					</div>
 
 					<div>
-						<div class="text-xs text-muted-foreground uppercase tracking-wider">Protocol</div>
+						<div class="text-xs text-text uppercase tracking-wider">Protocol</div>
 						<div class="text-sm font-medium mt-1">{data.session.protocol || 'Not specified'}</div>
 					</div>
 
-					<div>
-						<div class="text-xs text-muted-foreground uppercase tracking-wider">Status</div>
-						<div class="mt-1">
-							<Badge variant={getStatusVariant(data.session.status)} class={getStatusClass(data.session.status)}>
-								{data.session.status}
-							</Badge>
+					{#if data.session.quorum !== undefined}
+						<div>
+							<div class="text-xs text-text uppercase tracking-wider">Quorum</div>
+							<div class="text-sm font-medium mt-1">{data.session.quorum}</div>
 						</div>
-					</div>
+					{/if}
+
+					{#if data.session.weight !== undefined}
+						<div>
+							<div class="text-xs text-text uppercase tracking-wider">Weight</div>
+							<div class="text-sm font-medium mt-1">[{Array.isArray(data.session.weight) ? data.session.weight.join(', ') : data.session.weight}]</div>
+						</div>
+					{/if}
+
+					{#if data.session.challenge}
+						<div>
+							<div class="text-xs text-text uppercase tracking-wider">Challenge</div>
+							<div class="font-sans text-sm mt-1 break-all">{data.session.challenge}</div>
+						</div>
+					{/if}
+
+					{#if data.session.session_data}
+						<div>
+							<div class="text-xs text-text uppercase tracking-wider">Session Data</div>
+							<div class="mt-1">
+								<pre class="text-xs bg-muted/20 p-3 rounded border text-text overflow-x-auto max-h-48 overflow-y-auto">{JSON.stringify(JSON.parse(data.session.session_data), null, 2)}</pre>
+							</div>
+						</div>
+					{/if}
 
 					<div>
-						<div class="text-xs text-muted-foreground uppercase tracking-wider">Last Updated</div>
+						<div class="text-xs text-text uppercase tracking-wider">Last Updated</div>
 						<div class="text-sm mt-1">{new Date(data.session.updated_at).toLocaleString()}</div>
 					</div>
 				</div>

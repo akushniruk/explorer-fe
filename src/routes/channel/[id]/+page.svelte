@@ -86,6 +86,7 @@
 		<div class="mb-8">
 			<div class="flex items-start justify-between mb-4">
 				<div>
+					<h1 class="text-3xl font-bold mb-2">Channel Details</h1>
 					<div class="flex items-center gap-2 mb-2">
 						<span class="text-text">Channel ID:</span>
 						<code class="font-sans text-lg py-1 rounded text-text" title={data.channel.channel_id}>

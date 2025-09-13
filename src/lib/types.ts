@@ -22,6 +22,10 @@ export type AppSession = {
 	status: string;
 	updated_at: string;
 	protocol?: string;
+	quorum?: number;
+	challenge?: number;
+	weight?: number[];
+	session_data?: string | null;
 };
 
 export type NetworkCounts = {
