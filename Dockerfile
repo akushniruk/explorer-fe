@@ -22,6 +22,9 @@ ENV PUBLIC_API_BASE=$PUBLIC_API_BASE
 ARG PUBLIC_ENABLE_ANALYTICS=true
 ENV PUBLIC_ENABLE_ANALYTICS=$PUBLIC_ENABLE_ANALYTICS
 
+# Generate sitemap before build
+RUN node scripts/generate-sitemap.js
+
 # Build the application
 RUN pnpm build
 
