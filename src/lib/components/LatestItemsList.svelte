@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { shortHex, formatAmount, timeAgo } from '$lib/format';
+	import { Badge } from '$lib/components/ui/badge';
 	import type { Channel, AppSession, NodeConfig } from '$lib/types';
 
 	type Item = Channel | AppSession;
-	
+
 	export let items: Item[] = [];
 	export let nodeConfig: NodeConfig | null = null;
 	export let title: string;
@@ -11,17 +12,12 @@
 	export let viewAllText: string;
 	export let itemType: 'channel' | 'session';
 
-	function getStatusColor(status: string) {
-		switch (status.toLowerCase()) {
-			case 'open':
-				return 'bg-system-green/80 text-text';
-			case 'closed':
-				return 'bg-muted text-text';
-			case 'pending':
-				return 'bg-system-yellow/80 text-text';
-			default:
-				return 'bg-muted text-text';
-		}
+	function getStatusVariant(status: string): 'default' | 'destructive' {
+		return status.toLowerCase() === 'open' ? 'default' : 'destructive';
+	}
+
+	function getStatusClass(status: string) {
+		return status.toLowerCase() === 'open' ? 'bg-emerald-600 hover:bg-emerald-600/90 capitalize' : 'capitalize';
 	}
 
 	function getItemId(item: Item): string {
@@ -54,11 +50,9 @@
 							>
 								{shortHex(getItemId(item), 8, 6)}
 							</a>
-							<span
-								class="inline-flex px-2 py-1 rounded text-xs font-medium {getStatusColor(item.status)}"
-							>
+							<Badge variant={getStatusVariant(item.status)} class="{getStatusClass(item.status)} text-xs">
 								{item.status}
-							</span>
+							</Badge>
 						</div>
 						<div class="text-xs text-muted-foreground mt-1">
 							{#if itemType === 'channel'}

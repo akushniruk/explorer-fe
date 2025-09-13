@@ -5,8 +5,17 @@
 	import { FileText, Users, Clock, ExternalLink, Activity } from 'lucide-svelte';
 	import AddressAvatar from '$lib/components/ui/AddressAvatar.svelte';
 	import CopyButton from '$lib/components/ui/CopyButton.svelte';
+	import { Badge } from '$lib/components/ui/badge';
 	import { createSessionSEO } from '$lib/utils/seo';
 	import { trackSessionView } from '$lib/analytics';
+
+	function getStatusVariant(status: string): 'default' | 'destructive' {
+		return status.toLowerCase() === 'open' ? 'default' : 'destructive';
+	}
+
+	function getStatusClass(status: string) {
+		return status.toLowerCase() === 'open' ? 'bg-emerald-600 hover:bg-emerald-600/90 capitalize' : 'capitalize';
+	}
 
 	export let data: {
 		session: AppSession | null;
@@ -75,19 +84,9 @@
 						<CopyButton value={data.session.session_id} />
 					</div>
 				</div>
-				<span
-					class="inline-flex px-3 py-1 rounded text-sm font-medium"
-					class:bg-emerald-100={data.session.status === 'active'}
-					class:text-emerald-800={data.session.status === 'active'}
-					class:bg-muted={data.session.status === 'completed'}
-					class:text-muted-foreground={data.session.status === 'completed'}
-					class:bg-yellow-100={data.session.status === 'pending'}
-					class:text-yellow-800={data.session.status === 'pending'}
-					class:bg-red-100={data.session.status === 'failed'}
-					class:text-red-800={data.session.status === 'failed'}
-				>
-					{data.session.status.toUpperCase()}
-				</span>
+				<Badge variant={getStatusVariant(data.session.status)} class={getStatusClass(data.session.status)}>
+					{data.session.status}
+				</Badge>
 			</div>
 		</div>
 
@@ -115,12 +114,10 @@
 				<div class="flex items-center justify-center mb-2">
 					<Activity class="w-6 h-6 text-muted-foreground" />
 				</div>
-				<div
-					class="text-lg font-medium {data.session.status === 'active'
-						? 'text-emerald-600'
-						: 'text-muted-foreground'} mb-1 capitalize"
-				>
-					{data.session.status}
+				<div class="mb-1 flex justify-center">
+					<Badge variant={getStatusVariant(data.session.status)} class="{getStatusClass(data.session.status)} text-sm">
+						{data.session.status}
+					</Badge>
 				</div>
 				<div class="text-sm text-muted-foreground">Status</div>
 			</div>
@@ -204,7 +201,11 @@
 
 					<div>
 						<div class="text-xs text-muted-foreground uppercase tracking-wider">Status</div>
-						<div class="text-sm mt-1 capitalize font-medium">{data.session.status}</div>
+						<div class="mt-1">
+							<Badge variant={getStatusVariant(data.session.status)} class={getStatusClass(data.session.status)}>
+								{data.session.status}
+							</Badge>
+						</div>
 					</div>
 
 					<div>

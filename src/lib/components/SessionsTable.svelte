@@ -42,17 +42,12 @@
 		return sortDirection === 'asc' ? ChevronUp : ChevronDown;
 	}
 
-	function getStatusColor(status: string) {
-		switch (status.toLowerCase()) {
-			case 'open':
-				return 'bg-system-green/80 text-text';
-			case 'closed':
-				return 'bg-muted text-text';
-			case 'pending':
-				return 'bg-system-yellow/80 text-text';
-			default:
-				return 'bg-muted text-text';
-		}
+	function getStatusVariant(status: string): 'default' | 'destructive' {
+		return status.toLowerCase() === 'open' ? 'default' : 'destructive';
+	}
+
+	function getStatusClass(status: string) {
+		return status.toLowerCase() === 'open' ? 'bg-emerald-600 hover:bg-emerald-600/90 capitalize' : 'capitalize';
 	}
 </script>
 
@@ -198,7 +193,7 @@
 
 							<!-- Status -->
 							<Table.Cell>
-								<Badge class={getStatusColor(session.status)}>
+								<Badge variant={getStatusVariant(session.status)} class={getStatusClass(session.status)}>
 									{session.status}
 								</Badge>
 							</Table.Cell>
