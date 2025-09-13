@@ -6,7 +6,7 @@
 	import AddressAvatar from '$lib/components/ui/AddressAvatar.svelte';
 	import { getChainById } from '$lib/ctypto/utils';
 	import Chain from '$lib/components/Chain.svelte';
-	import { CreditCard, Users, Activity, Clock, Coins, Box } from 'lucide-svelte';
+	import { CreditCard, Users, Activity, Clock, Coins, Box, ExternalLink } from 'lucide-svelte';
 	import { createChannelSEO } from '$lib/utils/seo';
 	import { trackChannelView } from '$lib/analytics';
 
@@ -166,25 +166,14 @@
 								<div class="flex items-center gap-3">
 									<AddressAvatar address={participants.broker} size={40} />
 									<div class="flex-1 min-w-0">
-										<a
-											href={`/address/${participants.broker}?type=node`}
-											class="font-sans text-brand hover:text-brand/80 block truncate"
-										>
-											{shortHex(participants.broker)}
-										</a>
-										<div class="flex items-center gap-2 mt-1">
+										<div class="flex gap-2 items-center">
+											<a
+												href={`/address/${participants.broker}?type=node`}
+												class="font-sans text-brand hover:text-brand/80 block truncate"
+											>
+												{shortHex(participants.broker)}
+											</a>
 											<CopyButton value={participants.broker} />
-											{#if chain}
-												<a
-													href={`${chain.blockExplorers?.default.url}/address/${participants.broker}`}
-													target="_blank"
-													rel="noopener noreferrer"
-													class="text-xs text-text hover:text-foreground"
-													title={`View ${participants.broker} on ${chain.blockExplorers?.default.name}`}
-												>
-													View on Explorer
-												</a>
-											{/if}
 										</div>
 									</div>
 								</div>
@@ -198,28 +187,14 @@
 								<div class="flex items-center gap-3">
 									<AddressAvatar address={participants.counterparty} size={40} />
 									<div class="flex-1 min-w-0">
-										<a
-											href={`/address/${participants.counterparty}`}
-											class="font-sans text-brand hover:text-brand/80 block truncate"
-										>
-											{shortHex(participants.counterparty)}
-										</a>
-										<div class="text-xs text-text mt-1">
-											Participant address'
-										</div>
-										<div class="flex items-center gap-2 mt-1">
+										<div class="flex gap-2 items-center">
+											<a
+												href={`/address/${participants.counterparty}`}
+												class="font-sans text-brand hover:text-brand/80 block truncate"
+											>
+												{shortHex(participants.counterparty)}
+											</a>
 											<CopyButton value={participants.counterparty} />
-											{#if chain}
-												<a
-													href={`${chain.blockExplorers?.default.url}/address/${participants.counterparty}`}
-													target="_blank"
-													rel="noopener noreferrer"
-													class="text-xs text-text hover:text-foreground"
-													title={`View ${participants.counterparty} on ${chain.blockExplorers?.default.name}`}
-												>
-													View on Explorer
-												</a>
-											{/if}
 										</div>
 									</div>
 								</div>
@@ -231,14 +206,13 @@
 								<div class="flex items-center gap-3">
 									<AddressAvatar address={data.channel.wallet} size={40} />
 									<div class="flex-1 min-w-0">
-										<a
-											href={`/address/${data.channel.wallet}`}
-											class="font-sans text-brand hover:text-brand/80 block truncate"
-										>
-											{shortHex(data.channel.wallet)}
-										</a>
-										<div class="text-xs text-text mt-1">Wallet address</div>
-										<div class="flex items-center gap-2 mt-1">
+										<div class="flex gap-2 items-center">
+											<a
+												href={`/address/${data.channel.wallet}`}
+												class="font-sans text-brand hover:text-brand/80 block truncate"
+											>
+												{shortHex(data.channel.wallet)}
+											</a>
 											<CopyButton value={data.channel.wallet} />
 											{#if chain}
 												<a
@@ -261,14 +235,13 @@
 								<div class="flex items-center gap-3">
 									<AddressAvatar address={data.channel.participant} size={40} />
 									<div class="flex-1 min-w-0">
-										<a
-											href={`/address/${data.channel.participant}`}
-											class="font-sans text-brand hover:text-brand/80 block truncate"
-										>
-											{shortHex(data.channel.participant)}
-										</a>
-										<div class="text-xs text-text mt-1">Participant address</div>
-										<div class="flex items-center gap-2 mt-1">
+										<div class="flex gap-2 items-center">
+											<a
+												href={`/address/${data.channel.participant}`}
+												class="font-sans text-brand hover:text-brand/80 block truncate"
+											>
+												{shortHex(data.channel.participant)}
+											</a>
 											<CopyButton value={data.channel.participant} />
 											{#if chain}
 												<a
@@ -317,9 +290,10 @@
 											href={`${chain.blockExplorers?.default.url}/token/${data.channel.token}`}
 											target="_blank"
 											rel="noopener noreferrer"
-											class="text-xs text-text hover:text-foreground"
+											class="inline-flex items-center gap-1 px-2 py-1 text-xs text-text hover:text-foreground hover:bg-muted/20 rounded border border-border transition-colors"
 											title={`View ${data.channel.token} on ${chain.blockExplorers?.default.name}`}
 										>
+											<ExternalLink class="w-3 h-3" />
 											View Token
 										</a>
 									{/if}
@@ -329,7 +303,10 @@
 
 						<div>
 							<div class="text-xs text-text uppercase tracking-wider">Chain ID</div>
-							<div class="text-sm font-medium mt-1">{data.channel.chain_id}</div>
+							<div class="flex gap-2 items-center"><Chain chainId={Number(data.channel.chain_id)} />-
+							<div class="text-sm font-medium">{data.channel.chain_id}</div>
+							</div>
+
 						</div>
 
 						<div>
