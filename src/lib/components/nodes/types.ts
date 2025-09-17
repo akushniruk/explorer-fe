@@ -11,6 +11,7 @@ export type TNodeData = {
 	longitude: number;
 	status: string;
 	available: boolean;
+	featured: boolean;
 	latency_ms: number | null;
 	last_seen_at: Date | null;
 	updated_at: Date;

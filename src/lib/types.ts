@@ -88,6 +88,7 @@ export type Node = {
 	longitude: number;
 	status: string;
 	available: boolean;
+	featured: boolean;
 	latency_ms: number | null;
 	last_seen_at: string | null;
 	updated_at: string;
