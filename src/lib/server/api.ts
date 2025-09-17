@@ -7,16 +7,18 @@ export type ApiResult<T> = { data: T; etag?: string; notModified?: boolean };
 function joinUrl(base: string | undefined, path: string) {
 	const b = (base ?? '').replace(/\/+$/, ''); // trim trailing slash
 	const p = path.startsWith('/') ? path : `/${path}`;
-	
+
 	// Handle empty base case
 	if (!b) {
 		console.error('API base URL is empty or undefined!');
 		return path;
 	}
-	
+
 	// Simple join without complex regex that might cause issues
 	const joined = `${b}${p}`;
-	console.log(`[joinUrl] base: "${base}" -> "${b}", path: "${path}" -> "${p}", joined: "${joined}"`);
+	console.log(
+		`[joinUrl] base: "${base}" -> "${b}", path: "${path}" -> "${p}", joined: "${joined}"`
+	);
 	return joined;
 }
 
@@ -54,6 +56,15 @@ export async function getChannelsByAddress<T>(
 	return apiGet(event, path, schema);
 }
 
+export async function getNodeByAddress<T>(
+	event: RequestEvent,
+	address: string,
+	schema: z.ZodType<T>
+): Promise<ApiResult<T>> {
+	const path = `/api/v1/nodes/${address}`;
+	return apiGet(event, path, schema);
+}
+
 export async function apiGet<T>(
 	event: RequestEvent,
 	path: string,
@@ -66,7 +77,7 @@ export async function apiGet<T>(
 		console.log(`[apiGet] START - event.locals.apiBase: "${base}"`);
 		console.log(`[apiGet] typeof base: ${typeof base}`);
 		console.log(`[apiGet] path: "${path}"`);
-		
+
 		const url = joinUrl(base, path);
 		console.log(`[apiGet] final URL: "${url}"`);
 		console.log(`[apiGet] About to call event.fetch...`);
@@ -74,7 +85,7 @@ export async function apiGet<T>(
 		const res = await event.fetch(url, {
 			headers: etag ? { 'If-None-Match': etag } : undefined
 		});
-		
+
 		console.log(`[apiGet] Response status: ${res.status}`);
 		console.log(`[apiGet] Response ok: ${res.ok}`);
 
@@ -85,11 +96,14 @@ export async function apiGet<T>(
 			for (const fp of fallbackPaths) {
 				const fUrl = joinUrl(base, fp);
 				console.log(`[apiGet] Trying fallback URL: ${fUrl}`);
-				const fr = await event.fetch(fUrl, { headers: etag ? { 'If-None-Match': etag } : undefined });
+				const fr = await event.fetch(fUrl, {
+					headers: etag ? { 'If-None-Match': etag } : undefined
+				});
 				if (fr.ok || fr.status === 304) {
 					console.log(`[apiGet] Fallback succeeded with status: ${fr.status}`);
 					if (dev) console.warn(`[apiGet] 404 on ${url}, succeeded on fallback ${fUrl}`);
-					if (fr.status === 304) return { data: undefined as unknown as T, etag, notModified: true };
+					if (fr.status === 304)
+						return { data: undefined as unknown as T, etag, notModified: true };
 					const newEtag = fr.headers.get('etag') ?? undefined;
 					const json = await fr.json();
 					return { data: schema.parse(json), etag: newEtag };

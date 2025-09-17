@@ -1,13 +1,22 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { shortHex, formatAmount, timeAgo} from '$lib/format';
+	import { shortHex, formatAmount, timeAgo } from '$lib/format';
 	import type { Channel } from '$lib/types';
 	import CopyButton from '$lib/components/ui/CopyButton.svelte';
 	import AddressAvatar from '$lib/components/ui/AddressAvatar.svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import { getChainById } from '$lib/ctypto/utils';
 	import Chain from '$lib/components/Chain.svelte';
-	import { CreditCard, Users, Activity, Clock, Coins, Box, ExternalLink, Info } from 'lucide-svelte';
+	import {
+		CreditCard,
+		Users,
+		Activity,
+		Clock,
+		Coins,
+		Box,
+		ExternalLink,
+		Info
+	} from 'lucide-svelte';
 	import { createChannelSEO } from '$lib/utils/seo';
 	import { trackChannelView } from '$lib/analytics';
 
@@ -22,10 +31,13 @@
 	$: seoData = data.channel ? createChannelSEO(data.channel) : null;
 
 	// Compute participants based on business logic
-	$: participants = data.channel && data.nodeConfig ? {
-		broker: data.nodeConfig.broker_address,
-		counterparty: data.channel.wallet ?? data.channel.participant,
-	} : null;
+	$: participants =
+		data.channel && data.nodeConfig
+			? {
+					broker: data.nodeConfig.broker_address,
+					counterparty: data.channel.wallet ?? data.channel.participant
+				}
+			: null;
 
 	onMount(() => {
 		if (data.channel) {
@@ -41,7 +53,7 @@
 		<meta name="keywords" content={seoData.keywords} />
 		<meta name="author" content="ynscan" />
 		<meta name="format-detection" content="telephone=no" />
-		
+
 		<!-- Open Graph meta tags -->
 		<meta property="og:title" content={seoData.ogTitle} />
 		<meta property="og:description" content={seoData.ogDescription} />
@@ -50,12 +62,14 @@
 		<meta property="og:url" content={seoData.ogUrl} />
 		<meta property="og:image" content={seoData.ogImage} />
 		<meta property="og:image:alt" content="Visit ynscan" />
-		
-		
+
 		<link rel="canonical" href={seoData.canonical} />
 	{:else}
 		<title>Channel Not Found | ynscan</title>
-		<meta name="description" content="The requested channel could not be found on Yellow Network Explorer." />
+		<meta
+			name="description"
+			content="The requested channel could not be found on Yellow Network Explorer."
+		/>
 		<meta name="keywords" content="Yellow Network, explorer, channel, not found" />
 		<meta name="author" content="ynscan" />
 		<link rel="canonical" href="https://ynscan.xyz/channel/" />
@@ -131,7 +145,9 @@
 				<div class="flex justify-center mb-0.5">
 					<Badge
 						variant={data.channel.status === 'open' ? 'default' : 'destructive'}
-						class={data.channel.status === 'open' ? 'bg-emerald-600 hover:bg-emerald-600/90 text-xs capitalize' : 'text-xs capitalize'}
+						class={data.channel.status === 'open'
+							? 'bg-emerald-600 hover:bg-emerald-600/90 text-xs capitalize'
+							: 'text-xs capitalize'}
 					>
 						{data.channel.status}
 					</Badge>
@@ -154,7 +170,9 @@
 			{#if data.channel}
 				{@const chain = getChainById(Number(data.channel.chain_id))}
 				<!-- Participants -->
-				<div class="bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow">
+				<div
+					class="bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow"
+				>
 					<div class="p-4 border-b border-border bg-muted/20 rounded-t-lg">
 						<h2 class="text-lg font-semibold flex items-center gap-2">
 							<Users class="w-5 h-5 text-text" />
@@ -165,11 +183,15 @@
 						{#if participants}
 							<!-- Broker (from NodeConfig) -->
 							<div>
-								<div class="text-xs text-text uppercase tracking-wider mb-3 flex items-center gap-1">
+								<div
+									class="text-xs text-text uppercase tracking-wider mb-3 flex items-center gap-1"
+								>
 									<span>Node</span>
 									<div class="relative group">
 										<Info class="w-3 h-3 text-text/60 hover:text-text cursor-help" />
-										<div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 px-2 py-1 bg-background border border-border rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+										<div
+											class="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 px-2 py-1 bg-background border border-border rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10"
+										>
 											Network node address
 										</div>
 									</div>
@@ -193,11 +215,15 @@
 
 							<!-- Participant/Wallet -->
 							<div>
-								<div class="text-xs text-text uppercase tracking-wider mb-3 flex items-center gap-1">
+								<div
+									class="text-xs text-text uppercase tracking-wider mb-3 flex items-center gap-1"
+								>
 									<span>Participant</span>
 									<div class="relative group">
 										<Info class="w-3 h-3 text-text/60 hover:text-text cursor-help" />
-										<div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 px-2 py-1 bg-background border border-border rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+										<div
+											class="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 px-2 py-1 bg-background border border-border rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10"
+										>
 											Counterparty address
 										</div>
 									</div>
@@ -221,11 +247,15 @@
 						{:else}
 							<!-- Fallback when NodeConfig is not available -->
 							<div>
-								<div class="text-xs text-text uppercase tracking-wider mb-3 flex items-center gap-1">
+								<div
+									class="text-xs text-text uppercase tracking-wider mb-3 flex items-center gap-1"
+								>
 									<span>Wallet</span>
 									<div class="relative group">
 										<Info class="w-3 h-3 text-text/60 hover:text-text cursor-help" />
-										<div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 px-2 py-1 bg-background border border-border rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+										<div
+											class="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 px-2 py-1 bg-background border border-border rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10"
+										>
 											Wallet address
 										</div>
 									</div>
@@ -260,11 +290,15 @@
 							</div>
 
 							<div>
-								<div class="text-xs text-text uppercase tracking-wider mb-3 flex items-center gap-1">
+								<div
+									class="text-xs text-text uppercase tracking-wider mb-3 flex items-center gap-1"
+								>
 									<span>Participant</span>
 									<div class="relative group">
 										<Info class="w-3 h-3 text-text/60 hover:text-text cursor-help" />
-										<div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 px-2 py-1 bg-background border border-border rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+										<div
+											class="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 px-2 py-1 bg-background border border-border rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10"
+										>
 											Counterparty address
 										</div>
 									</div>
@@ -302,7 +336,9 @@
 				</div>
 
 				<!-- Technical Details -->
-				<div class="bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow">
+				<div
+					class="bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow"
+				>
 					<div class="p-4 border-b border-border bg-muted/10 rounded-t-lg">
 						<h2 class="text-lg font-semibold flex items-center gap-2">
 							<CreditCard class="w-5 h-5 text-text" />
@@ -316,9 +352,7 @@
 						</div>
 
 						<div>
-							<div class="text-xs text-text uppercase tracking-wider">
-								Token Contract
-							</div>
+							<div class="text-xs text-text uppercase tracking-wider">Token Contract</div>
 							<div class="font-sans text-sm mt-1">
 								<div class="flex items-center gap-2">
 									<a href={`/asset/${data.channel.token}`} class="text-brand hover:text-brand/80">
@@ -356,7 +390,8 @@
 										data.channel.amount,
 										data.channel.asset?.decimals ? parseInt(data.channel.asset.decimals) : 18,
 										6
-									)} {data.channel.asset?.symbol?.toUpperCase() ?? ''}
+									)}
+									{data.channel.asset?.symbol?.toUpperCase() ?? ''}
 								</div>
 								<div class="text-xs text-text mt-0.5">
 									{data.channel.amount} Wei
@@ -369,7 +404,9 @@
 							<div class="mt-1">
 								<Badge
 									variant={data.channel.status === 'open' ? 'default' : 'destructive'}
-									class={data.channel.status === 'open' ? 'bg-emerald-600 hover:bg-emerald-600/90 capitalize' : 'capitalize'}
+									class={data.channel.status === 'open'
+										? 'bg-emerald-600 hover:bg-emerald-600/90 capitalize'
+										: 'capitalize'}
 								>
 									{data.channel.status}
 								</Badge>

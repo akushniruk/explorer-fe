@@ -11,13 +11,13 @@
 	onMount(() => {
 		// Initialize PostHog
 		initPostHog();
-		
+
 		// Track initial page view
 		trackPageView($page.url.pathname);
-		
+
 		// Apply theme
 		applyTheme(get(theme));
-		
+
 		// Subscribe to theme changes and track them
 		const unsubscribeTheme = theme.subscribe((newTheme) => {
 			applyTheme(newTheme);
@@ -28,7 +28,7 @@
 		const unsubscribePage = page.subscribe((pageData) => {
 			trackPageView(pageData.url.pathname);
 		});
-		
+
 		return () => {
 			unsubscribeTheme();
 			unsubscribePage();

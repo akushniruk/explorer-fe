@@ -17,13 +17,13 @@
 	}
 
 	function getStatusClass(status: string) {
-		return status.toLowerCase() === 'open' ? 'bg-emerald-600 hover:bg-emerald-600/90 capitalize' : 'capitalize';
+		return status.toLowerCase() === 'open'
+			? 'bg-emerald-600 hover:bg-emerald-600/90 capitalize'
+			: 'capitalize';
 	}
 
 	function getItemId(item: Item): string {
-		return itemType === 'channel' 
-			? (item as Channel).channel_id 
-			: (item as AppSession).session_id;
+		return itemType === 'channel' ? (item as Channel).channel_id : (item as AppSession).session_id;
 	}
 
 	function getItemHref(item: Item): string {
@@ -50,7 +50,10 @@
 							>
 								{shortHex(getItemId(item), 8, 6)}
 							</a>
-							<Badge variant={getStatusVariant(item.status)} class="{getStatusClass(item.status)} text-xs">
+							<Badge
+								variant={getStatusVariant(item.status)}
+								class="{getStatusClass(item.status)} text-xs"
+							>
 								{item.status}
 							</Badge>
 						</div>
@@ -60,12 +63,14 @@
 								{#if nodeConfig}
 									{@const brokerAddress = nodeConfig.broker_address}
 									{@const counterparty = channel.wallet ?? channel.participant}
-									Node: <a
+									Node:
+									<a
 										href={`/address/${brokerAddress}?type=node`}
 										class="font-sans text-brand hover:text-brand/80 cursor-pointer"
 										>{shortHex(brokerAddress, 6, 4)}</a
 									>
-									• Address: <a
+									• Address:
+									<a
 										href={`/address/${counterparty}`}
 										class="font-sans text-brand hover:text-brand/80 cursor-pointer"
 										>{shortHex(counterparty, 6, 4)}</a
@@ -76,7 +81,8 @@
 										class="font-sans text-brand hover:text-brand/80 cursor-pointer"
 										>{shortHex(channel.wallet, 6, 4)}</a
 									>
-									• Address 2: <a
+									• Address 2:
+									<a
 										href={`/address/${channel.participant}`}
 										class="font-sans text-brand hover:text-brand/80 cursor-pointer"
 										>{shortHex(channel.participant, 6, 4)}</a
@@ -106,7 +112,11 @@
 					{#if itemType === 'channel'}
 						{@const channel = item as Channel}
 						<div class="font-medium uppercase">
-							{formatAmount(channel.amount, channel.asset?.decimals ? parseInt(channel.asset.decimals) : 18, 4)}
+							{formatAmount(
+								channel.amount,
+								channel.asset?.decimals ? parseInt(channel.asset.decimals) : 18,
+								4
+							)}
 							{channel.asset?.symbol || ''}
 						</div>
 					{/if}

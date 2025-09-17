@@ -60,7 +60,7 @@
 	<meta name="keywords" content={seoData.keywords} />
 	<meta name="author" content="ynscan" />
 	<meta name="format-detection" content="telephone=no" />
-	
+
 	<!-- Open Graph meta tags -->
 	<meta property="og:title" content={seoData.ogTitle} />
 	<meta property="og:description" content={seoData.ogDescription} />
@@ -69,7 +69,7 @@
 	<meta property="og:url" content={seoData.ogUrl} />
 	<meta property="og:image" content={seoData.ogImage} />
 	<meta property="og:image:alt" content="Visit ynscan" />
-	
+
 	<link rel="canonical" href={seoData.canonical} />
 </svelte:head>
 

@@ -143,15 +143,21 @@ export const load: PageServerLoad = async (event) => {
 		] = results;
 
 		// Type-safe data extraction
-		const channelsCount = channelsCountResult.status === 'fulfilled' ? channelsCountResult.value : null;
-		const sessionsCount = sessionsCountResult.status === 'fulfilled' ? sessionsCountResult.value : null;
-		const networksCount = networksCountResult.status === 'fulfilled' ? networksCountResult.value : null;
+		const channelsCount =
+			channelsCountResult.status === 'fulfilled' ? channelsCountResult.value : null;
+		const sessionsCount =
+			sessionsCountResult.status === 'fulfilled' ? sessionsCountResult.value : null;
+		const networksCount =
+			networksCountResult.status === 'fulfilled' ? networksCountResult.value : null;
 		const assetsCount = assetsCountResult.status === 'fulfilled' ? assetsCountResult.value : null;
-		const activeNodesCount = activeNodesCountResult.status === 'fulfilled' ? activeNodesCountResult.value : null;
-		const latestChannels = latestChannelsResult.status === 'fulfilled' ? latestChannelsResult.value : null;
-		const latestSessions = latestSessionsResult.status === 'fulfilled' ? latestSessionsResult.value : null;
+		const activeNodesCount =
+			activeNodesCountResult.status === 'fulfilled' ? activeNodesCountResult.value : null;
+		const latestChannels =
+			latestChannelsResult.status === 'fulfilled' ? latestChannelsResult.value : null;
+		const latestSessions =
+			latestSessionsResult.status === 'fulfilled' ? latestSessionsResult.value : null;
 
-		// Extract actual data, handling cache state properly  
+		// Extract actual data, handling cache state properly
 		const getApiData = (result: any) => {
 			if (!result) return null;
 			console.log('getApiData result keys:', Object.keys(result));
@@ -174,7 +180,6 @@ export const load: PageServerLoad = async (event) => {
 			},
 			nodeConfig: nodeConfigResult?.value?.data?.data ?? null
 		};
-
 
 		return dashboardData;
 	} catch (error) {

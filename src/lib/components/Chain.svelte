@@ -11,7 +11,7 @@
 		30: 'rootstock', // Rootstock Mainnet
 		747: 'flow', // Flow EVM Mainnet
 		480: 'World Chain',
-		59144: 'linea', // Linea Mainnet
+		59144: 'linea' // Linea Mainnet
 	};
 
 	const iconSlug = chain

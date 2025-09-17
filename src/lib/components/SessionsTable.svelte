@@ -47,7 +47,9 @@
 	}
 
 	function getStatusClass(status: string) {
-		return status.toLowerCase() === 'open' ? 'bg-emerald-600 hover:bg-emerald-600/90 capitalize' : 'capitalize';
+		return status.toLowerCase() === 'open'
+			? 'bg-emerald-600 hover:bg-emerald-600/90 capitalize'
+			: 'capitalize';
 	}
 </script>
 
@@ -193,7 +195,10 @@
 
 							<!-- Status -->
 							<Table.Cell>
-								<Badge variant={getStatusVariant(session.status)} class={getStatusClass(session.status)}>
+								<Badge
+									variant={getStatusVariant(session.status)}
+									class={getStatusClass(session.status)}
+								>
 									{session.status}
 								</Badge>
 							</Table.Cell>

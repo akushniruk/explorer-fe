@@ -9,7 +9,8 @@ export function generateWebsiteStructuredData(): StructuredData {
 		'@context': 'https://schema.org',
 		'@type': 'WebSite',
 		name: 'ynscan - The Yellow Network Explorer',
-		description: 'Explore and monitor The Yellow Network\'s channels, app sessions, and assets. Real-time network statistics and comprehensive data analysis.',
+		description:
+			"Explore and monitor The Yellow Network's channels, app sessions, and assets. Real-time network statistics and comprehensive data analysis.",
 		url: 'https://ynscan.xyz',
 		potentialAction: {
 			'@type': 'SearchAction',
@@ -35,7 +36,9 @@ export function generateOrganizationStructuredData(): StructuredData {
 	};
 }
 
-export function generateBreadcrumbStructuredData(items: Array<{name: string, url: string}>): StructuredData {
+export function generateBreadcrumbStructuredData(
+	items: Array<{ name: string; url: string }>
+): StructuredData {
 	return {
 		'@context': 'https://schema.org',
 		'@type': 'BreadcrumbList',

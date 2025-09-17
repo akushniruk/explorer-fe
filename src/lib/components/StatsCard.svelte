@@ -23,9 +23,7 @@
 						<Link2 class="h-6 w-6 text-text" aria-hidden="true" />
 					</div>
 					<div class="min-w-0">
-						<div class="text-sm uppercase tracking-wider text-muted-foreground mb-1">
-							Channels
-						</div>
+						<div class="text-sm uppercase tracking-wider text-muted-foreground mb-1">Channels</div>
 						<a href="/channels" class="text-lg font-semibold hover:underline"
 							>{fmt(counts.channels)}</a
 						>
@@ -63,12 +61,8 @@
 						<Coins class="h-6 w-6 text-text" aria-hidden="true" />
 					</div>
 					<div class="min-w-0">
-						<div class="text-sm uppercase tracking-wider text-muted-foreground mb-1">
-							Assets
-						</div>
-						<a href="/assets" class="text-lg font-semibold hover:underline"
-							>{fmt(counts.assets)}</a
-						>
+						<div class="text-sm uppercase tracking-wider text-muted-foreground mb-1">Assets</div>
+						<a href="/assets" class="text-lg font-semibold hover:underline">{fmt(counts.assets)}</a>
 						<span class="text-sm text-muted-foreground ml-2">tracked</span>
 					</div>
 				</div>
@@ -83,9 +77,7 @@
 						<Network class="h-6 w-6 text-text" aria-hidden="true" />
 					</div>
 					<div class="min-w-0">
-						<div class="text-sm uppercase tracking-wider text-muted-foreground mb-1">
-							Networks
-						</div>
+						<div class="text-sm uppercase tracking-wider text-muted-foreground mb-1">Networks</div>
 						<a href="/assets" class="text-lg font-semibold hover:underline"
 							>{fmt(counts.networks)}</a
 						>
@@ -107,11 +99,7 @@
 						<div class="text-sm uppercase tracking-wider text-muted-foreground mb-1">
 							Network Status
 						</div>
-						<span
-							class="inline-flex items-center text-sm"
-						>
-							Operational
-						</span>
+						<span class="inline-flex items-center text-sm"> Operational </span>
 					</div>
 				</div>
 

@@ -14,7 +14,9 @@
 	}
 
 	function getStatusClass(status: string) {
-		return status.toLowerCase() === 'open' ? 'bg-emerald-600 hover:bg-emerald-600/90 capitalize' : 'capitalize';
+		return status.toLowerCase() === 'open'
+			? 'bg-emerald-600 hover:bg-emerald-600/90 capitalize'
+			: 'capitalize';
 	}
 
 	export let data: {
@@ -23,7 +25,7 @@
 	};
 
 	$: seoData = data.session ? createSessionSEO(data.session) : null;
-	console.log(data.session)
+	console.log(data.session);
 	onMount(() => {
 		if (data.session) {
 			trackSessionView(data.session.session_id);
@@ -38,7 +40,7 @@
 		<meta name="keywords" content={seoData.keywords} />
 		<meta name="author" content="ynscan" />
 		<meta name="format-detection" content="telephone=no" />
-		
+
 		<!-- Open Graph meta tags -->
 		<meta property="og:title" content={seoData.ogTitle} />
 		<meta property="og:description" content={seoData.ogDescription} />
@@ -47,11 +49,14 @@
 		<meta property="og:url" content={seoData.ogUrl} />
 		<meta property="og:image" content={seoData.ogImage} />
 		<meta property="og:image:alt" content="Visit ynscan" />
-		
+
 		<link rel="canonical" href={seoData.canonical} />
 	{:else}
 		<title>Session Not Found | ynscan</title>
-		<meta name="description" content="The requested session could not be found on Yellow Network Explorer." />
+		<meta
+			name="description"
+			content="The requested session could not be found on Yellow Network Explorer."
+		/>
 		<meta name="keywords" content="Yellow Network, explorer, session, not found" />
 		<meta name="author" content="ynscan" />
 		<link rel="canonical" href="https://ynscan.xyz/session/" />
@@ -97,7 +102,10 @@
 						</div>
 					{/if}
 				</div>
-				<Badge variant={getStatusVariant(data.session.status)} class={getStatusClass(data.session.status)}>
+				<Badge
+					variant={getStatusVariant(data.session.status)}
+					class={getStatusClass(data.session.status)}
+				>
 					{data.session.status}
 				</Badge>
 			</div>
@@ -128,7 +136,10 @@
 					<Activity class="w-5 h-5 text-text" />
 				</div>
 				<div class="flex justify-center mb-0.5">
-					<Badge variant={getStatusVariant(data.session.status)} class="{getStatusClass(data.session.status)} text-xs">
+					<Badge
+						variant={getStatusVariant(data.session.status)}
+						class="{getStatusClass(data.session.status)} text-xs"
+					>
 						{data.session.status}
 					</Badge>
 				</div>
@@ -148,7 +159,9 @@
 		<!-- Session Details -->
 		<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 			<!-- Participants -->
-			<div class="bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow">
+			<div
+				class="bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow"
+			>
 				<div class="p-4 border-b border-border bg-muted/20 rounded-t-lg">
 					<h2 class="text-lg font-semibold flex items-center gap-2">
 						<Users class="w-5 h-5 text-text" />
@@ -189,7 +202,9 @@
 			</div>
 
 			<!-- Technical Details -->
-			<div class="bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow">
+			<div
+				class="bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow"
+			>
 				<div class="p-4 border-b border-border bg-muted/10 rounded-t-lg">
 					<h2 class="text-lg font-semibold flex items-center gap-2">
 						<FileText class="w-5 h-5 text-text" />
@@ -233,7 +248,11 @@
 					{#if data.session.weight !== undefined}
 						<div>
 							<div class="text-xs text-text uppercase tracking-wider">Weight</div>
-							<div class="text-sm font-medium mt-1">[{Array.isArray(data.session.weight) ? data.session.weight.join(', ') : data.session.weight}]</div>
+							<div class="text-sm font-medium mt-1">
+								[{Array.isArray(data.session.weight)
+									? data.session.weight.join(', ')
+									: data.session.weight}]
+							</div>
 						</div>
 					{/if}
 
@@ -248,7 +267,12 @@
 						<div>
 							<div class="text-xs text-text uppercase tracking-wider">Session Data</div>
 							<div class="mt-1">
-								<pre class="text-xs bg-muted/20 p-3 rounded border text-text overflow-x-auto max-h-48 overflow-y-auto">{JSON.stringify(JSON.parse(data.session.session_data), null, 2)}</pre>
+								<pre
+									class="text-xs bg-muted/20 p-3 rounded border text-text overflow-x-auto max-h-48 overflow-y-auto">{JSON.stringify(
+										JSON.parse(data.session.session_data),
+										null,
+										2
+									)}</pre>
 							</div>
 						</div>
 					{/if}

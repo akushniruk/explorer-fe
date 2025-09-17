@@ -1,5 +1,11 @@
 import type { Channel, AppSession, Asset } from '$lib/types';
-import { generateWebsiteStructuredData, generateOrganizationStructuredData, generateChannelStructuredData, generateSessionStructuredData, type StructuredData } from './structured-data';
+import {
+	generateWebsiteStructuredData,
+	generateOrganizationStructuredData,
+	generateChannelStructuredData,
+	generateSessionStructuredData,
+	type StructuredData
+} from './structured-data';
 
 export interface SEOData {
 	title: string;
@@ -14,8 +20,10 @@ export interface SEOData {
 }
 
 const baseTitle = 'ynscan';
-const baseDescription = 'Explore and monitor The Yellow Network\'s channels, app sessions, and assets. Real-time network statistics and comprehensive data analysis.';
-const baseKeywords = 'Yellow Network, explorer, channels, app sessions, cryptocurrency, DeFi, network scanner';
+const baseDescription =
+	"Explore and monitor The Yellow Network's channels, app sessions, and assets. Real-time network statistics and comprehensive data analysis.";
+const baseKeywords =
+	'Yellow Network, explorer, channels, app sessions, cryptocurrency, DeFi, network scanner';
 const baseUrl = 'https://ynscan.xyz';
 
 export function createBaseSEO(): SEOData {
@@ -26,7 +34,7 @@ export function createBaseSEO(): SEOData {
 		ogTitle: `${baseTitle} - Yellow Network Channels & Sessions`,
 		ogDescription: baseDescription,
 		ogUrl: baseUrl,
-		ogImage: `${baseUrl}/og-preview.jpg`,
+		ogImage: `${baseUrl}/og-preview.jpg`
 	};
 }
 
@@ -38,7 +46,7 @@ export function createHomeSEO(data: {
 	nodes: number;
 }): SEOData {
 	const description = baseDescription;
-	
+
 	return {
 		title: `${baseTitle} - The Yellow Network Explorer`,
 		description,
@@ -54,9 +62,11 @@ export function createHomeSEO(data: {
 
 export function createChannelSEO(channel: Channel): SEOData {
 	const shortId = channel.channel_id.slice(0, 10) + '...';
-	const amount = channel.asset?.symbol ? `${parseFloat(channel.amount)} ${channel.asset.symbol}` : channel.amount;
+	const amount = channel.asset?.symbol
+		? `${parseFloat(channel.amount)} ${channel.asset.symbol}`
+		: channel.amount;
 	const description = `Channel ${shortId} - ${amount} ${channel.status} connection between ${channel.wallet.slice(0, 10)}... and ${channel.participant.slice(0, 10)}... on Yellow Network`;
-	
+
 	return {
 		title: `Channel ${shortId} | ${baseTitle}`,
 		description,
@@ -74,7 +84,7 @@ export function createSessionSEO(session: AppSession): SEOData {
 	const shortId = session.session_id.slice(0, 10) + '...';
 	const participants = session.participants.length;
 	const description = `App Session ${shortId} - ${session.protocol} protocol with ${participants} participant${participants !== 1 ? 's' : ''} on Yellow Network`;
-	
+
 	return {
 		title: `Session ${shortId} | ${baseTitle}`,
 		description,
@@ -90,7 +100,7 @@ export function createSessionSEO(session: AppSession): SEOData {
 
 export function createChannelsListSEO(total: number, page: number = 1): SEOData {
 	const description = `Browse channels on Yellow Network. View active and closed channels with real-time updates.`;
-	
+
 	return {
 		title: `Channels | ${baseTitle}`,
 		description,
@@ -105,7 +115,7 @@ export function createChannelsListSEO(total: number, page: number = 1): SEOData 
 
 export function createSessionsListSEO(total: number, page: number = 1): SEOData {
 	const description = `Browse app sessions on Yellow Network. View active protocol sessions and applications.`;
-	
+
 	return {
 		title: `Sessions | ${baseTitle}`,
 		description,
@@ -120,7 +130,7 @@ export function createSessionsListSEO(total: number, page: number = 1): SEOData 
 
 export function createSearchSEO(query: string, results?: number): SEOData {
 	const description = `Search for "${query}" on Yellow Network Explorer - Find channels, sessions, addresses and tokens`;
-	
+
 	return {
 		title: `Search: ${query} | ${baseTitle}`,
 		description,
@@ -135,7 +145,7 @@ export function createSearchSEO(query: string, results?: number): SEOData {
 
 export function createAssetsSEO(total: number): SEOData {
 	const description = `Explore tokens and assets on Yellow Network. View token details, balances, and trading activity.`;
-	
+
 	return {
 		title: `Assets & Tokens | ${baseTitle}`,
 		description,
@@ -150,7 +160,7 @@ export function createAssetsSEO(total: number): SEOData {
 
 export function createNodesSEO(active: number, total: number): SEOData {
 	const description = `Monitor network nodes on Yellow Network. Real-time network infrastructure status and map visualization.`;
-	
+
 	return {
 		title: `Network Nodes | ${baseTitle}`,
 		description,
@@ -163,10 +173,18 @@ export function createNodesSEO(active: number, total: number): SEOData {
 	};
 }
 
-export function createAddressSEO(address: string, stats: { totalChannels: number; activeChannels: number; totalSessions: number; activeSessions: number }): SEOData {
+export function createAddressSEO(
+	address: string,
+	stats: {
+		totalChannels: number;
+		activeChannels: number;
+		totalSessions: number;
+		activeSessions: number;
+	}
+): SEOData {
 	const shortAddr = address.slice(0, 10) + '...';
 	const description = `View address ${shortAddr} activity on Yellow Network. Channel participation, session history, and network statistics.`;
-	
+
 	return {
 		title: `Address ${shortAddr} | ${baseTitle}`,
 		description,

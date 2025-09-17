@@ -50,7 +50,9 @@
 	}
 
 	function getStatusClass(status: string) {
-		return status.toLowerCase() === 'open' ? 'bg-emerald-600 hover:bg-emerald-600/90 capitalize' : 'capitalize';
+		return status.toLowerCase() === 'open'
+			? 'bg-emerald-600 hover:bg-emerald-600/90 capitalize'
+			: 'capitalize';
 	}
 </script>
 
@@ -223,7 +225,10 @@
 
 							<!-- Status -->
 							<Table.Cell>
-								<Badge variant={getStatusVariant(channel.status)} class={getStatusClass(channel.status)}>{channel.status}</Badge>
+								<Badge
+									variant={getStatusVariant(channel.status)}
+									class={getStatusClass(channel.status)}>{channel.status}</Badge
+								>
 							</Table.Cell>
 							<Table.Cell>
 								<Chain chainId={Number(channel.chain_id)} />

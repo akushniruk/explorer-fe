@@ -42,7 +42,7 @@
 	<meta name="description" content={seoData.description} />
 	<meta name="keywords" content={seoData.keywords} />
 	<meta name="author" content="ynscan" />
-	
+
 	<!-- Open Graph meta tags -->
 	<meta property="og:title" content={seoData.ogTitle} />
 	<meta property="og:description" content={seoData.ogDescription} />
@@ -51,9 +51,9 @@
 	<meta property="og:url" content={seoData.ogUrl} />
 	<meta property="og:image" content={seoData.ogImage} />
 	<meta property="og:image:alt" content="Visit ynscan" />
-	
+
 	<link rel="canonical" href={seoData.canonical} />
-	
+
 	<!-- JSON-LD Structured Data -->
 	{@html `<script type="application/ld+json">${JSON.stringify(seoData.structuredData)}</script>`}
 </svelte:head>

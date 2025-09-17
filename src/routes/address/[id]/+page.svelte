@@ -1,14 +1,28 @@
 <script lang="ts">
 	import { shortHex, formatAmount, timeAgo, formatSignificantWithSeparators } from '$lib/format';
-	import type { Channel, AppSession } from '$lib/types';
+	import type { Channel, AppSession, Node } from '$lib/types';
 	import AddressAvatar from '$lib/components/ui/AddressAvatar.svelte';
 	import * as Table from '$lib/components/ui/table';
 	import { Badge } from '$lib/components/ui/badge';
 	import CopyButton from '$lib/components/ui/CopyButton.svelte';
 	import { getChainById } from '$lib/ctypto/utils';
 	import Chain from '$lib/components/Chain.svelte';
-	import { ExternalLink, Users, CreditCard, Activity, Clock } from 'lucide-svelte';
+	import {
+		ExternalLink,
+		Users,
+		CreditCard,
+		Activity,
+		Clock,
+		Cpu,
+		Globe,
+		MapPin,
+		Network,
+		Zap
+	} from 'lucide-svelte';
 	import { createAddressSEO } from '$lib/utils/seo';
+	import ChannelsPagination from '$lib/components/ChannelsPagination.svelte';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 
 	export let data: {
 		address: string;
@@ -18,6 +32,13 @@
 		participants: string[];
 		channels: Channel[];
 		sessions: AppSession[];
+		node: Node | null;
+		pagination?: {
+			page: number;
+			limit: number;
+			total: number;
+			totalPages: number;
+		} | null;
 		stats: {
 			totalChannels: number;
 			activeChannels: number;
@@ -26,18 +47,51 @@
 		};
 	};
 
-	console.log(data)
+	let activeTab =
+		data.lookupType === 'wallet' && data.participants.length > 0 ? 'sessionkeys' : 'channels';
 
-	let activeTab = data.lookupType === 'wallet' && data.participants.length > 0 ? 'sessionkeys' : 'channels';
+	// For node types, always default to channels tab
+	if (data.addressType === 'node') {
+		activeTab = 'channels';
+	}
 	$: seoData = createAddressSEO(data.address, data.stats);
-	$: addressType = data.addressType === 'node' ? 'Node' : data.lookupType === 'wallet' ? 'Wallet' : data.lookupType === 'participant' ? 'Session Key' : 'Address';
+	$: addressType =
+		data.addressType === 'node'
+			? 'Node'
+			: data.lookupType === 'wallet'
+				? 'Wallet'
+				: data.lookupType === 'participant'
+					? 'Session Key'
+					: 'Address';
 
 	function getStatusVariant(status: string): 'default' | 'destructive' {
-		return status.toLowerCase() === 'open' || status.toLowerCase() === 'active' ? 'default' : 'destructive';
+		return status.toLowerCase() === 'open' || status.toLowerCase() === 'active'
+			? 'default'
+			: 'destructive';
 	}
 
 	function getStatusClass(status: string) {
-		return status.toLowerCase() === 'open' || status.toLowerCase() === 'active' ? 'bg-emerald-600 hover:bg-emerald-600/90 capitalize' : 'capitalize';
+		return status.toLowerCase() === 'open' || status.toLowerCase() === 'active'
+			? 'bg-emerald-600 hover:bg-emerald-600/90 capitalize'
+			: 'capitalize';
+	}
+
+	// Pagination handlers for node addresses
+	function onPageChange(newPage: number) {
+		if (data.addressType === 'node') {
+			const url = new URL($page.url);
+			url.searchParams.set('page', newPage.toString());
+			goto(url, { keepFocus: true });
+		}
+	}
+
+	function onPageSizeChange(newSize: number) {
+		if (data.addressType === 'node') {
+			const url = new URL($page.url);
+			url.searchParams.set('limit', newSize.toString());
+			url.searchParams.set('page', '1'); // Reset to first page
+			goto(url, { keepFocus: true });
+		}
 	}
 </script>
 
@@ -47,7 +101,7 @@
 	<meta name="keywords" content={seoData.keywords} />
 	<meta name="author" content="ynscan" />
 	<meta name="format-detection" content="telephone=no" />
-	
+
 	<!-- Open Graph meta tags -->
 	<meta property="og:title" content={seoData.ogTitle} />
 	<meta property="og:description" content={seoData.ogDescription} />
@@ -56,7 +110,7 @@
 	<meta property="og:url" content={seoData.ogUrl} />
 	<meta property="og:image" content={seoData.ogImage} />
 	<meta property="og:image:alt" content="Visit ynscan" />
-	
+
 	<!-- Twitter meta tags -->
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={seoData.twitterTitle} />
@@ -64,7 +118,7 @@
 	<meta name="twitter:site" content="@ynscan" />
 	<meta property="twitter:image" content={seoData.ogImage} />
 	<meta name="twitter:image:alt" content="Visit ynscan" />
-	
+
 	<link rel="canonical" href={seoData.canonical} />
 </svelte:head>
 
@@ -75,13 +129,38 @@
 			<div class="flex items-start gap-4">
 				<AddressAvatar address={data.address} size={64} />
 				<div class="flex-1">
-					<h1 class="text-3xl font-bold mb-2">{addressType} Details</h1>
+					<h1 class="text-3xl font-bold mb-2">
+						{#if data.addressType === 'node' && data.node}
+							Node Details
+						{:else}
+							{addressType} Details
+						{/if}
+					</h1>
 					<div class="flex items-center gap-2 mb-2">
-						<span class="text-text">{addressType}:</span>
-						<code class="font-sans text-lg py-1 rounded text-text" title={data.address}>
-							{shortHex(data.address, 8, 8)}
-						</code>
-						<CopyButton value={data.address} />
+						{#if data.addressType === 'node' && data.node}
+							<span class="text-text">Node ID:</span>
+							<code class="font-sans text-lg py-1 rounded text-text" title={data.address}>
+								{shortHex(data.address, 10, 8)}
+							</code>
+							<CopyButton value={data.address} />
+							{#if data.node.website_host}
+								<a
+									href={`https://${data.node.website_host}`}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="ml-2 text-brand hover:text-brand/80"
+									title="Visit node website"
+								>
+									<ExternalLink class="w-4 h-4" />
+								</a>
+							{/if}
+						{:else}
+							<span class="text-text">{addressType}:</span>
+							<code class="font-sans text-lg py-1 rounded text-text" title={data.address}>
+								{shortHex(data.address, 8, 8)}
+							</code>
+							<CopyButton value={data.address} />
+						{/if}
 					</div>
 
 					<!-- Relationship Information -->
@@ -114,6 +193,119 @@
 								{shortHex(data.wallet, 8, 8)}
 							</a>
 							<CopyButton value={data.wallet} />
+						</div>
+					{/if}
+
+					<!-- Node Information -->
+					{#if data.addressType === 'node' && data.node}
+						<div class="bg-card border border-border rounded-lg p-6 mt-4">
+							<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+								<!-- Left Column: Identity & Status -->
+								<div class="space-y-4">
+									<div>
+										<h3 class="text-xl font-bold text-foreground mb-1">{data.node.name}</h3>
+										<div class="flex items-center gap-2 mb-3">
+											<Badge
+												variant={data.node.status === 'active' ? 'default' : 'destructive'}
+												class={data.node.status === 'active'
+													? 'bg-emerald-600 hover:bg-emerald-600/90 capitalize'
+													: 'capitalize'}
+											>
+												{data.node.status}
+											</Badge>
+											<Badge
+												variant="outline"
+												class={data.node.available
+													? 'border-emerald-600 text-emerald-600'
+													: 'border-red-600 text-red-600'}
+											>
+												{data.node.available ? 'Available' : 'Unavailable'}
+											</Badge>
+										</div>
+									</div>
+
+									{#if data.node.latency_ms}
+										<div class="flex items-center gap-2">
+											<Activity class="w-4 h-4 text-muted-foreground" />
+											<span class="text-sm text-muted-foreground">Latency:</span>
+											<span class="font-sans font-medium">{data.node.latency_ms}ms</span>
+										</div>
+									{/if}
+
+									{#if data.node.description}
+										<div class="pt-2">
+											<p class="text-sm text-muted-foreground leading-relaxed">
+												{data.node.description}
+											</p>
+										</div>
+									{/if}
+								</div>
+
+								<!-- Right Column: Metadata -->
+								<div class="space-y-4">
+									<div class="flex items-center gap-2">
+										<MapPin class="w-4 h-4 text-muted-foreground" />
+										<span class="text-sm text-muted-foreground">Location:</span>
+										<span class="font-medium"
+											>{data.node.region}, {data.node.country_code.toUpperCase()}</span
+										>
+									</div>
+
+									{#if data.node.website_host}
+										<div class="flex items-center gap-2">
+											<Globe class="w-4 h-4 text-muted-foreground" />
+											<span class="text-sm text-muted-foreground">Website:</span>
+											<a
+												href={`https://${data.node.website_host}`}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="text-brand hover:text-brand/80 underline font-medium"
+											>
+												{data.node.website_host}
+											</a>
+										</div>
+									{/if}
+
+									{#if data.node.last_seen_at}
+										<div class="flex items-center gap-2">
+											<Clock class="w-4 h-4 text-muted-foreground" />
+											<span class="text-sm text-muted-foreground">Last Seen:</span>
+											<span class="font-medium">{timeAgo(data.node.last_seen_at)}</span>
+										</div>
+									{/if}
+
+									<!-- WebSocket URL - Collapsible Technical Details -->
+									<details class="group">
+										<summary
+											class="flex items-center gap-2 cursor-pointer text-sm text-muted-foreground hover:text-foreground"
+										>
+											<Cpu class="w-4 h-4" />
+											<span>WebSocket URL</span>
+											<svg
+												class="w-4 h-4 transition-transform group-open:rotate-180"
+												fill="none"
+												stroke="currentColor"
+												viewBox="0 0 24 24"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M19 9l-7 7-7-7"
+												/>
+											</svg>
+										</summary>
+										<div class="mt-2 p-3 bg-muted rounded border">
+											<div class="flex items-center gap-2">
+												<code class="font-sans text-xs break-all text-muted-foreground flex-1">
+													{data.node.ws_url}
+												</code>
+												<CopyButton value={data.node.ws_url} />
+											</div>
+										</div>
+									</details>
+								</div>
+							</div>
 						</div>
 					{/if}
 				</div>
@@ -153,7 +345,6 @@
 		</div>
 	</div>
 
-
 	<!-- Tabs -->
 	<div class="border-b border-border mb-6">
 		<nav class="flex space-x-8">
@@ -171,7 +362,6 @@
 				</button>
 			{/if}
 
-
 			<button
 				class="py-2 px-1 border-b-2 font-medium text-sm transition-colors"
 				class:border-brand={activeTab === 'channels'}
@@ -182,16 +372,19 @@
 			>
 				Channels ({data.channels.length})
 			</button>
-			<button
-				class="py-2 px-1 border-b-2 font-medium text-sm transition-colors"
-				class:border-brand={activeTab === 'sessions'}
-				class:text-brand={activeTab === 'sessions'}
-				class:border-transparent={activeTab !== 'sessions'}
-				class:text-muted-foreground={activeTab !== 'sessions'}
-				on:click={() => (activeTab = 'sessions')}
-			>
-				Sessions ({data.sessions.length})
-			</button>
+			<!-- Hide sessions tab for node types -->
+			{#if data.addressType !== 'node'}
+				<button
+					class="py-2 px-1 border-b-2 font-medium text-sm transition-colors"
+					class:border-brand={activeTab === 'sessions'}
+					class:text-brand={activeTab === 'sessions'}
+					class:border-transparent={activeTab !== 'sessions'}
+					class:text-muted-foreground={activeTab !== 'sessions'}
+					on:click={() => (activeTab = 'sessions')}
+				>
+					Sessions ({data.sessions.length})
+				</button>
+			{/if}
 		</nav>
 	</div>
 
@@ -217,9 +410,13 @@
 				</Table.Header>
 				<Table.Body>
 					{#each data.participants as participant (participant)}
-						{@const participantChannels = data.channels.filter(c => c.participant === participant)}
-						{@const activeParticipantChannels = participantChannels.filter(c => c.status === 'open')}
-						{@const uniqueChains = [...new Set(participantChannels.map(c => c.chain_id))]}
+						{@const participantChannels = data.channels.filter(
+							(c) => c.participant === participant
+						)}
+						{@const activeParticipantChannels = participantChannels.filter(
+							(c) => c.status === 'open'
+						)}
+						{@const uniqueChains = [...new Set(participantChannels.map((c) => c.chain_id))]}
 						<Table.Row class="hover:bg-muted/50">
 							<Table.Cell class="font-sans">
 								<div class="flex items-center gap-2">
@@ -251,7 +448,9 @@
 												</a>
 											{/each}
 											{#if participantChannels.length > 3}
-												<span class="text-xs text-muted-foreground">+{participantChannels.length - 3}</span>
+												<span class="text-xs text-muted-foreground"
+													>+{participantChannels.length - 3}</span
+												>
 											{/if}
 										</div>
 										<div class="text-muted-foreground text-xs">
@@ -275,7 +474,9 @@
 							<Table.Cell>
 								<Badge
 									variant={activeParticipantChannels.length > 0 ? 'default' : 'destructive'}
-									class={activeParticipantChannels.length > 0 ? 'bg-emerald-600 hover:bg-emerald-600/90 capitalize' : 'capitalize'}
+									class={activeParticipantChannels.length > 0
+										? 'bg-emerald-600 hover:bg-emerald-600/90 capitalize'
+										: 'capitalize'}
 								>
 									{activeParticipantChannels.length > 0 ? 'Active' : 'Inactive'}
 								</Badge>
@@ -313,7 +514,10 @@
 						<Table.Head class="font-medium text-muted-foreground text-sm">Status</Table.Head>
 						<Table.Head class="font-medium text-muted-foreground text-sm">Chain</Table.Head>
 						<Table.Head class="font-medium text-muted-foreground text-sm">Updated</Table.Head>
-						<Table.Head class="font-medium text-muted-foreground text-sm">Action</Table.Head>
+						<!-- Hide Action column for node types -->
+						{#if data.addressType !== 'node'}
+							<Table.Head class="font-medium text-muted-foreground text-sm">Action</Table.Head>
+						{/if}
 					</Table.Row>
 				</Table.Header>
 				<Table.Body>
@@ -356,7 +560,10 @@
 								{channel.asset?.symbol || 'ETH'}
 							</Table.Cell>
 							<Table.Cell>
-								<Badge variant={getStatusVariant(channel.status)} class={getStatusClass(channel.status)}>
+								<Badge
+									variant={getStatusVariant(channel.status)}
+									class={getStatusClass(channel.status)}
+								>
 									{channel.status}
 								</Badge>
 							</Table.Cell>
@@ -368,31 +575,61 @@
 									{timeAgo(channel.updated_at)}
 								</div>
 							</Table.Cell>
-							<Table.Cell>
-								{#if chain}
-									<a
-										href={`${chain.blockExplorers?.default.url}/address/${counterparty}`}
-										target="_blank"
-										rel="noopener noreferrer"
-										class="flex items-center gap-1 text-muted-foreground hover:text-foreground text-xs"
-										title={`View ${counterparty} on ${chain.blockExplorers?.default.name}`}
-									>
-										<ExternalLink class="w-3 h-3" />
-										Explorer
-									</a>
-								{/if}
-							</Table.Cell>
+							<!-- Hide Action cell for node types -->
+							{#if data.addressType !== 'node'}
+								<Table.Cell>
+									{#if chain}
+										<a
+											href={`${chain.blockExplorers?.default.url}/address/${counterparty}`}
+											target="_blank"
+											rel="noopener noreferrer"
+											class="flex items-center gap-1 text-muted-foreground hover:text-foreground text-xs"
+											title={`View ${counterparty} on ${chain.blockExplorers?.default.name}`}
+										>
+											<ExternalLink class="w-3 h-3" />
+											Explorer
+										</a>
+									{/if}
+								</Table.Cell>
+							{/if}
 						</Table.Row>
 					{:else}
 						<Table.Row>
-							<Table.Cell colspan={7} class="h-24 text-center text-muted-foreground">
-								No channels found for this address.
+							<Table.Cell colspan={data.addressType === 'node' ? 6 : 7} class="h-32 text-center">
+								<div class="flex flex-col items-center gap-3">
+									{#if data.addressType === 'node'}
+										<Network class="w-8 h-8 text-muted-foreground" />
+										<div class="text-muted-foreground">
+											<div class="font-medium">No channels found</div>
+											<div class="text-sm">This node has no active payment channels.</div>
+										</div>
+									{:else}
+										<CreditCard class="w-8 h-8 text-muted-foreground" />
+										<div class="text-muted-foreground">
+											<div class="font-medium">No channels found</div>
+											<div class="text-sm">This address has no payment channels.</div>
+										</div>
+									{/if}
+								</div>
 							</Table.Cell>
 						</Table.Row>
 					{/each}
 				</Table.Body>
 			</Table.Root>
 		</div>
+
+		<!-- Pagination for node addresses -->
+		{#if data.addressType === 'node' && data.pagination && data.pagination.total > 0}
+			<div class="mt-6">
+				<ChannelsPagination
+					currentPage={data.pagination.page}
+					totalRecords={data.pagination.total}
+					recordsPerPage={data.pagination.limit}
+					{onPageChange}
+					{onPageSizeChange}
+				/>
+			</div>
+		{/if}
 	{:else if activeTab === 'sessions'}
 		<!-- Sessions Tab -->
 		<div class="bg-card border border-border rounded-lg">
@@ -410,9 +647,7 @@
 				</Table.Header>
 				<Table.Body>
 					{#each data.sessions as session (session.session_id)}
-						{@const otherParticipants = session.participants.filter(
-							(p) => p !== data.address
-						)}
+						{@const otherParticipants = session.participants.filter((p) => p !== data.address)}
 						<Table.Row class="hover:bg-muted/50">
 							<Table.Cell class="font-sans">
 								<div class="flex items-center gap-2">
@@ -454,7 +689,10 @@
 								</div>
 							</Table.Cell>
 							<Table.Cell>
-								<Badge variant={getStatusVariant(session.status)} class={getStatusClass(session.status)}>
+								<Badge
+									variant={getStatusVariant(session.status)}
+									class={getStatusClass(session.status)}
+								>
 									{session.status}
 								</Badge>
 							</Table.Cell>
@@ -466,8 +704,22 @@
 						</Table.Row>
 					{:else}
 						<Table.Row>
-							<Table.Cell colspan={5} class="h-24 text-center text-muted-foreground">
-								No sessions found for this address.
+							<Table.Cell colspan={5} class="h-32 text-center">
+								<div class="flex flex-col items-center gap-3">
+									{#if data.addressType === 'node'}
+										<Zap class="w-8 h-8 text-muted-foreground" />
+										<div class="text-muted-foreground">
+											<div class="font-medium">No sessions found</div>
+											<div class="text-sm">This node has no active application sessions.</div>
+										</div>
+									{:else}
+										<Users class="w-8 h-8 text-muted-foreground" />
+										<div class="text-muted-foreground">
+											<div class="font-medium">No sessions found</div>
+											<div class="text-sm">This address has no application sessions.</div>
+										</div>
+									{/if}
+								</div>
 							</Table.Cell>
 						</Table.Row>
 					{/each}
