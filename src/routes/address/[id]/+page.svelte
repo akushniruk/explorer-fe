@@ -11,7 +11,6 @@
 
 	// Import enhanced node components
 	import NodeHeroProfile from '$lib/components/node/NodeHeroProfile.svelte';
-	import NodeStatsCards from '$lib/components/node/NodeStatsCards.svelte';
 
 	export let data: {
 		address: string;
@@ -86,10 +85,8 @@
 	{#if data.addressType === 'node' && data.node}
 		<!-- Enhanced Node Profile Layout -->
 		<!-- Hero/Profile Block -->
-		<NodeHeroProfile node={data.node} />
-
-		<!-- Node Stats (Channels only) -->
-		<NodeStatsCards
+		<NodeHeroProfile
+			node={data.node}
 			stats={{
 				totalChannels: data.stats.totalChannels,
 				activeChannels: data.stats.activeChannels
@@ -98,7 +95,6 @@
 
 		<!-- Channels Table (simplified for nodes) -->
 		<div class="mt-8">
-			<h3 class="text-lg font-semibold text-foreground mb-4">Network Channels</h3>
 			<AddressTabs
 				address={data.address}
 				addressType={data.addressType}

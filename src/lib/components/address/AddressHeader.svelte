@@ -45,7 +45,7 @@
 							href={`https://${node.website_host}`}
 							target="_blank"
 							rel="noopener noreferrer"
-							class="ml-2 text-brand hover:text-brand/80"
+							class="ml-2 text-text hover:text-text/80"
 							title="Visit node website"
 						>
 							<ExternalLink class="w-4 h-4" />
@@ -84,7 +84,7 @@
 					<span class="text-text">Main Wallet:</span>
 					<a
 						href={`/address/${wallet}`}
-						class="font-sans text-brand hover:text-brand/80"
+						class="font-sans text-text hover:text-text/80"
 						title={wallet}
 					>
 						{shortHex(wallet, 8, 8)}

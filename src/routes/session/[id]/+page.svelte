@@ -73,7 +73,7 @@
 			<p class="text-muted-foreground mb-4">
 				The session you're looking for doesn't exist or has been removed.
 			</p>
-			<a href="/sessions" class="text-brand hover:text-brand/80">← Back to Sessions</a>
+			<a href="/sessions" class="text-text hover:text-text/80">← Back to Sessions</a>
 		</div>
 	{:else}
 		<!-- Header -->
@@ -93,7 +93,7 @@
 							<span class="text-text">Channel:</span>
 							<a
 								href={`/channel/${data.session.channel_id}`}
-								class="font-sans text-brand hover:text-brand/80"
+								class="font-sans text-text hover:text-text/80"
 								title={data.session.channel_id}
 							>
 								{shortHex(data.session.channel_id, 8, 8)}
@@ -181,7 +181,7 @@
 										<div class="flex gap-2 items-center">
 											<a
 												href={`/address/${participant}`}
-												class="font-sans text-brand hover:text-brand/80 block truncate"
+												class="font-sans text-text hover:text-text/80 block truncate"
 												title={participant}
 											>
 												{shortHex(participant)}
@@ -223,7 +223,7 @@
 							{#if data.session.channel_id}
 								<a
 									href={`/channel/${data.session.channel_id}`}
-									class="text-brand hover:text-brand/80"
+									class="text-text hover:text-text/80"
 								>
 									{shortHex(data.session.channel_id, 12, 8)}
 								</a>

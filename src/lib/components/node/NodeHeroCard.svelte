@@ -50,7 +50,7 @@
 						}}
 					/>
 					<div
-						class="w-full h-full bg-gradient-to-br from-brand/20 to-brand/40 flex items-center justify-center text-xl font-bold text-brand"
+						class="w-full h-full bg-gradient-to-br from-brand/20 to-brand/40 flex items-center justify-center text-xl font-bold text-text"
 						style="display: none;"
 					>
 						{node.name.charAt(0).toUpperCase()}
@@ -58,7 +58,7 @@
 				</div>
 			{:else}
 				<div
-					class="w-16 h-16 rounded-full bg-gradient-to-br from-brand/20 to-brand/40 flex items-center justify-center text-xl font-bold text-brand"
+					class="w-16 h-16 rounded-full bg-gradient-to-br from-brand/20 to-brand/40 flex items-center justify-center text-xl font-bold text-text"
 				>
 					{node.name.charAt(0).toUpperCase()}
 				</div>

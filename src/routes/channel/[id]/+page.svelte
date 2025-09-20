@@ -93,7 +93,7 @@
 			<p class="text-text mb-4">
 				The channel you're looking for doesn't exist or has been removed.
 			</p>
-			<a href="/channels" class="text-brand hover:text-brand/80">← Back to Channels</a>
+			<a href="/channels" class="text-text hover:text-text/80">← Back to Channels</a>
 		</div>
 	{:else}
 		<!-- Header -->
@@ -202,7 +202,7 @@
 										<div class="flex gap-2 items-center">
 											<a
 												href={`/address/${participants.broker}?type=node`}
-												class="font-sans text-brand hover:text-brand/80 block truncate"
+												class="font-sans text-text hover:text-text/80 block truncate"
 												title={participants.broker}
 											>
 												{shortHex(participants.broker)}
@@ -234,7 +234,7 @@
 										<div class="flex gap-2 items-center">
 											<a
 												href={`/address/${participants.counterparty}`}
-												class="font-sans text-brand hover:text-brand/80 block truncate"
+												class="font-sans text-text hover:text-text/80 block truncate"
 												title={participants.counterparty}
 											>
 												{shortHex(participants.counterparty)}
@@ -266,7 +266,7 @@
 										<div class="flex gap-2 items-center">
 											<a
 												href={`/address/${data.channel.wallet}`}
-												class="font-sans text-brand hover:text-brand/80 block truncate"
+												class="font-sans text-text hover:text-text/80 block truncate"
 												title={data.channel.wallet}
 											>
 												{shortHex(data.channel.wallet)}
@@ -309,7 +309,7 @@
 										<div class="flex gap-2 items-center">
 											<a
 												href={`/address/${data.channel.participant}`}
-												class="font-sans text-brand hover:text-brand/80 block truncate"
+												class="font-sans text-text hover:text-text/80 block truncate"
 												title={data.channel.participant}
 											>
 												{shortHex(data.channel.participant)}
@@ -355,7 +355,7 @@
 							<div class="text-xs text-text uppercase tracking-wider">Token Contract</div>
 							<div class="font-sans text-sm mt-1">
 								<div class="flex items-center gap-2">
-									<a href={`/asset/${data.channel.token}`} class="text-brand hover:text-brand/80">
+									<a href={`/asset/${data.channel.token}`} class="text-text hover:text-text/80">
 										{shortHex(data.channel.token, 12, 8)}
 									</a>
 									<CopyButton value={data.channel.token} />

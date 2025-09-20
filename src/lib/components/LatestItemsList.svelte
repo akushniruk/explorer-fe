@@ -46,7 +46,7 @@
 						<div class="flex items-center gap-2">
 							<a
 								href={getItemHref(item)}
-								class="font-sans text-sm text-brand hover:text-brand/80 cursor-pointer"
+								class="font-sans text-sm text-text hover:text-text/80 cursor-pointer"
 							>
 								{shortHex(getItemId(item), 8, 6)}
 							</a>
@@ -66,25 +66,25 @@
 									Node:
 									<a
 										href={`/address/${brokerAddress}?type=node`}
-										class="font-sans text-brand hover:text-brand/80 cursor-pointer"
+										class="font-sans text-text hover:text-text/80 cursor-pointer"
 										>{shortHex(brokerAddress, 6, 4)}</a
 									>
 									• Address:
 									<a
 										href={`/address/${counterparty}`}
-										class="font-sans text-brand hover:text-brand/80 cursor-pointer"
+										class="font-sans text-text hover:text-text/80 cursor-pointer"
 										>{shortHex(counterparty, 6, 4)}</a
 									>
 								{:else}
 									Address 1: <a
 										href={`/address/${channel.wallet}`}
-										class="font-sans text-brand hover:text-brand/80 cursor-pointer"
+										class="font-sans text-text hover:text-text/80 cursor-pointer"
 										>{shortHex(channel.wallet, 6, 4)}</a
 									>
 									• Address 2:
 									<a
 										href={`/address/${channel.participant}`}
-										class="font-sans text-brand hover:text-brand/80 cursor-pointer"
+										class="font-sans text-text hover:text-text/80 cursor-pointer"
 										>{shortHex(channel.participant, 6, 4)}</a
 									>
 								{/if}
@@ -93,13 +93,13 @@
 								{#if session.participants && session.participants.length > 0}
 									<a
 										href={`/address/${session.participants[0]}`}
-										class="font-sans text-brand hover:text-brand/80 cursor-pointer"
+										class="font-sans text-text hover:text-text/80 cursor-pointer"
 										>{shortHex(session.participants[0], 6, 4)}</a
 									>
 									{#if session.participants.length > 1}
 										& <a
 											href={`/address/${session.participants[1]}`}
-											class="font-sans text-brand hover:text-brand/80 cursor-pointer"
+											class="font-sans text-text hover:text-text/80 cursor-pointer"
 											>{shortHex(session.participants[1], 6, 4)}</a
 										>
 									{/if}

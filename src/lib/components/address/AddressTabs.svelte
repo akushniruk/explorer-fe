@@ -28,9 +28,9 @@
 		<!-- Session Keys Tab (for wallets) -->
 		{#if lookupType === 'wallet' && participants.length > 0}
 			<button
-				class="py-2 px-1 border-b-2 font-medium text-sm transition-colors"
-				class:border-brand={activeTab === 'sessionkeys'}
-				class:text-brand={activeTab === 'sessionkeys'}
+				class="py-2 px-1 border-b-2 font-medium text-sm transition-colors cursor-pointer"
+				class:border-secondary={activeTab === 'sessionkeys'}
+				class:text-text={activeTab === 'sessionkeys'}
 				class:border-transparent={activeTab !== 'sessionkeys'}
 				class:text-muted-foreground={activeTab !== 'sessionkeys'}
 				on:click={() => (activeTab = 'sessionkeys')}
@@ -40,9 +40,9 @@
 		{/if}
 
 		<button
-			class="py-2 px-1 border-b-2 font-medium text-sm transition-colors"
-			class:border-brand={activeTab === 'channels'}
-			class:text-brand={activeTab === 'channels'}
+			class="py-2 px-1 border-b-2 font-medium text-sm transition-colors cursor-pointer"
+			class:border-secondary={activeTab === 'channels'}
+			class:text-text={activeTab === 'channels'}
 			class:border-transparent={activeTab !== 'channels'}
 			class:text-muted-foreground={activeTab !== 'channels'}
 			on:click={() => (activeTab = 'channels')}
@@ -52,9 +52,9 @@
 		<!-- Hide sessions tab for node types -->
 		{#if addressType !== 'node'}
 			<button
-				class="py-2 px-1 border-b-2 font-medium text-sm transition-colors"
-				class:border-brand={activeTab === 'sessions'}
-				class:text-brand={activeTab === 'sessions'}
+				class="py-2 px-1 border-b-2 font-medium text-sm transition-colors cursor-pointer"
+				class:border-secondary={activeTab === 'sessions'}
+				class:text-text={activeTab === 'sessions'}
 				class:border-transparent={activeTab !== 'sessions'}
 				class:text-muted-foreground={activeTab !== 'sessions'}
 				on:click={() => (activeTab = 'sessions')}

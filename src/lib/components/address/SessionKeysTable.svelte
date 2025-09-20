@@ -100,7 +100,7 @@
 					<Table.Cell>
 						<a
 							href={`/address/${participant}`}
-							class="text-brand hover:text-brand/80 text-sm underline"
+							class="text-text hover:text-text/80 text-sm underline"
 						>
 							View Details
 						</a>

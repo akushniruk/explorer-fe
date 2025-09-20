@@ -68,7 +68,7 @@
 							href={`https://${node.website_host}`}
 							target="_blank"
 							rel="noopener noreferrer"
-							class="text-brand hover:text-brand/80 underline font-medium"
+							class="text-text hover:text-text/80 underline font-medium"
 						>
 							{node.website_host}
 						</a>

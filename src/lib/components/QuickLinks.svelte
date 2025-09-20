@@ -6,7 +6,7 @@
 			Explore state channels across the Yellow Network. Track channel states, participants, and
 			asset flows between nodes.
 		</p>
-		<a href="/channels" class="text-sm text-brand hover:text-brand/80 cursor-pointer"
+		<a href="/channels" class="text-sm text-text hover:text-text/80 cursor-pointer"
 			>Browse Channels →</a
 		>
 	</div>
@@ -17,7 +17,7 @@
 			Monitor active sessions within state channels. View participant interactions, session states,
 			and network activity.
 		</p>
-		<a href="/sessions" class="text-sm text-brand hover:text-brand/80 cursor-pointer"
+		<a href="/sessions" class="text-sm text-text hover:text-text/80 cursor-pointer"
 			>View Sessions →</a
 		>
 	</div>
@@ -28,7 +28,7 @@
 			Real-time statistics from the Yellow Network. Track assets, node health, and overall network
 			performance.
 		</p>
-		<a href="/networks" class="text-sm text-brand hover:text-brand/80 cursor-pointer"
+		<a href="/networks" class="text-sm text-text hover:text-text/80 cursor-pointer"
 			>Network Overview →</a
 		>
 	</div>

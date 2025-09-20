@@ -3,9 +3,14 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import { shortHex } from '$lib/format';
 	import CopyButton from '$lib/components/ui/CopyButton.svelte';
-	import { Globe, MapPin, Navigation, Plug, Hash } from 'lucide-svelte';
+	import { Globe } from 'lucide-svelte';
+	import NodeStatsCards from '$lib/components/node/NodeStatsCards.svelte';
 
 	export let node: Node;
+	export let stats: {
+		totalChannels: number;
+		activeChannels: number;
+	};
 
 	function getStatusVariant(status: string): 'default' | 'destructive' | 'secondary' {
 		switch (status.toLowerCase()) {
@@ -32,7 +37,7 @@
 	}
 </script>
 
-<div class="bg-gradient-to-br from-card to-muted/30 border border-border rounded-xl p-6 mb-6">
+<div class="mb-6">
 	<div class="flex items-start gap-4">
 		<!-- Node Icon -->
 		<div class="flex-shrink-0">
@@ -51,7 +56,7 @@
 						}}
 					/>
 					<div
-						class="w-full h-full bg-gradient-to-br from-brand/20 to-brand/40 flex items-center justify-center text-lg font-bold text-brand"
+						class="w-full h-full bg-gradient-to-br from-brand/20 to-brand/40 flex items-center justify-center text-lg font-bold text-text"
 						style="display: none;"
 					>
 						{node.name.charAt(0).toUpperCase()}
@@ -59,7 +64,7 @@
 				</div>
 			{:else}
 				<div
-					class="w-16 h-16 rounded-full bg-gradient-to-br from-brand/20 to-brand/40 flex items-center justify-center text-lg font-bold text-brand border-2 border-border"
+					class="w-16 h-16 rounded-full bg-gradient-to-br from-brand/20 to-brand/40 flex items-center justify-center text-lg font-bold text-text border-2 border-border"
 				>
 					{node.name.charAt(0).toUpperCase()}
 				</div>
@@ -89,85 +94,80 @@
 	</div>
 
 	<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-		<!-- Left Column: Identity -->
+		<!-- Left Column -->
 		<div class="space-y-4">
+			<!-- Website -->
+			{#if node.website_host}
+				<a
+					href={`https://${node.website_host}`}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="inline-flex mt-4 items-center gap-2 px-3 py-2 border border-border hover:bg-muted/50 text-text rounded-lg font-medium text-sm transition-colors"
+				>
+					<Globe class="w-4 h-4" />
+					{node.website_host}
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="w-3 h-3"
+					>
+						<path d="M7 7h10v10" />
+						<path d="M7 17 17 7" />
+					</svg>
+				</a>
+			{/if}
 			<!-- Node Address -->
-			<div class="flex items-start gap-3">
-				<Hash class="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-				<div class="flex-1 min-w-0">
-					<div class="text-sm text-muted-foreground mb-1">Node Address</div>
+			<div class="flex h-16 items-center justify-between gap-2 rounded-lg bg-foreground/5 px-7">
+				<p>Node Address</p>
+				<div class="text-right">
 					<div class="flex items-center gap-2">
-						<code class="font-mono text-sm bg-muted px-2 py-1 rounded break-all">
-							{node.address || shortHex(node.slug, 16, 8)}
+						<code class="">
+							{shortHex(node.address ?? '', 6, 4)}
 						</code>
 						<CopyButton value={node.address || node.slug} />
 					</div>
 				</div>
 			</div>
-		</div>
 
-		<!-- Right Column: Meta -->
-		<div class="space-y-4">
-			<!-- Location -->
-			<div class="flex items-start gap-3">
-				<MapPin class="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-				<div>
-					<div class="text-sm text-muted-foreground mb-1">Location</div>
-					<div class="font-medium capitalize">
+			<!-- WebSocket URL -->
+			<div class="flex h-16 items-center justify-between gap-2 rounded-lg bg-foreground/5 px-7">
+				<p>WebSocket URL</p>
+				<div class="text-right">
+					<div class="flex items-center gap-2">
+						<code class="">
+							{node.ws_url}
+						</code>
+						<CopyButton value={node.ws_url} />
+					</div>
+				</div>
+			</div>
+
+			<!-- WebSocket URL -->
+			<div class="flex h-16 items-center justify-between gap-2 rounded-lg bg-foreground/5 px-7">
+				<p>Location</p>
+				<div class="text-right">
+					<div class="flex items-center gap-2 capitalize">
 						{node.region.replace('_', ' ')}, {node.country_code.toUpperCase()}
 					</div>
 				</div>
 			</div>
+		</div>
 
-			<!-- Website -->
-			{#if node.website_host}
-				<div class="flex items-start gap-3">
-					<Globe class="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-					<div>
-						<div class="text-sm text-muted-foreground mb-2">Website</div>
-						<a
-							href={`https://${node.website_host}`}
-							target="_blank"
-							rel="noopener noreferrer"
-							class="inline-flex items-center gap-2 px-3 py-2 bg-brand hover:bg-brand/90 text-white rounded-lg font-medium text-sm transition-colors shadow-sm hover:shadow-md"
-						>
-							<Globe class="w-4 h-4" />
-							{node.website_host}
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="16"
-								height="16"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								class="w-3 h-3"
-							>
-								<path d="M7 7h10v10" />
-								<path d="M7 17 17 7" />
-							</svg>
-						</a>
-					</div>
-				</div>
-			{/if}
-
-			<!-- WebSocket URL -->
-			<div class="flex items-start gap-3">
-				<Plug class="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-				<div class="flex-1 min-w-0">
-					<div class="text-sm text-muted-foreground mb-2">WebSocket URL</div>
-					<div class="bg-muted/50 border border-border rounded p-3">
-						<div class="flex items-center gap-2">
-							<code class="font-mono text-xs text-foreground break-all flex-1 leading-relaxed">
-								{node.ws_url}
-							</code>
-							<CopyButton value={node.ws_url} />
-						</div>
-					</div>
-				</div>
-			</div>
+		<!-- Right Column -->
+		<div class="space-y-4">
+			<NodeStatsCards
+				stats={{
+					totalChannels: stats.totalChannels,
+					activeChannels: stats.activeChannels
+				}}
+			/>
 		</div>
 	</div>
 </div>
