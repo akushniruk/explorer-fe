@@ -132,24 +132,9 @@
 					/>
 				</div>
 
-				<!-- Scope Filter -->
-				<div>
-					<label for="scope" class="block text-sm font-medium mb-2">Search In</label>
-					<select
-						id="scope"
-						bind:value={scope}
-						class="w-full px-3 py-2 border border-border rounded-lg bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring"
-					>
-						<option value="all">All</option>
-						<option value="channels">Channels</option>
-						<option value="sessions">Sessions</option>
-						<option value="participants">Addresses</option>
-					</select>
-				</div>
-
 				<!-- Search Button -->
 				<div class="flex items-end">
-					<Button type="submit" class="w-full">Search</Button>
+					<Button type="submit" class="w-full cursor-pointer">Search</Button>
 				</div>
 			</div>
 		</form>
@@ -162,7 +147,7 @@
 				<div class="flex flex-wrap items-center gap-6">
 					<div class="flex items-center gap-2">
 						<span class="text-sm font-medium">Total Results:</span>
-						<Badge class="bg-primary text-primary-foreground">{data.total}</Badge>
+						<Badge class="bg-secondary text-text">{data.total}</Badge>
 					</div>
 					{#if data.results.channels.length > 0}
 						<div class="flex items-center gap-2">

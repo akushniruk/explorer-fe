@@ -104,7 +104,7 @@
 				<button
 					class="flex-shrink-0 transition-all duration-200 transform hover:opacity-80"
 					class:text-success={isCopied}
-					class:text-primary={!isCopied}
+					class:text-text={!isCopied}
 					class:scale-110={isCopied}
 					aria-label={isCopied ? 'Copied!' : 'Copy WebSocket URL'}
 					on:click={() => copyToClipboard(pin.ws_url)}
