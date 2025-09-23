@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { shortHex, formatAmount, formatSignificantWithSeparators } from '$lib/format';
 	import * as Table from '$lib/components/ui/table';
-	import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-svelte';
+	import { ChevronUp, ChevronDown, ChevronsUpDown, ChevronRight } from 'lucide-svelte';
 	import Chain from './Chain.svelte';
 	import { getChainById } from '$lib/ctypto/utils';
 	import CopyButton from './ui/CopyButton.svelte';
 	import TokenIcon from './ui/TokenIcon.svelte';
+	import { groupAssetsBySymbol, type GroupedAsset } from '$lib/utils/token-grouping';
 
 	type Asset = {
 		id: string;
@@ -24,6 +25,21 @@
 	export let onSort: ((key: string) => void) | null = null;
 	export let loading = false;
 	export let emptyMessage = 'No assets found for your filters.';
+	export let groupedView = true;
+
+	let expandedTokens = new Set<string>();
+
+	$: groupedAssets = groupedView ? groupAssetsBySymbol(assets) : [];
+
+	function toggleExpand(symbol: string) {
+		const newExpanded = new Set(expandedTokens);
+		if (newExpanded.has(symbol)) {
+			newExpanded.delete(symbol);
+		} else {
+			newExpanded.add(symbol);
+		}
+		expandedTokens = newExpanded;
+	}
 
 	type Column = {
 		key: string;
@@ -35,8 +51,12 @@
 
 	const columns: Column[] = [
 		{ key: 'symbol', label: 'Asset', sortable: false },
-		{ key: 'contract_address', label: 'Contract Address', sortable: false },
-		{ key: 'chain_id', label: 'Chain', sortable: false },
+		{
+			key: 'contract_address',
+			label: groupedView ? 'Contract Details' : 'Contract Address',
+			sortable: false
+		},
+		{ key: 'chain_id', label: groupedView ? 'Chains' : 'Chain', sortable: false },
 		{ key: 'decimals', label: 'Decimals', sortable: false }
 	];
 
@@ -100,6 +120,125 @@
 							{emptyMessage}
 						</Table.Cell>
 					</Table.Row>
+				{:else if groupedView}
+					{#each groupedAssets as asset}
+						{@const isExpanded = expandedTokens.has(asset.symbol)}
+						<!-- Main grouped row -->
+						<Table.Row class="hover:bg-muted/50">
+							<!-- Asset -->
+							<Table.Cell>
+								<div class="flex items-center gap-3">
+									<TokenIcon symbol={asset.symbol} logoUrl={asset.logo_url} size={24} />
+									<div class="flex items-baseline gap-1">
+										<div class="text-xs text-muted-foreground">{asset.name}</div>
+										<div class="font-semibold text-sm uppercase">({asset.symbol})</div>
+									</div>
+								</div>
+							</Table.Cell>
+
+							<!-- Contract Details -->
+							<Table.Cell>
+								{#if asset.chains.length === 1}
+									{@const chain = asset.chains[0]}
+									{@const blockExplorerUrl = getBlockExplorerUrl(
+										chain.contract_address,
+										Number(chain.chain_id)
+									)}
+									<div class="flex items-center gap-2">
+										<a
+											href={blockExplorerUrl}
+											class="text-foreground underline hover:text-foreground text-sm cursor-pointer"
+											title={chain.contract_address}
+											target="_blank"
+										>
+											{shortHex(chain.contract_address, 12, 8)}
+										</a>
+										<CopyButton value={chain.contract_address} />
+									</div>
+								{:else}
+									<span class="text-sm text-muted-foreground">
+										{asset.chains.length} contracts
+									</span>
+								{/if}
+							</Table.Cell>
+
+							<!-- Chains -->
+							<Table.Cell>
+								{#if asset.chains.length > 1}
+									<button
+										onclick={() => toggleExpand(asset.symbol)}
+										class="flex items-center gap-2 w-full text-left hover:bg-muted/50 rounded p-1 -m-1 transition-colors cursor-pointer"
+										title={isExpanded ? 'Collapse details' : 'Expand details'}
+									>
+										<div class="flex flex-wrap gap-1">
+											{#each asset.chains.slice(0, 3) as chain}
+												<Chain chainId={Number(chain.chain_id)} />
+											{/each}
+										</div>
+										{#if asset.totalChains > 3}
+											<span class="text-xs text-muted-foreground"
+												>+{asset.totalChains - 3} more</span
+											>
+										{/if}
+										<ChevronRight
+											class="h-4 w-4 transition-transform duration-200 text-muted-foreground {isExpanded
+												? 'rotate-90'
+												: ''}"
+										/>
+									</button>
+								{:else}
+									<div class="flex flex-wrap gap-1">
+										{#each asset.chains as chain}
+											<Chain chainId={Number(chain.chain_id)} />
+										{/each}
+									</div>
+								{/if}
+							</Table.Cell>
+
+							<!-- Decimals -->
+							<Table.Cell>
+								{#if asset.chains.length === 1}
+									<span class="text-sm font-sans">{asset.chains[0].decimals}</span>
+								{:else}
+									<span class="text-sm text-muted-foreground">-</span>
+								{/if}
+							</Table.Cell>
+						</Table.Row>
+
+						<!-- Expanded rows -->
+						{#if isExpanded && asset.chains.length > 1}
+							{#each asset.chains as chain}
+								{@const blockExplorerUrl = getBlockExplorerUrl(
+									chain.contract_address,
+									Number(chain.chain_id)
+								)}
+								<Table.Row class="bg-muted/25">
+									<Table.Cell class="pl-12">
+										<!-- Empty for indentation -->
+									</Table.Cell>
+									<Table.Cell>
+										<div class="flex items-center gap-2">
+											<a
+												href={blockExplorerUrl}
+												class="text-foreground underline hover:text-foreground text-sm cursor-pointer"
+												title={chain.contract_address}
+												target="_blank"
+											>
+												{shortHex(chain.contract_address, 12, 8)}
+											</a>
+											<CopyButton value={chain.contract_address} />
+										</div>
+									</Table.Cell>
+									<Table.Cell>
+										<Chain chainId={Number(chain.chain_id)} />
+									</Table.Cell>
+									<Table.Cell>
+										<span class="text-sm font-sans">{chain.decimals}</span>
+									</Table.Cell>
+								</Table.Row>
+							{/each}
+						{/if}
+					{/each}
 				{:else}
 					{#each assets as asset}
 						{@const blockExplorerUrl = getBlockExplorerUrl(

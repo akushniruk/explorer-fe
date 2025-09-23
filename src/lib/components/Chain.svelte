@@ -11,7 +11,12 @@
 		30: 'rootstock', // Rootstock Mainnet
 		747: 'flow', // Flow EVM Mainnet
 		480: 'World Chain',
-		59144: 'linea' // Linea Mainnet
+		59144: 'linea', // Linea Mainnet
+		1440000: 'XRPL EVM'
+	};
+
+	const customIconUrls: Record<number, string> = {
+		1440000: 'https://explorer.xrplevm.org/assets/configs/network_icon.png'
 	};
 
 	const iconSlug = chain
@@ -23,7 +28,7 @@
 	<div class="flex items-center gap-2">
 		{#if iconSlug}
 			<img
-				src={`https://icons.llamao.fi/icons/chains/rsz_${iconSlug}.jpg`}
+				src={customIconUrls[chain.id] ?? `https://icons.llamao.fi/icons/chains/rsz_${iconSlug}.jpg`}
 				alt={chain.name}
 				class="h-4 w-4 rounded-full"
 			/>

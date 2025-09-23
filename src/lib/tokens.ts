@@ -15,6 +15,14 @@ let tokenCache: Map<string, TokenInfo> | null = null;
 let cacheTimestamp: number = 0;
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
 
+// Custom token overrides for specific tokens
+const customTokens: Record<string, { name: string; logoUrl: string }> = {
+	xrp: {
+		name: 'XRP',
+		logoUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/52.png'
+	}
+};
+
 async function fetchUniswapTokenList(): Promise<TokenList> {
 	const response = await fetch('https://tokens.uniswap.org/');
 	if (!response.ok) {
@@ -56,6 +64,14 @@ export async function getTokenInfo(
 	symbol?: string
 ): Promise<{ name: string; logoUrl?: string } | null> {
 	try {
+		// Check custom tokens first by symbol
+		if (symbol) {
+			const customToken = customTokens[symbol.toLowerCase()];
+			if (customToken) {
+				return customToken;
+			}
+		}
+
 		const cache = await getTokenCache();
 		const key = `${chainId}:${address.toLowerCase()}`;
 		const token = cache.get(key);
