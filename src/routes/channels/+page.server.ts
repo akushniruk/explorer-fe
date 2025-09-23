@@ -93,7 +93,9 @@ export const load: PageServerLoad = async (event) => {
 		const result = channelsResult.value;
 
 		if (result.notModified) {
-			return { channels: [], total: 0, page, limit, nodeConfig: null };
+			// When 304 Not Modified is returned, the browser should use cached data
+			// Don't return empty arrays - let the browser handle caching
+			return new Response(null, { status: 304 });
 		}
 
 		// Set response headers for caching
