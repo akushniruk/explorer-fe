@@ -8,8 +8,8 @@
 		{ href: '/', label: 'Home' },
 		{ href: '/channels', label: 'Channels' },
 		{ href: '/sessions', label: 'Sessions' },
-		{ href: '/assets', label: 'Assets' },
-		{ href: '/nodes', label: 'Nodes' }
+		{ href: '/assets', label: 'Assets' }
+		// { href: '/nodes', label: 'Nodes' }
 	];
 
 	function handleClickOutside(event: MouseEvent) {

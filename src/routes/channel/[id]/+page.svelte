@@ -15,10 +15,18 @@
 		Coins,
 		Box,
 		ExternalLink,
-		Info
+		Info,
+		Shield,
+		Loader2
 	} from 'lucide-svelte';
 	import { createChannelSEO } from '$lib/utils/seo';
 	import { trackChannelView } from '$lib/analytics';
+	import { NitroliteClient, type ChannelData } from '$lib/ctypto/nitrolite/getChannelData';
+	import {
+		isCustodyStateSupported,
+		getCustodyContractForTimestamp,
+		getLatestCustodyContract
+	} from '$lib/config/contracts';
 
 	import type { NodeConfig } from '$lib/types';
 
@@ -27,6 +35,11 @@
 		nodeConfig: NodeConfig | null;
 		notFound?: boolean;
 	};
+
+	let custodyData: ChannelData | null = null;
+	let custodyLoading = false;
+	let custodyError: string | null = null;
+	let nitroliteClient: NitroliteClient | null = null;
 
 	$: seoData = data.channel ? createChannelSEO(data.channel) : null;
 
@@ -39,9 +52,51 @@
 				}
 			: null;
 
+	// Check if custody state is supported for this channel
+	$: custodyStateSupported = data.channel
+		? (() => {
+				// Try to get contract for timestamp first, but fall back to latest if not found
+				let contract = getCustodyContractForTimestamp(
+					Number(data.channel.chain_id),
+					new Date(data.channel.created_at || data.channel.updated_at).getTime() / 1000
+				);
+
+				// If no contract found for timestamp, try getting the latest contract for the chain
+				if (!contract) {
+					contract = getLatestCustodyContract(Number(data.channel.chain_id));
+				}
+
+				return contract
+					? isCustodyStateSupported(Number(data.channel.chain_id), contract.comment)
+					: false;
+			})()
+		: false;
+
+	async function fetchCustodyData() {
+		if (!data.channel) return;
+
+		custodyLoading = true;
+		custodyError = null;
+
+		try {
+			nitroliteClient = new NitroliteClient(
+				Number(data.channel.chain_id),
+				data.channel.created_at || data.channel.updated_at
+			);
+			custodyData = await nitroliteClient.getChannelData(data.channel.channel_id as `0x${string}`);
+		} catch (error: any) {
+			custodyError = error.message;
+		} finally {
+			custodyLoading = false;
+		}
+	}
+
 	onMount(() => {
 		if (data.channel) {
 			trackChannelView(data.channel.channel_id);
+			if (custodyStateSupported) {
+				fetchCustodyData();
+			}
 		}
 	});
 </script>
@@ -159,9 +214,11 @@
 					<Clock class="w-5 h-5 text-text" />
 				</div>
 				<div class="text-lg font-medium text-text mb-0.5">
-					{timeAgo(data.channel.updated_at)}
+					{timeAgo(data.channel.created_at || data.channel.updated_at)}
 				</div>
-				<div class="text-xs text-text">Last Updated</div>
+				<div class="text-xs text-text">
+					{data.channel.created_at ? 'Created' : 'Last Updated'}
+				</div>
 			</div>
 		</div>
 
@@ -414,13 +471,348 @@
 						</div>
 
 						<div>
-							<div class="text-xs text-text uppercase tracking-wider">Last Updated</div>
-							<div class="text-sm mt-1">{new Date(data.channel.updated_at).toLocaleString()}</div>
+							<div class="text-xs text-text uppercase tracking-wider">
+								{data.channel.created_at ? 'Created' : 'Last Updated'}
+							</div>
+							<div class="text-sm mt-1">
+								{new Date(data.channel.created_at || data.channel.updated_at).toLocaleString()}
+							</div>
 						</div>
 					</div>
 				</div>
 			{/if}
 		</div>
+
+		<!-- Channel State (from blockchain) - Only show if supported -->
+		{#if custodyStateSupported}
+			<div class="mt-8">
+				<div
+					class="bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow"
+				>
+					<div class="p-4 border-b border-border bg-muted/10 rounded-t-lg">
+						<div class="flex items-center justify-between">
+							<h2 class="text-lg font-semibold flex items-center gap-2">
+								<Shield class="w-5 h-5 text-text" />
+								Channel State
+								<div class="relative group">
+									<Info class="w-4 h-4 text-text/60 hover:text-text cursor-help" />
+									<div
+										class="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 px-2 py-1 bg-background border border-border rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10"
+									>
+										Channel state from custody contract
+									</div>
+								</div>
+							</h2>
+							{#if nitroliteClient}
+								{@const chain = getChainById(Number(data.channel.chain_id))}
+								<div class="flex items-center gap-2">
+									<Badge variant="secondary" class="text-xs">
+										{nitroliteClient.contractInfo.comment}
+									</Badge>
+									{#if chain?.blockExplorers?.default}
+										<a
+											href={`${chain.blockExplorers.default.url}/address/${nitroliteClient.contractInfo.deployedTo}`}
+											target="_blank"
+											rel="noopener noreferrer"
+											class="text-xs text-text hover:text-text/80"
+											title={`View ${nitroliteClient.contractInfo.deployedTo} on ${chain.blockExplorers.default.name}`}
+										>
+											{nitroliteClient.contractInfo.deployedTo.slice(
+												0,
+												6
+											)}...{nitroliteClient.contractInfo.deployedTo.slice(-4)}
+										</a>
+									{:else}
+										<span class="text-xs text-text" title={nitroliteClient.contractInfo.deployedTo}>
+											{nitroliteClient.contractInfo.deployedTo.slice(
+												0,
+												6
+											)}...{nitroliteClient.contractInfo.deployedTo.slice(-4)}
+										</span>
+									{/if}
+								</div>
+							{/if}
+						</div>
+					</div>
+					<div class="p-4">
+						{#if custodyLoading}
+							<div class="flex items-center justify-center py-8">
+								<Loader2 class="w-6 h-6 animate-spin text-text" />
+								<span class="ml-2 text-text">Fetching channel state...</span>
+							</div>
+						{:else if custodyError}
+							<div class="text-center py-8">
+								<div class="text-red-600 mb-2">Failed to fetch channel state</div>
+								<div class="text-sm text-text">{custodyError}</div>
+								<button
+									class="mt-3 px-4 py-2 text-sm bg-muted/20 hover:bg-muted/30 border border-border rounded transition-colors"
+									on:click={fetchCustodyData}
+								>
+									Retry
+								</button>
+							</div>
+						{:else if custodyData}
+							{@const chain = getChainById(Number(data.channel.chain_id))}
+							<div class="space-y-6">
+								<!-- Channel Status Overview -->
+								<div
+									class="flex flex-wrap items-center gap-3 p-3 bg-muted/5 rounded-lg border border-border/50"
+								>
+									<!-- Status Badge -->
+									<div class="relative group">
+										<Badge variant="secondary">
+											{custodyData.status === 0 ? 'Open' : `Status ${custodyData.status}`}
+										</Badge>
+										<div
+											class="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 px-2 py-1 bg-background border border-border rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10"
+										>
+											{custodyData.status === 0
+												? 'Channel is open and active'
+												: 'Channel status from smart contract'}
+										</div>
+									</div>
+
+									<!-- Challenge Expiry Badge -->
+									<div class="flex items-center gap-2">
+										<Clock class="w-4 h-4 text-text/60" />
+										<div class="relative group">
+											<Badge variant="outline">
+												{custodyData.challengeExpiry === 0n
+													? 'No Challenge'
+													: `Expires ${timeAgo(new Date(Number(custodyData.challengeExpiry) * 1000).toISOString())}`}
+											</Badge>
+											<div
+												class="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 px-2 py-1 bg-background border border-border rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10"
+											>
+												{custodyData.challengeExpiry === 0n
+													? 'No active dispute challenge'
+													: 'Dispute challenge expiration time'}
+											</div>
+										</div>
+									</div>
+
+									<!-- Version Badge -->
+									<div class="relative group">
+										<Badge variant="secondary">
+											Version {custodyData.lastValidState.version.toString()}
+										</Badge>
+										<div
+											class="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 px-2 py-1 bg-background border border-border rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10"
+										>
+											Channel state version number
+										</div>
+									</div>
+
+									<!-- Duration Badge -->
+									<div class="relative group">
+										<Badge variant="outline">
+											{custodyData.channel.challenge.toString()}s Duration
+										</Badge>
+										<div
+											class="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 px-2 py-1 bg-background border border-border rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10"
+										>
+											Challenge dispute duration in seconds
+										</div>
+									</div>
+								</div>
+
+								<!-- Contract Details -->
+								<div class="border border-border rounded-lg p-4">
+									<h3 class="text-md font-semibold mb-4 flex items-center gap-2">
+										<Shield class="w-4 h-4 text-text" />
+										Contract Details
+									</h3>
+									<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+										<!-- Adjudicator -->
+										<div>
+											<div class="text-xs text-text/60 mb-2 uppercase tracking-wider">
+												Adjudicator
+											</div>
+											<div class="flex items-center gap-2">
+												<a
+													href={`/address/${custodyData.channel.adjudicator}`}
+													class="font-sans text-sm text-text hover:text-text/80 truncate"
+													title={custodyData.channel.adjudicator}
+												>
+													{shortHex(custodyData.channel.adjudicator)}
+												</a>
+												<CopyButton value={custodyData.channel.adjudicator} />
+											</div>
+										</div>
+
+										<!-- Channel Nonce -->
+										<div>
+											<div class="text-xs text-text/60 mb-2 uppercase tracking-wider">Nonce</div>
+											<div class="text-sm font-sans text-text font-medium">
+												{custodyData.channel.nonce.toString()}
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<!-- Participants -->
+								<div class="border border-border rounded-lg p-4">
+									<h3 class="text-md font-semibold mb-4 flex items-center gap-2">
+										<Users class="w-4 h-4 text-text" />
+										Participants
+									</h3>
+									<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+										{#each custodyData.channel.participants as participant, index}
+											{@const isNode =
+												participants &&
+												participant.toLowerCase() === participants.broker.toLowerCase()}
+											{@const isCounterparty =
+												participants &&
+												participant.toLowerCase() === participants.counterparty.toLowerCase()}
+											<div class="p-3 bg-muted/5 rounded-lg border border-border/50">
+												<div class="flex items-center gap-3">
+													<AddressAvatar address={participant} size={32} />
+													<div class="flex-1 min-w-0">
+														<div class="text-xs font-medium text-text/80 mb-1">
+															{#if isNode}
+																Node
+															{:else if isCounterparty}
+																Participant
+															{:else}
+																Participant {index + 1}
+															{/if}
+														</div>
+														<div class="flex gap-2 items-center">
+															<a
+																href={`/address/${participant}${isNode ? '?type=node' : ''}`}
+																class="font-sans text-sm text-text hover:text-text/80 block truncate"
+																title={participant}
+															>
+																{shortHex(participant)}
+															</a>
+															<CopyButton value={participant} />
+														</div>
+													</div>
+												</div>
+											</div>
+										{/each}
+									</div>
+								</div>
+
+								<!-- Token Allocations -->
+								{#if custodyData.lastValidState.allocations.length > 0}
+									<div class="border border-border rounded-lg p-4">
+										<h3 class="text-md font-semibold mb-4 flex items-center gap-2">
+											<Coins class="w-4 h-4 text-text" />
+											Token Allocations
+										</h3>
+										<div class="overflow-x-auto">
+											<table class="w-full">
+												<thead>
+													<tr class="border-b border-border">
+														<th class="text-left text-xs font-medium text-text/60 py-2 px-3"
+															>Token Contract</th
+														>
+														<th class="text-left text-xs font-medium text-text/60 py-2 px-3"
+															>Address</th
+														>
+														<th class="text-right text-xs font-medium text-text/60 py-2 px-3"
+															>Amount</th
+														>
+													</tr>
+												</thead>
+												<tbody>
+													{#each custodyData.lastValidState.allocations as allocation, index}
+														<tr
+															class="border-b border-border/50 hover:bg-muted/5 transition-colors"
+														>
+															<td class="py-3 px-3">
+																<div class="flex items-center gap-2">
+																	<a
+																		href={`/asset/${allocation.token}`}
+																		class="font-sans text-sm text-text hover:text-text/80"
+																		title={allocation.token}
+																	>
+																		{shortHex(allocation.token, 6, 4)}
+																	</a>
+																	<CopyButton value={allocation.token} />
+																</div>
+															</td>
+															<td class="py-3 px-3">
+																<div class="flex items-center gap-2">
+																	<AddressAvatar address={allocation.destination} size={24} />
+																	<a
+																		href={`/address/${allocation.destination}`}
+																		class="font-sans text-sm text-text hover:text-text/80"
+																		title={allocation.destination}
+																	>
+																		{shortHex(allocation.destination, 6, 4)}
+																	</a>
+																	<CopyButton value={allocation.destination} />
+																</div>
+															</td>
+															<td class="py-3 px-3 text-right">
+																<div class="font-sans text-sm text-text font-medium">
+																	{formatAmount(
+																		allocation.amount.toString(),
+																		allocation.token.toLowerCase() ===
+																			data.channel.token.toLowerCase()
+																			? data.channel.asset?.decimals
+																				? parseInt(data.channel.asset.decimals)
+																				: 18
+																			: 18,
+																		6
+																	)}
+																	{#if allocation.token.toLowerCase() === data.channel.token.toLowerCase()}
+																		{data.channel.asset?.symbol?.toUpperCase() ?? ''}
+																	{/if}
+																</div>
+															</td>
+														</tr>
+													{/each}
+												</tbody>
+											</table>
+										</div>
+									</div>
+								{/if}
+
+								<!-- State Information -->
+								<div class="border border-border rounded-lg p-4">
+									<h3 class="text-md font-semibold mb-4 flex items-center gap-2">
+										<Activity class="w-4 h-4 text-text" />
+										State Information
+									</h3>
+									<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+										<!-- Intent -->
+										<div>
+											<div class="text-xs text-text/60 mb-2 uppercase tracking-wider">Intent</div>
+											<div class="text-sm font-sans text-text font-medium">
+												{custodyData.lastValidState.intent}
+											</div>
+										</div>
+
+										<!-- Signatures Count -->
+										<div>
+											<div class="text-xs text-text/60 mb-2 uppercase tracking-wider">
+												Signatures
+											</div>
+											<div class="text-sm text-text font-medium">
+												{custodyData.lastValidState.sigs.length}
+											</div>
+										</div>
+
+										<!-- State Data -->
+										<div>
+											<div class="text-xs text-text/60 mb-2 uppercase tracking-wider">
+												State Data
+											</div>
+											<div class="text-sm font-sans text-text break-all">
+												{custodyData.lastValidState.data || '0x'}
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						{/if}
+					</div>
+				</div>
+			</div>
+		{/if}
 
 		<!-- Actions -->
 		<div class="mt-8 flex gap-4">

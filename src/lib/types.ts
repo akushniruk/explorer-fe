@@ -13,6 +13,7 @@ export type Channel = {
 	status: string;
 	updated_at: string;
 	asset?: Asset | null;
+	created_at: string | null;
 };
 
 export type AppSession = {

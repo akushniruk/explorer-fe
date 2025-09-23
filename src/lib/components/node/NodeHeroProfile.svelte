@@ -154,7 +154,8 @@
 				<p>Location</p>
 				<div class="text-right">
 					<div class="flex items-center gap-2 capitalize">
-						{node.region.replace('_', ' ')}, {node.country_code.toUpperCase()}
+						{node.region.replace('_', ' ')}
+						{node.country_code.toUpperCase()}
 					</div>
 				</div>
 			</div>
