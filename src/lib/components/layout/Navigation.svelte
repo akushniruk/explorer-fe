@@ -34,6 +34,20 @@
 				<span class="text-3xl font-semibold tracking-tight leading-none">ynscan</span>
 			</a>
 
+			<div class="flex items-center rounded mx-2 shrink-0 md:mx-4">
+				<a
+					class="relative flex items-center gap-2 px-1.5 py-1 text-xs font-medium -outline-offset-1 transition-colors first:rounded-l-md first:border first:border-r-0 last:rounded-r-md last:border last:border-l-0 sm:h-[32px] sm:px-3 sm:text-sm cursor-default border-[#fcd000] bg-[#fcd000] text-black"
+					data-state="closed"
+					href="https://ynscan.xyz"
+				>
+					Mainnet
+				</a>
+				<a
+					class="relative flex items-center gap-2 border-border-light px-1.5 py-1 text-xs font-medium text-text-light -outline-offset-1 transition-colors first:rounded-l-md first:border first:border-r-0 last:rounded-r-md last:border last:border-l-0 border-border sm:h-[32px] sm:px-3 sm:text-sm hover:bg-background-dark/5 hover:dark:bg-background-light/5"
+					href="https://testnet.ynscan.xyz">Testnet</a
+				>
+			</div>
+
 			<!-- Desktop Navigation -->
 			<nav class="hidden md:flex items-center gap-6">
 				{#each navItems as item}
