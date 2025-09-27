@@ -1,8 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Menu, X } from 'lucide-svelte';
+	import { browser } from '$app/environment';
 
 	let showMobileMenu = false;
+	let isMainnet = true;
+
+	$: if (browser) {
+		isMainnet = window.location.hostname === 'ynscan.xyz' || window.location.hostname === 'localhost';
+	}
 
 	const navItems = [
 		{ href: '/', label: 'Home' },
@@ -36,15 +42,15 @@
 
 			<div class="flex items-center rounded mx-2 shrink-0 md:mx-4">
 				<a
-					class="relative flex items-center gap-2 px-1.5 py-1 text-xs font-medium -outline-offset-1 transition-colors first:rounded-l-md first:border first:border-r-0 last:rounded-r-md last:border last:border-l-0 sm:h-[32px] sm:px-3 sm:text-sm cursor-default border-[#fcd000] bg-[#fcd000] text-black"
+					class="relative flex items-center gap-2 px-1.5 py-1 text-xs font-medium -outline-offset-1 transition-colors first:rounded-l-md first:border first:border-r-0 last:rounded-r-md last:border last:border-l-0 sm:h-[32px] sm:px-3 sm:text-sm {isMainnet ? 'cursor-default border-[#fcd000] bg-[#fcd000] text-black' : 'border-border-light text-text-light border-border hover:bg-background-dark/5 hover:dark:bg-background-light/5'}"
 					data-state="closed"
 					href="https://ynscan.xyz"
 				>
 					Mainnet
 				</a>
 				<a
-					class="relative flex items-center gap-2 border-border-light px-1.5 py-1 text-xs font-medium text-text-light -outline-offset-1 transition-colors first:rounded-l-md first:border first:border-r-0 last:rounded-r-md last:border last:border-l-0 border-border sm:h-[32px] sm:px-3 sm:text-sm hover:bg-background-dark/5 hover:dark:bg-background-light/5"
-					href="https://testnet.ynscan.xyz">Testnet</a
+					class="relative flex items-center gap-2 px-1.5 py-1 text-xs font-medium -outline-offset-1 transition-colors first:rounded-l-md first:border first:border-r-0 last:rounded-r-md last:border last:border-l-0 sm:h-[32px] sm:px-3 sm:text-sm {!isMainnet ? 'cursor-default border-[#fcd000] bg-[#fcd000] text-black' : 'border-border-light text-text-light border-border hover:bg-background-dark/5 hover:dark:bg-background-light/5'}"
+					href="https://sandbox.ynscan.xyz">Testnet</a
 				>
 			</div>
 
