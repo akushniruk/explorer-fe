@@ -53,9 +53,9 @@
 		content="Explore and monitor The Yellow Network's channels, app sessions, and network assets."
 	/>
 	<meta property="og:type" content="website" />
-	<meta property="og:url" content="https://ynscan.xyz" />
+	<meta property="og:url" content="https://yellowscan.io" />
 	<meta property="og:site_name" content="ynscan" />
-	<link rel="canonical" href="https://ynscan.xyz" />
+	<link rel="canonical" href="https://yellowscan.io" />
 </svelte:head>
 
 <div class="min-h-dvh bg-background text-foreground flex flex-col">

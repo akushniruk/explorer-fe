@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	<url>
-		<loc>https://ynscan.xyz/</loc>
+		<loc>https://yellowscan.io/</loc>
 		<lastmod>2025-09-08T00:00:00+00:00</lastmod>
 		<changefreq>hourly</changefreq>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://ynscan.xyz/channels</loc>
+		<loc>https://yellowscan.io/channels</loc>
 		<lastmod>2025-09-08T00:00:00+00:00</lastmod>
 		<changefreq>daily</changefreq>
 		<priority>0.8</priority>
 	</url>
 	<url>
-		<loc>https://ynscan.xyz/sessions</loc>
+		<loc>https://yellowscan.io/sessions</loc>
 		<lastmod>2025-09-08T00:00:00+00:00</lastmod>
 		<changefreq>daily</changefreq>
 		<priority>0.8</priority>
 	</url>
 	<url>
-		<loc>https://ynscan.xyz/assets</loc>
+		<loc>https://yellowscan.io/assets</loc>
 		<lastmod>2025-09-08T00:00:00+00:00</lastmod>
 		<changefreq>daily</changefreq>
 		<priority>0.7</priority>
 	</url>
 	<url>
-		<loc>https://ynscan.xyz/nodes</loc>
+		<loc>https://yellowscan.io/nodes</loc>
 		<lastmod>2025-09-08T00:00:00+00:00</lastmod>
 		<changefreq>daily</changefreq>
 		<priority>0.7</priority>

@@ -24,7 +24,7 @@ const baseDescription =
 	"Explore and monitor The Yellow Network's channels, app sessions, and assets. Real-time network statistics and comprehensive data analysis.";
 const baseKeywords =
 	'Yellow Network, explorer, channels, app sessions, cryptocurrency, DeFi, network scanner';
-const baseUrl = 'https://ynscan.xyz';
+const baseUrl = 'https://yellowscan.io';
 
 export function createBaseSEO(): SEOData {
 	return {

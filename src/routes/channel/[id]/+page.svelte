@@ -127,7 +127,7 @@
 		/>
 		<meta name="keywords" content="Yellow Network, explorer, channel, not found" />
 		<meta name="author" content="ynscan" />
-		<link rel="canonical" href="https://ynscan.xyz/channel/" />
+		<link rel="canonical" href="https://yellowscan.io/channel/" />
 	{/if}
 </svelte:head>
 

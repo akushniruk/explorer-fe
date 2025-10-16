@@ -11,12 +11,12 @@ export function generateWebsiteStructuredData(): StructuredData {
 		name: 'ynscan - The Yellow Network Explorer',
 		description:
 			"Explore and monitor The Yellow Network's channels, app sessions, and assets. Real-time network statistics and comprehensive data analysis.",
-		url: 'https://ynscan.xyz',
+		url: 'https://yellowscan.io',
 		potentialAction: {
 			'@type': 'SearchAction',
 			target: {
 				'@type': 'EntryPoint',
-				urlTemplate: 'https://ynscan.xyz/search?q={search_term_string}'
+				urlTemplate: 'https://yellowscan.io/search?q={search_term_string}'
 			},
 			'query-input': 'required name=search_term_string'
 		},
@@ -30,8 +30,8 @@ export function generateOrganizationStructuredData(): StructuredData {
 		'@type': 'Organization',
 		name: 'ynscan',
 		description: 'Decentralized network for financial applications',
-		url: 'https://ynscan.xyz',
-		logo: 'https://ynscan.xyz/og-preview.jpg',
+		url: 'https://yellowscan.io',
+		logo: 'https://yellowscan.io/og-preview.jpg',
 		sameAs: []
 	};
 }
@@ -57,7 +57,7 @@ export function generateChannelStructuredData(channel: any): StructuredData {
 		'@type': 'FinancialProduct',
 		name: `Channel ${channel.channel_id}`,
 		description: `Yellow Network channel with ${channel.balance_a_formatted} ${channel.asset_a_symbol} and ${channel.balance_b_formatted} ${channel.asset_b_symbol}`,
-		url: `https://ynscan.xyz/channel/${channel.channel_id}`,
+		url: `https://yellowscan.io/channel/${channel.channel_id}`,
 		provider: {
 			'@type': 'Organization',
 			name: 'ynscan'
@@ -72,7 +72,7 @@ export function generateSessionStructuredData(session: any): StructuredData {
 		'@type': 'SoftwareApplication',
 		name: `App Session ${session.session_id}`,
 		description: `Yellow Network application session on channel ${session.channel_id}`,
-		url: `https://ynscan.xyz/session/${session.session_id}`,
+		url: `https://yellowscan.io/session/${session.session_id}`,
 		applicationCategory: 'FinanceApplication',
 		provider: {
 			'@type': 'Organization',

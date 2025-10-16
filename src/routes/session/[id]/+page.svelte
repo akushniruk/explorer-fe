@@ -59,7 +59,7 @@
 		/>
 		<meta name="keywords" content="Yellow Network, explorer, session, not found" />
 		<meta name="author" content="ynscan" />
-		<link rel="canonical" href="https://ynscan.xyz/session/" />
+		<link rel="canonical" href="https://yellowscan.io/session/" />
 	{/if}
 </svelte:head>
 

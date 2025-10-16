@@ -98,7 +98,7 @@
 	<meta name="twitter:image:alt" content="Visit ynscan" />
 
 	<link rel="canonical" href={seoData.canonical} />
-	<link rel="canonical" href="https://ynscan.xyz/search" />
+	<link rel="canonical" href="https://yellowscan.io/search" />
 </svelte:head>
 
 <div class="max-w-7xl mx-auto px-4 py-6">

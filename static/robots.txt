@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Primary sitemap index (Google only needs this one)
-Sitemap: https://ynscan.xyz/sitemap_index.xml
+Sitemap: https://yellowscan.io/sitemap_index.xml
 
 # Crawl-delay (mainly for Bing/Yandex, ignored by Google)
 Crawl-delay: 1

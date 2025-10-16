@@ -7,7 +7,7 @@
 	let isMainnet = true;
 
 	$: if (browser) {
-		isMainnet = window.location.hostname === 'ynscan.xyz' || window.location.hostname === 'localhost';
+		isMainnet = window.location.hostname === 'yellowscan.io' || window.location.hostname === 'localhost';
 	}
 
 	const navItems = [
@@ -37,20 +37,20 @@
 	<div class="flex items-center justify-between gap-4">
 		<div class="flex items-center gap-8">
 			<a href="/" class="flex items-center gap-3 flex-shrink-0">
-				<span class="text-3xl font-semibold tracking-tight leading-none">ynscan</span>
+				<span class="text-3xl font-semibold tracking-tight leading-none">yellowscan</span>
 			</a>
 
 			<div class="flex items-center rounded mx-2 shrink-0 md:mx-4">
 				<a
 					class="relative flex items-center gap-2 px-1.5 py-1 text-xs font-medium -outline-offset-1 transition-colors first:rounded-l-md first:border first:border-r-0 last:rounded-r-md last:border last:border-l-0 sm:h-[32px] sm:px-3 sm:text-sm {isMainnet ? 'cursor-default border-[#fcd000] bg-[#fcd000] text-black' : 'border-border-light text-text-light border-border hover:bg-background-dark/5 hover:dark:bg-background-light/5'}"
 					data-state="closed"
-					href="https://ynscan.xyz"
+					href="https://yellowscan.io"
 				>
 					Mainnet
 				</a>
 				<a
 					class="relative flex items-center gap-2 px-1.5 py-1 text-xs font-medium -outline-offset-1 transition-colors first:rounded-l-md first:border first:border-r-0 last:rounded-r-md last:border last:border-l-0 sm:h-[32px] sm:px-3 sm:text-sm {!isMainnet ? 'cursor-default border-[#fcd000] bg-[#fcd000] text-black' : 'border-border-light text-text-light border-border hover:bg-background-dark/5 hover:dark:bg-background-light/5'}"
-					href="https://sandbox.ynscan.xyz">Testnet</a
+					href="https://sandbox.yellowscan.io">Sandbox</a
 				>
 			</div>
 

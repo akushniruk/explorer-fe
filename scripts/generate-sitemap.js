@@ -9,7 +9,7 @@ import { writeFileSync } from 'fs';
 import { join } from 'path';
 
 const API_BASE = process.env.PUBLIC_API_BASE || 'https://explorer-apps.up.railway.app';
-const SITE_URL = 'https://ynscan.xyz';
+const SITE_URL = 'https://yellowscan.io';
 const OUTPUT_DIR = './static';
 
 // Helper function to validate blockchain addresses
@@ -146,28 +146,28 @@ async function generateSitemap() {
 	// Generate main sitemap XML
 	const mainSitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${staticRoutes
-		.map(
-			(route) => `
+			.map(
+				(route) => `
 	<url>
 		<loc>${SITE_URL}${route.url === '' ? '/' : route.url}</loc>
 		<lastmod>${currentDate}</lastmod>
 		<changefreq>${route.changefreq}</changefreq>
 		<priority>${route.priority}</priority>
 	</url>`
-		)
-		.join('')}${uniqueDynamicUrls
-		.map((url) => {
-			const priority = url.startsWith('/channel/') || url.startsWith('/session/') ? '0.6' : '0.5';
-			const changefreq = url.startsWith('/address/') ? 'weekly' : 'daily';
-			return `
+			)
+			.join('')}${uniqueDynamicUrls
+				.map((url) => {
+					const priority = url.startsWith('/channel/') || url.startsWith('/session/') ? '0.6' : '0.5';
+					const changefreq = url.startsWith('/address/') ? 'weekly' : 'daily';
+					return `
 	<url>
 		<loc>${SITE_URL}${url}</loc>
 		<lastmod>${currentDate}</lastmod>
 		<changefreq>${changefreq}</changefreq>
 		<priority>${priority}</priority>
 	</url>`;
-		})
-		.join('')}
+				})
+				.join('')}
 </urlset>`;
 
 	// Generate sitemap index
