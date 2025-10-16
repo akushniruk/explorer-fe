@@ -19,7 +19,7 @@ export interface SEOData {
 	structuredData?: StructuredData[];
 }
 
-const baseTitle = 'ynscan';
+const baseTitle = 'yellowscan';
 const baseDescription =
 	"Explore and monitor The Yellow Network's channels, app sessions, and assets. Real-time network statistics and comprehensive data analysis.";
 const baseKeywords =

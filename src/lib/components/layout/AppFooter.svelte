@@ -3,7 +3,7 @@
 		<div
 			class="flex flex-col md:flex-row justify-between items-center gap-2 text-[11px] text-muted-foreground"
 		>
-			<p class="m-0">ynscan © 2025</p>
+			<p class="m-0">yellowscan © 2025</p>
 		</div>
 	</div>
 </footer>

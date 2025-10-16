@@ -37,7 +37,7 @@
 </script>
 
 <svelte:head>
-	<title>ynscan - The Yellow Network Explorer</title>
+	<title>yellowscan - The Yellow Network Explorer</title>
 	<meta
 		name="description"
 		content="Explore and monitor The Yellow Network's channels, app sessions, and assets. Real-time network statistics and comprehensive data analysis."
@@ -46,15 +46,15 @@
 		name="keywords"
 		content="Yellow Network, explorer, channels, app sessions, cryptocurrency, DeFi, network scanner"
 	/>
-	<meta name="author" content="ynscan" />
-	<meta property="og:title" content="ynscan - The Yellow Network Explorer" />
+	<meta name="author" content="yellowscan" />
+	<meta property="og:title" content="yellowscan - The Yellow Network Explorer" />
 	<meta
 		property="og:description"
 		content="Explore and monitor The Yellow Network's channels, app sessions, and network assets."
 	/>
 	<meta property="og:type" content="website" />
 	<meta property="og:url" content="https://yellowscan.io" />
-	<meta property="og:site_name" content="ynscan" />
+	<meta property="og:site_name" content="yellowscan" />
 	<link rel="canonical" href="https://yellowscan.io" />
 </svelte:head>
 

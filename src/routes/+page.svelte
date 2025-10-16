@@ -41,16 +41,16 @@
 	<title>{seoData.title}</title>
 	<meta name="description" content={seoData.description} />
 	<meta name="keywords" content={seoData.keywords} />
-	<meta name="author" content="ynscan" />
+	<meta name="author" content="yellowscan" />
 
 	<!-- Open Graph meta tags -->
 	<meta property="og:title" content={seoData.ogTitle} />
 	<meta property="og:description" content={seoData.ogDescription} />
 	<meta property="og:type" content="website" />
-	<meta property="og:site_name" content="ynscan" />
+	<meta property="og:site_name" content="yellowscan" />
 	<meta property="og:url" content={seoData.ogUrl} />
 	<meta property="og:image" content={seoData.ogImage} />
-	<meta property="og:image:alt" content="Visit ynscan" />
+	<meta property="og:image:alt" content="Visit yellowscan" />
 
 	<link rel="canonical" href={seoData.canonical} />
 

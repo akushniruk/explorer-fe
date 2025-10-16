@@ -1,6 +1,6 @@
 {
-  "name": "ynscan - The Yellow Network Explorer",
-  "short_name": "ynscan",
+  "name": "yellowscan - The Yellow Network Explorer",
+  "short_name": "yellowscan",
   "description": "Explore and monitor The Yellow Network's channels, app sessions, and assets",
   "icons": [
     {

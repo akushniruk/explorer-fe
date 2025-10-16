@@ -8,7 +8,7 @@ export function generateWebsiteStructuredData(): StructuredData {
 	return {
 		'@context': 'https://schema.org',
 		'@type': 'WebSite',
-		name: 'ynscan - The Yellow Network Explorer',
+		name: 'yellowscan - The Yellow Network Explorer',
 		description:
 			"Explore and monitor The Yellow Network's channels, app sessions, and assets. Real-time network statistics and comprehensive data analysis.",
 		url: 'https://yellowscan.io',
@@ -28,7 +28,7 @@ export function generateOrganizationStructuredData(): StructuredData {
 	return {
 		'@context': 'https://schema.org',
 		'@type': 'Organization',
-		name: 'ynscan',
+		name: 'yellowscan',
 		description: 'Decentralized network for financial applications',
 		url: 'https://yellowscan.io',
 		logo: 'https://yellowscan.io/og-preview.jpg',
@@ -60,7 +60,7 @@ export function generateChannelStructuredData(channel: any): StructuredData {
 		url: `https://yellowscan.io/channel/${channel.channel_id}`,
 		provider: {
 			'@type': 'Organization',
-			name: 'ynscan'
+			name: 'yellowscan'
 		},
 		identifier: channel.channel_id
 	};
@@ -76,7 +76,7 @@ export function generateSessionStructuredData(session: any): StructuredData {
 		applicationCategory: 'FinanceApplication',
 		provider: {
 			'@type': 'Organization',
-			name: 'ynscan'
+			name: 'yellowscan'
 		},
 		identifier: session.session_id
 	};

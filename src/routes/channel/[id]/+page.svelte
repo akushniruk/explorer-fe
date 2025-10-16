@@ -106,27 +106,27 @@
 		<title>{seoData.title}</title>
 		<meta name="description" content={seoData.description} />
 		<meta name="keywords" content={seoData.keywords} />
-		<meta name="author" content="ynscan" />
+		<meta name="author" content="yellowscan" />
 		<meta name="format-detection" content="telephone=no" />
 
 		<!-- Open Graph meta tags -->
 		<meta property="og:title" content={seoData.ogTitle} />
 		<meta property="og:description" content={seoData.ogDescription} />
 		<meta property="og:type" content="website" />
-		<meta property="og:site_name" content="ynscan" />
+		<meta property="og:site_name" content="yellowscan" />
 		<meta property="og:url" content={seoData.ogUrl} />
 		<meta property="og:image" content={seoData.ogImage} />
-		<meta property="og:image:alt" content="Visit ynscan" />
+		<meta property="og:image:alt" content="Visit yellowscan" />
 
 		<link rel="canonical" href={seoData.canonical} />
 	{:else}
-		<title>Channel Not Found | ynscan</title>
+		<title>Channel Not Found | yellowscan</title>
 		<meta
 			name="description"
 			content="The requested channel could not be found on Yellow Network Explorer."
 		/>
 		<meta name="keywords" content="Yellow Network, explorer, channel, not found" />
-		<meta name="author" content="ynscan" />
+		<meta name="author" content="yellowscan" />
 		<link rel="canonical" href="https://yellowscan.io/channel/" />
 	{/if}
 </svelte:head>
