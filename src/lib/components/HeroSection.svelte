@@ -34,12 +34,12 @@
 	}
 </script>
 
-<section class="relative z-0 bg-hero-bg border-b border-border/60 pt-6 pb-8 sm:pt-12 sm:pb-16">
+<section class="relative z-0 bg-hero-bg border-b border-border/60 pt-20 pb-24 sm:pt-12 sm:pb-16">
 	<div class="relative z-10 max-w-7xl mx-auto px-4">
 		<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
 			<div class="flex-1 max-w-2xl">
 				<h1
-					class="text-xl sm:text-2xl lg:text-3xl font-semibold text-text-secondary mb-3 tracking-tight"
+					class="text-2xl sm:text-2xl lg:text-3xl font-semibold text-text-secondary mb-3 tracking-tight"
 				>
 					The Yellow Network Explorer
 				</h1>
