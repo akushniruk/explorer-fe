@@ -12,11 +12,13 @@
 		747: 'flow', // Flow EVM Mainnet
 		480: 'World Chain',
 		59144: 'linea', // Linea Mainnet
-		1440000: 'XRPL EVM'
+		1440000: 'XRPL EVM',
+		1449000: 'XRPL EVM Testnet'
 	};
 
 	const customIconUrls: Record<number, string> = {
-		1440000: 'https://explorer.xrplevm.org/assets/configs/network_icon.png'
+		1440000: 'https://explorer.xrplevm.org/assets/configs/network_icon.png',
+		1449000: 'https://explorer.xrplevm.org/assets/configs/network_icon.png'
 	};
 
 	const iconSlug = chain
