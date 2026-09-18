@@ -97,7 +97,7 @@
 
 	<!-- Mobile Navigation -->
 	{#if showMobileMenu}
-		<div class="md:hidden absolute top-14 left-0 z-50 h-full w-full py-4 px-4 border-t bg-background border-border" data-mobile-menu>
+		<div class="md:hidden mt-3 border-t border-border py-4" data-mobile-menu>
 			<nav class="flex flex-col gap-3">
 				{#each navItems as item}
 					<a
