@@ -1,13 +1,13 @@
 # Frontend Dockerfile for SvelteKit application
-FROM node:20-alpine
+FROM node:22-alpine
 
 # Install pnpm globally
-RUN npm install -g pnpm
+RUN npm install -g pnpm@11.22.0
 
 WORKDIR /app
 
 # Copy package files
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
